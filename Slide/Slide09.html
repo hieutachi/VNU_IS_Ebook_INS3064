@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INS3064: Session 09: Error Handling</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 50px;
+            min-height: 700px;
+            background: white;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        .slide h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .slide p {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .slide strong {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.95em;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .box-info {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .box-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            color: #333;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+                <!-- Slide 1: Title Slide -->
+        <div class="slide active">
+            <div class="header-section">
+                <h1>🎓 INS3064</h1>
+                <h2>Multimedia Design & Web Development</h2>
+                <p style="font-size: 1.2em; margin-top: 30px; color: #667eea;"><strong>Session 09: Error Handling</strong></p>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 1.1em; margin: 20px 0;">Course Code: <strong>INS3064</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Instructor: <strong>M.Sc. Hieu Ta Chi</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Host Department: <strong>Applied Sciences Department - IS-VNU</strong></p>
+            </div>
+        </div>
+        <!-- Slide 2: 1. CÁC LOẠI LỖI -->
+        <div class="slide">
+            <h1>1. CÁC LOẠI LỖI</h1>
+            
+<h3>1.1 Error Types</h3>
+
+<p>| Loại | Mô tả | Ví dụ |</p>
+<p>|------|-------|-------|</p>
+<p>| <strong>Parse Error</strong> | Lỗi cú pháp | Thiếu <span class="highlight">;</span>, <span class="highlight">}</span> |</p>
+<p>| <strong>Fatal Error</strong> | Lỗi nghiêm trọng | Gọi hàm không tồn tại |</p>
+<p>| <strong>Warning</strong> | Cảnh báo | Include file không tồn tại |</p>
+<p>| <strong>Notice</strong> | Thông báo | Dùng biến chưa khai báo |</p>
+
+<h3>1.2 Error Reporting</h3>
+
+<div class="code-block">&lt;?php
+<p>// Hiển thị tất cả lỗi (development)</p>
+<p>error_reporting(E_ALL);</p>
+<p>ini_set(&#39;display_errors&#39;, 1);</p>
+
+<p>// Ẩn lỗi (production)</p>
+<p>error_reporting(0);</p>
+<p>ini_set(&#39;display_errors&#39;, 0);</p>
+
+<p>// Ghi log lỗi</p>
+<p>ini_set(&#39;log_errors&#39;, 1);</p>
+<p>ini_set(&#39;error_log&#39;, &#39;/path/to/error.log&#39;);</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 3: 2. TRY-CATCH -->
+        <div class="slide">
+            <h1>2. TRY-CATCH</h1>
+            
+<h3>2.1 Cú Pháp Cơ Bản</h3>
+
+<div class="code-block">&lt;?php
+<p>try {</p>
+<p>// Code có thể gây lỗi</p>
+<p>$result = 10 / 0;</p>
+<p>} catch (Exception $e) {</p>
+<p>// Xử lý lỗi</p>
+<p>echo &quot;Lỗi: &quot; . $e-&gt;getMessage();</p>
+<p>} finally {</p>
+<p>// Luôn chạy</p>
+<p>echo &quot;Hoàn thành&quot;;</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<h3>2.2 Throw Exception</h3>
+
+<div class="code-block">&lt;?php
+<p>function divide($a, $b) {</p>
+<p>if ($b == 0) {</p>
+<p>throw new Exception(&quot;Không thể chia cho 0&quot;);</p>
+<p>}</p>
+<p>return $a / $b;</p>
+<p>}</p>
+
+<p>try {</p>
+<p>echo divide(10, 0);</p>
+<p>} catch (Exception $e) {</p>
+<p>echo &quot;Lỗi: &quot; . $e-&gt;getMessage();</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<h3>2.3 Custom Exception</h3>
+
+<div class="code-block">&lt;?php
+<p>class ValidationException extends Exception {</p>
+<p>private $errors = [];</p>
+    
+<p>public function __construct($errors) {</p>
+<p>$this-&gt;errors = $errors;</p>
+<p>parent::__construct(&quot;Validation failed&quot;);</p>
+<p>}</p>
+    
+<p>public function getErrors() {</p>
+<p>return $this-&gt;errors;</p>
+<p>}</p>
+<p>}</p>
+
+<p>// Sử dụng</p>
+<p>try {</p>
+<p>$errors = [];</p>
+<p>if (empty($name)) {</p>
+<p>$errors[&#39;name&#39;] = &quot;Name is required&quot;;</p>
+<p>}</p>
+<p>if (!empty($errors)) {</p>
+<p>throw new ValidationException($errors);</p>
+<p>}</p>
+<p>} catch (ValidationException $e) {</p>
+<p>$errors = $e-&gt;getErrors();</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 4: 3. CUSTOM ERROR HANDLER -->
+        <div class="slide">
+            <h1>3. CUSTOM ERROR HANDLER</h1>
+            
+<div class="code-block">&lt;?php
+<p>// Custom error handler</p>
+<p>function customErrorHandler($errno, $errstr, $errfile, $errline) {</p>
+<p>$log = date(&#39;Y-m-d H:i:s&#39;) . &quot; - Error [$errno]: $errstr in $errfile on line $errline\n&quot;;</p>
+<p>error_log($log, 3, &#39;errors.log&#39;);</p>
+    
+<p>if ($errno == E_USER_ERROR) {</p>
+<p>echo &quot;Đã xảy ra lỗi. Vui lòng thử lại sau.&quot;;</p>
+<p>exit(1);</p>
+<p>}</p>
+    
+<p>return true;</p>
+<p>}</p>
+
+<p>set_error_handler(&quot;customErrorHandler&quot;);</p>
+
+<p>// Custom exception handler</p>
+<p>function customExceptionHandler($exception) {</p>
+<p>error_log($exception-&gt;getMessage());</p>
+<p>echo &quot;Đã xảy ra lỗi. Vui lòng liên hệ admin.&quot;;</p>
+<p>}</p>
+
+<p>set_exception_handler(&quot;customExceptionHandler&quot;);</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 5: 4. DEBUG TECHNIQUES -->
+        <div class="slide">
+            <h1>4. DEBUG TECHNIQUES</h1>
+            
+<h3>4.1 Các Hàm Debug</h3>
+
+<div class="code-block">&lt;?php
+<p>// In biến</p>
+<p>var_dump($variable);</p>
+<p>print_r($array);</p>
+
+<p>// Debug và dừng</p>
+<p>dd($variable);  // Laravel style</p>
+
+<p>function dd($var) {</p>
+<p>echo &quot;&lt;pre&gt;&quot;;</p>
+<p>var_dump($var);</p>
+<p>echo &quot;&lt;/pre&gt;&quot;;</p>
+<p>die();</p>
+<p>}</p>
+
+<p>// Backtrace</p>
+<p>debug_print_backtrace();</p>
+
+<p>// Error log</p>
+<p>error_log(&quot;Debug: &quot; . print_r($data, true));</p>
+<p>?&gt;</p>
+</div>
+
+<h3>4.2 Xdebug</h3>
+
+<div class="code-block">// php.ini
+<p>xdebug.mode=debug</p>
+<p>xdebug.start_with_request=yes</p>
+<p>xdebug.client_port=9003</p>
+</div>
+
+<p>---</p>
+
+<p># VÍ DỤ THỰC TẾ</p>
+
+<div class="code-block">&lt;?php
+<p>class Database {</p>
+<p>private $pdo;</p>
+    
+<p>public function __construct() {</p>
+<p>try {</p>
+<p>$this-&gt;pdo = new PDO(</p>
+<p>&quot;mysql:host=localhost;dbname=test&quot;,</p>
+<p>&quot;root&quot;,</p>
+<p>&quot;&quot;,</p>
+<p>[PDO::ATTR_ERRMODE =&gt; PDO::ERRMODE_EXCEPTION]</p>
+<p>);</p>
+<p>} catch (PDOException $e) {</p>
+<p>error_log(&quot;Database connection failed: &quot; . $e-&gt;getMessage());</p>
+<p>throw new Exception(&quot;Không thể kết nối database&quot;);</p>
+<p>}</p>
+<p>}</p>
+    
+<p>public function query($sql, $params = []) {</p>
+<p>try {</p>
+<p>$stmt = $this-&gt;pdo-&gt;prepare($sql);</p>
+<p>$stmt-&gt;execute($params);</p>
+<p>return $stmt-&gt;fetchAll(PDO::FETCH_ASSOC);</p>
+<p>} catch (PDOException $e) {</p>
+<p>error_log(&quot;Query failed: &quot; . $e-&gt;getMessage());</p>
+<p>throw new Exception(&quot;Truy vấn thất bại&quot;);</p>
+<p>}</p>
+<p>}</p>
+<p>}</p>
+
+<p>// Sử dụng</p>
+<p>try {</p>
+<p>$db = new Database();</p>
+<p>$users = $db-&gt;query(&quot;SELECT * FROM users WHERE id = ?&quot;, [1]);</p>
+<p>} catch (Exception $e) {</p>
+<p>echo &quot;Lỗi: &quot; . $e-&gt;getMessage();</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+<p># THỰC HÀNH</p>
+
+        </div>
+        <!-- Slide 6: BÀI 1: Form với Error Handling -->
+        <div class="slide">
+            <h1>BÀI 1: Form với Error Handling</h1>
+            
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Tạo form đăng ký</li>
+<li>Validate với try-catch</li>
+<li>Hiển thị lỗi thân thiện</li></ul>
+
+        </div>
+        <!-- Slide 7: BÀI 2: Custom Exception -->
+        <div class="slide">
+            <h1>BÀI 2: Custom Exception</h1>
+            
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Tạo DatabaseException</li>
+<li>Tạo ValidationException</li>
+<li>Xử lý trong controller</li></ul>
+
+<p>---</p>
+
+<p># ✅ KIẾN THỨC CẦN ĐẠT</p>
+
+<ul><li>[ ] Hiểu các loại lỗi PHP</li>
+<li>[ ] Sử dụng được try-catch</li>
+<li>[ ] Tạo được custom exception</li>
+<li>[ ] Debug hiệu quả</li></ul>
+
+<p>---</p>
+
+<strong>Chương tiếp theo: [Buổi 10 - PHP + MySQL →](./buoi_10_php_mysql.md)</strong>
+
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">7</span></span>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 7;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            }
+            if (n < 1) {
+                currentSlide = 1;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

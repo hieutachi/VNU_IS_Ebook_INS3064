@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INS3064: Programming PHP - Variables, Data Types, Operators</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 50px;
+            min-height: 700px;
+            background: white;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        .slide h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .slide p {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .slide strong {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.95em;
+            color: #333;
+        }
+
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .box-info {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .box-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .icon-row {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .icon-item {
+            text-align: center;
+            padding: 15px;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .icon-item .icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .icon-item p {
+            font-size: 0.95em;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Slide 1: Title Slide -->
+        <div class="slide active">
+            <div class="header-section">
+                <h1>🎓 INS3064</h1>
+                <h2>Multimedia Design & Web Development</h2>
+                <p style="font-size: 1.2em; margin-top: 30px; color: #667eea;"><strong>Session 02: Programming PHP</strong></p>
+                <p style="font-size: 1.1em; margin-top: 15px; color: #764ba2;">Variables, Data Types, Operators & Control Structures</p>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 1.1em; margin: 20px 0;">Course Code: <strong>INS3064</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Instructor: <strong>M.Sc. Hieu Ta Chi</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Host Department: <strong>Applied Sciences Department - IS-VNU</strong></p>
+                <p style="font-size: 1.1em; margin-top: 50px; color: #764ba2;">Master the Foundation of PHP Programming</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Session Information -->
+        <div class="slide">
+            <h1>📌 Session Information</h1>
+            <div class="box-info">
+                <p><strong>📅 Time:</strong> 3 hours (Theory: 1.5 hours, Practice: 1.5 hours)</p>
+                <p><strong>📚 Reference:</strong> Chapter 2 - PHP & MySQL Web Development</p>
+                <p><strong>📖 Preparation:</strong> Complete Session 01 exercises</p>
+                <p><strong>🔗 Learning Outcomes:</strong> LO1</p>
+            </div>
+
+            <h2>🎯 Session Objectives</h2>
+            <ul>
+                <li>Declare and use variables correctly in PHP</li>
+                <li>Understand data types and their usage</li>
+                <li>Master various operators (arithmetic, comparison, logical)</li>
+                <li>Write control structures (if-else, switch)</li>
+                <li>Create loops (for, while, foreach)</li>
+                <li>Write and use functions</li>
+            </ul>
+        </div>
+
+        <!-- Slide 3: Learning Objectives -->
+        <div class="slide">
+            <h1>🎯 Learning Objectives</h1>
+            <h2>After This Session, You Will:</h2>
+            <div class="icon-row">
+                <div class="comparison-item">
+                    <h4>📦 Variables</h4>
+                    <p>Declare and use variables correctly</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>🔢 Data Types</h4>
+                    <p>Distinguish between different data types</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>⚙️ Operators</h4>
+                    <p>Use various operators effectively</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>🔀 Control Flow</h4>
+                    <p>Write if-else, switch statements</p>
+                </div>
+            </div>
+
+            <h2>Practical Skills</h2>
+            <ul>
+                <li>✓ Create loops (for, while, foreach)</li>
+                <li>✓ Write and call functions</li>
+                <li>✓ Process data with operators</li>
+                <li>✓ Build dynamic programs with control structures</li>
+            </ul>
+        </div>
+
+        <!-- Slide 4: What is a Variable? -->
+        <div class="slide">
+            <h1>📦 Variables in PHP</h1>
+            <h2>What is a Variable?</h2>
+            <p style="font-size: 1.2em; margin-bottom: 20px;"><strong>Variable = Container for data</strong></p>
+            <p>A variable can change its value during program execution.</p>
+
+            <h2>🎒 Real-life Analogy</h2>
+            <div class="box-info">
+                <p>Variables are like <strong>labeled containers</strong>:</p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Label</strong> = Variable name (<span class="highlight">$name</span>)</li>
+                    <li><strong>Content</strong> = Value (<span class="highlight">"John Doe"</span>)</li>
+                    <li>You can change the content anytime</li>
+                </ul>
+            </div>
+
+            <h2>Example</h2>
+            <div class="code-block">
+&lt;?php
+    $name = "John Doe";
+    $age = 20;
+    $gpa = 3.5;
+    
+    echo "Name: $name&lt;br&gt;";
+    echo "Age: $age&lt;br&gt;";
+    echo "GPA: $gpa";
+?&gt;
+            </div>
+        </div>
+
+        <!-- Slide 5: Variable Naming Rules -->
+        <div class="slide">
+            <h1>📋 Variable Naming Rules</h1>
+            
+            <table>
+                <tr>
+                    <th>Rule</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>Must start with $</strong></td>
+                    <td><span class="highlight">$name</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Next: letter or _</strong></td>
+                    <td><span class="highlight">$_name</span>, <span class="highlight">$name</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Can contain numbers (not at start)</strong></td>
+                    <td><span class="highlight">$name1</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Case-sensitive</strong></td>
+                    <td><span class="highlight">$Name</span> ≠ <span class="highlight">$name</span></td>
+                </tr>
+            </table>
+
+            <h2>✅ Correct Examples</h2>
+            <div class="code-block">
+&lt;?php
+    $name = "John";           // Lowercase
+    $userName = "john123";    // camelCase (recommended)
+    $user_name = "john123";   // snake_case
+    $_private = "secret";     // Starts with _
+    $name2 = "Jane";          // Contains number
+?&gt;
+            </div>
+
+            <h2>❌ Wrong Examples</h2>
+            <div class="code-block" style="background: #ffe6e6; border-left-color: #dc3545;">
+    $2name = "Error";         // Starts with number
+    $user-name = "Error";     // Contains hyphen
+    $user name = "Error";     // Contains space
+            </div>
+        </div>
+
+        <!-- Slide 6: Data Types Overview -->
+        <div class="slide">
+            <h1>🔢 Data Types in PHP</h1>
+            
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>String</strong></td>
+                    <td>Character string</td>
+                    <td><span class="highlight">"Hello"</span>, <span class="highlight">'World'</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Integer</strong></td>
+                    <td>Whole number</td>
+                    <td><span class="highlight">42</span>, <span class="highlight">-10</span>, <span class="highlight">0</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Float</strong></td>
+                    <td>Decimal number</td>
+                    <td><span class="highlight">3.14</span>, <span class="highlight">-2.5</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Boolean</strong></td>
+                    <td>True/False</td>
+                    <td><span class="highlight">true</span>, <span class="highlight">false</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Array</strong></td>
+                    <td>Collection of values</td>
+                    <td><span class="highlight">[1, 2, 3]</span></td>
+                </tr>
+                <tr>
+                    <td><strong>NULL</strong></td>
+                    <td>No value</td>
+                    <td><span class="highlight">null</span></td>
+                </tr>
+            </table>
+
+            <div class="box-info">
+                <p><strong>💡 PHP is dynamically typed:</strong> You don't need to declare the type. PHP automatically determines the type based on the value.</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: String Data Type -->
+        <div class="slide">
+            <h1>📝 String Data Type</h1>
+            
+            <h2>Single Quotes vs Double Quotes</h2>
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <h4>Single Quotes ' '</h4>
+                    <p><strong>Literal string</strong> - doesn't parse variables</p>
+                    <div class="code-block" style="font-size: 0.9em;">
+$str = 'Hello $name';
+// Output: Hello $name
+                    </div>
+                </div>
+                <div class="comparison-item">
+                    <h4>Double Quotes " "</h4>
+                    <p><strong>Parsed string</strong> - processes variables</p>
+                    <div class="code-block" style="font-size: 0.9em;">
+$name = "John";
+$str = "Hello $name";
+// Output: Hello John
+                    </div>
+                </div>
+            </div>
+
+            <h2>String Concatenation</h2>
+            <div class="code-block">
+&lt;?php
+    $name = "John";
+    $greeting = "Hello, " . $name . "!";
+    echo $greeting;  // Hello, John!
+?&gt;
+            </div>
+
+            <h2>Common String Functions</h2>
+            <div class="code-block">
+&lt;?php
+    echo strlen("Hello");        // 5 - Length
+    echo strtoupper("hello");    // HELLO
+    echo strtolower("HELLO");    // hello
+    echo substr("Hello", 0, 3);  // Hel
+    echo str_replace("o", "0", "Hello"); // Hell0
+?&gt;
+            </div>
+        </div>
+
+        <!-- Slide 8: Integer & Float -->
+        <div class="slide">
+            <h1>🔢 Integer & Float</h1>
+            
+            <h2>Integer (Whole Numbers)</h2>
+            <div class="code-block">
+&lt;?php
+    $int1 = 42;
+    $int2 = -10;
+    $int3 = 0;
+    
+    var_dump($int1);  // int(42)
+?&gt;
+            </div>
+
+            <h2>Float (Decimal Numbers)</h2>
+            <div class="code-block">
+&lt;?php
+    $float1 = 3.14;
+    $float2 = -2.5;
+    $float3 = 1.5e3;  // 1500 (scientific notation)
+    
+    var_dump($float1);  // float(3.14)
+?&gt;
+            </div>
+
+            <h2>Type Casting</h2>
+            <div class="code-block">
+&lt;?php
+    $str = "123";
+    $num = (int) $str;     // 123
+    $num = intval($str);   // 123
+?&gt;
+            </div>
+
+            <h2>Math Functions</h2>
+            <div class="code-block">
+&lt;?php
+    echo abs(-5);          // 5
+    echo round(3.7);       // 4
+    echo ceil(3.2);        // 4
+    echo floor(3.8);       // 3
+    echo max(1, 5, 3);     // 5
+    echo min(1, 5, 3);     // 1
+    echo rand(1, 100);     // Random 1-100
+?&gt;
+            </div>
+        </div>
+
+        <!-- Slide 9: Boolean & Array -->
+        <div class="slide">
+            <h1>✅ Boolean & Array</h1>
+            
+            <h2>Boolean</h2>
+            <div class="code-block">
+&lt;?php
+    $isActive = true;
+    $isDeleted = false;
+    
+    if ($isActive) {
+        echo "Account is active";
+    }
+?&gt;
+            </div>
+
+            <div class="box-warning">
+                <p><strong>Values considered FALSE:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>false, 0, 0.0, "", "0", [], null</li>
+                </ul>
+            </div>
+
+            <h2>Array - Indexed</h2>
+            <div class="code-block">
+&lt;?php
+    $fruits = ["Apple", "Banana", "Orange"];
+    echo $fruits[0];  // Apple
+    echo $fruits[1];  // Banana
+?&gt;
+            </div>
+
+            <h2>Array - Associative</h2>
+            <div class="code-block">
+&lt;?php
+    $student = [
+        "name" => "John Doe",
+        "age" => 20,
+        "gpa" => 3.5
+    ];
+    echo $student["name"];  // John Doe
+?&gt;
+            </div>
+        </div>
+
+        <!-- Slide 10: Arithmetic Operators -->
+        <div class="slide">
+            <h1>➕ Arithmetic Operators</h1>
+            
+            <div class="code-block">
+&lt;?php
+    $a = 10;
+    $b = 3;
+    
+    echo $a + $b;   // 13 - Addition
+    echo $a - $b;   // 7  - Subtraction
+    echo $a * $b;   // 30 - Multiplication
+    echo $a / $b;   // 3.333... - Division
+    echo $a % $b;   // 1  - Modulo (remainder)
+    echo $a ** $b;  // 1000 - Exponentiation (10^3)
+?&gt;
+            </div>
+
+            <table>
+                <tr>
+                    <th>Operator</th>
+                    <th>Name</th>
+                    <th>Example</th>
+                    <th>Result</th>
+                </tr>
+                <tr>
+                    <td><strong>+</strong></td>
+                    <td>Addition</td>
+                    <td>10 + 3</td>
+                    <td>13</td>
+                </tr>
+                <tr>
+                    <td><strong>-</strong></td>
+                    <td>Subtraction</td>
+                    <td>10 - 3</td>
+                    <td>7</td>
+                </tr>
+                <tr>
+                    <td><strong>*</strong></td>
+                    <td>Multiplication</td>
+                    <td>10 * 3</td>
+                    <td>30</td>
+                </tr>
+                <tr>
+                    <td><strong>/</strong></td>
+                    <td>Division</td>
+                    <td>10 / 3</td>
+                    <td>3.333...</td>
+                </tr>
+                <tr>
+                    <td><strong>%</strong></td>
+                    <td>Modulo</td>
+                    <td>10 % 3</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td><strong>**</strong></td>
+                    <td>Exponentiation</td>
+                    <td>10 ** 3</td>
+                    <td>1000</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 11: Assignment Operators -->
+        <div class="slide">
+            <h1>📝 Assignment Operators</h1>
+            
+            <p>Shortcut operators that combine assignment with operation:</p>
+            
+            <div class="code-block">
+&lt;?php
+    $x = 10;
+    
+    $x += 5;   // $x = $x + 5  → 15
+    $x -= 3;   // $x = $x - 3  → 12
+    $x *= 2;   // $x = $x * 2  → 24
+    $x /= 4;   // $x = $x / 4  → 6
+    $x %= 4;   // $x = $x % 4  → 2
+    $x .= "!"; // $x = $x . "!" → "2!"
+?&gt;
+            </div>
+
+            <table>
+                <tr>
+                    <th>Operator</th>
+                    <th>Equivalent To</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>+=</strong></td>
+                    <td>$x = $x + value</td>
+                    <td>$x += 5</td>
+                </tr>
+                <tr>
+                    <td><strong>-=</strong></td>
+                    <td>$x = $x - value</td>
+                    <td>$x -= 3</td>
+                </tr>
+                <tr>
+                    <td><strong>*=</strong></td>
+                    <td>$x = $x * value</td>
+                    <td>$x *= 2</td>
+                </tr>
+                <tr>
+                    <td><strong>/=</strong></td>
+                    <td>$x = $x / value</td>
+                    <td>$x /= 4</td>
+                </tr>
+                <tr>
+                    <td><strong>.=</strong></td>
+                    <td>$x = $x . value</td>
+                    <td>$x .= "!"</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 12: Comparison Operators -->
+        <div class="slide">
+            <h1>⚖️ Comparison Operators</h1>
+            
+            <h2>Value Comparison (==) vs Type Comparison (===)</h2>
+            <div class="code-block">
+&lt;?php
+    $a = 5;
+    $b = "5";
+    
+    // Value comparison
+    $a == $b;    // true (5 == "5")
+    $a != $b;    // false
+    
+    // Value AND type comparison
+    $a === $b;   // false (int !== string)
+    $a !== $b;   // true
+?&gt;
+            </div>
+
+            <table>
+                <tr>
+                    <th>Operator</th>
+                    <th>Name</th>
+                    <th>Example</th>
+                    <th>Result</th>
+                </tr>
+                <tr>
+                    <td><strong>==</strong></td>
+                    <td>Equal (value)</td>
+                    <td>5 == "5"</td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <td><strong>===</strong></td>
+                    <td>Identical (value & type)</td>
+                    <td>5 === "5"</td>
+                    <td>false</td>
+                </tr>
+                <tr>
+                    <td><strong>!=</strong> or <strong>&lt;&gt;</strong></td>
+                    <td>Not equal</td>
+                    <td>5 != "5"</td>
+                    <td>false</td>
+                </tr>
+                <tr>
+                    <td><strong>!==</strong></td>
+                    <td>Not identical</td>
+                    <td>5 !== "5"</td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <td><strong>&gt;</strong></td>
+                    <td>Greater than</td>
+                    <td>5 > 3</td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <td><strong>&lt;</strong></td>
+                    <td>Less than</td>
+                    <td>5 < 3</td>
+                    <td>false</td>
+                </tr>
+                <tr>
+                    <td><strong>&gt;=</strong></td>
+                    <td>Greater or equal</td>
+                    <td>5 >= 5</td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <td><strong>&lt;=</strong></td>
+                    <td>Less or equal</td>
+                    <td>5 <= 5</td>
+                    <td>true</td>
+                </tr>
+            </table>
+
+            <div class="box-warning">
+                <p><strong>⚠️ Important:</strong> Always use <span class="highlight">===</span> and <span class="highlight">!==</span> for strict comparison to avoid type coercion issues!</p>
+            </div>
+        </div>
+
+        <!-- Slide 13: Logical Operators -->
+        <div class="slide">
+            <h1>🔀 Logical Operators</h1>
+            
+            <div class="code-block">
+&lt;?php
+    $a = true;
+    $b = false;
+    
+    // AND - Both must be true
+    $a && $b;    // false
+    $a and $b;   // false
+    
+    // OR - At least one true
+    $a || $b;    // true
+    $a or $b;    // true
+    
+    // NOT - Invert
+    !$a;         // false
+    !$b;         // true
+    
+    // XOR - Only one true
+    $a xor $b;   // true
+?&gt;
+            </div>
+
+            <table>
+                <tr>
+                    <th>Operator</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>&&</strong> or <strong>and</strong></td>
+                    <td>AND</td>
+                    <td>Both must be true</td>
+                    <td>true && false = false</td>
+                </tr>
+                <tr>
+                    <td><strong>||</strong> or <strong>or</strong></td>
+                    <td>OR</td>
+                    <td>At least one true</td>
+                    <td>true || false = true</td>
+                </tr>
+                <tr>
+                    <td><strong>!</strong></td>
+                    <td>NOT</td>
+                    <td>Invert value</td>
+                    <td>!true = false</td>
+                </tr>
+                <tr>
+                    <td><strong>xor</strong></td>
+                    <td>XOR</td>
+                    <td>Only one true</td>
+                    <td>true xor false = true</td>
+                </tr>
+            </table>
+
+            <div class="box-info">
+                <p><strong>💡 Precedence:</strong> <span class="highlight">&&</span> and <span class="highlight">||</span> have higher precedence than <span class="highlight">and</span> and <span class="highlight">or</span></p>
+            </div>
+        </div>
+
+        <!-- Slide 14: Increment/Decrement -->
+        <div class="slide">
+            <h1>➕➖ Increment/Decrement Operators</h1>
+            
+            <h2>Pre-increment/Decrement</h2>
+            <p>Increment/decrement first, then use the value</p>
+            <div class="code-block">
+&lt;?php
+    $x = 5;
+    echo ++$x;  // 6 (increment x to 6, then print 6)
+    echo --$x;  // 5 (decrement x to 5, then print 5)
+?&gt;
+            </div>
+
+            <h2>Post-increment/Decrement</h2>
+            <p>Use the value first, then increment/decrement</p>
+            <div class="code-block">
+&lt;?php
+    $x = 5;
+    echo $x++;  // 5 (print 5, then increment x to 6)
+    echo $x--;  // 6 (print 6, then decrement x to 5)
+?&gt;
+            </div>
+
+            <table>
+                <tr>
+                    <th>Operator</th>
+                    <th>Name</th>
+                    <th>Example</th>
+                    <th>Result</th>
+                </tr>
+                <tr>
+                    <td><strong>++$x</strong></td>
+                    <td>Pre-increment</td>
+                    <td>$x = 5; echo ++$x;</td>
+                    <td>6</td>
+                </tr>
+                <tr>
+                    <td><strong>$x++</strong></td>
+                    <td>Post-increment</td>
+                    <td>$x = 5; echo $x++;</td>
+                    <td>5 (then $x = 6)</td>
+                </tr>
+                <tr>
+                    <td><strong>--$x</strong></td>
+                    <td>Pre-decrement</td>
+                    <td>$x = 5; echo --$x;</td>
+                    <td>4</td>
+                </tr>
+                <tr>
+                    <td><strong>$x--</strong></td>
+                    <td>Post-decrement</td>
+                    <td>$x = 5; echo $x--;</td>
+                    <td>5 (then $x = 4)</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 15: If-Else -->
+        <div class="slide">
+            <h1>🔀 Control Structures: If-Else</h1>
+            
+            <h2>Simple If</h2>
+            <div class="code-block">
+&lt;?php
+    $score = 75;
+    if ($score >= 50) {
+        echo "Pass";
+    }
+?&gt;
+            </div>
+
+            <h2>If-Else</h2>
+            <div class="code-block">
+&lt;?php
+    if ($score >= 50) {
+        echo "Pass";
+    } else {
+        echo "Fail";
+    }
+?&gt;
+            </div>
+
+            <h2>If-Elseif-Else</h2>
+            <div class="code-block">
+&lt;?php
+    if ($score >= 90) {
+        echo "Excellent";
+    } elseif ($score >= 80) {
+        echo "Good";
+    } elseif ($score >= 70) {
+        echo "Fair";
+    } elseif ($score >= 50) {
+        echo "Average";
+    } else {
+        echo "Poor";
+    }
+?&gt;
+            </div>
+
+            <h2>Ternary Operator</h2>
+            <div class="code-block">
+&lt;?php
+    $result = ($score >= 50) ? "Pass" : "Fail";
+    echo $result;
+?&gt;
+            </div>
+        </div>
+
+        <!-- Slide 16: Switch Statement -->
+        <div class="slide">
+            <h1>🔀 Switch Statement</h1>
+            
+            <p>Use switch when comparing one variable against multiple values:</p>
+            
+            <div class="code-block">
+&lt;?php
+    $day = date("l");  // Get day of week name
+    
+    switch ($day) {
+        case "Monday":
+            echo "Monday - Start of new week!";
+            break;
+        case "Tuesday":
+            echo "Tuesday";
+            break;
+        case "Wednesday":
+            echo "Wednesday - Midweek";
+            break;
+        case "Friday":
+            echo "Friday - Almost weekend!";
+            break;
+        case "Saturday":
+        case "Sunday":
+            echo "Weekend - Rest!";
+            break;
+        default:
+            echo "Invalid day";
+    }
+?&gt;
+            </div>
+
+            <div class="box-info">
+                <p><strong>💡 Key Points:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Use <span class="highlight">break</span> to exit after each case</li>
+                    <li>Multiple cases can share the same code</li>
+                    <li><span class="highlight">default</span> handles unmatched values</li>
+                    <li>Switch is faster than multiple if-else for many conditions</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 17: For Loop -->
+        <div class="slide">
+            <h1>🔄 For Loop</h1>
+            
+            <h2>Basic For Loop</h2>
+            <div class="code-block">
+&lt;?php
+    for ($i = 1; $i <= 5; $i++) {
+        echo "Count: $i&lt;br&gt;";
+    }
+    // Output: Count: 1, Count: 2, Count: 3, Count: 4, Count: 5
+?&gt;
+            </div>
+
+            <h2>For Loop with Array</h2>
+            <div class="code-block">
+&lt;?php
+    $fruits = ["Apple", "Banana", "Orange"];
+    for ($i = 0; $i < count($fruits); $i++) {
+        echo $fruits[$i] . "&lt;br&gt;";
+    }
+?&gt;
+            </div>
+
+            <h2>Nested For Loop (Multiplication Table)</h2>
+            <div class="code-block">
+&lt;?php
+    echo "&lt;table border='1'&gt;";
+    for ($i = 1; $i <= 10; $i++) {
+        echo "&lt;tr&gt;";
+        for ($j = 1; $j <= 10; $j++) {
+            echo "&lt;td&gt;" . ($i * $j) . "&lt;/td&gt;";
+        }
+        echo "&lt;/tr&gt;";
+    }
+    echo "&lt;/table&gt;";
+?&gt;
+            </div>
+        </div>
+
+        <!-- Slide 18: While & Do-While -->
+        <div class="slide">
+            <h1>🔄 While & Do-While Loops</h1>
+            
+            <h2>While Loop</h2>
+            <p>Checks condition first, then executes</p>
+            <div class="code-block">
+&lt;?php
+    $count = 1;
+    while ($count <= 5) {
+        echo "Count: $count&lt;br&gt;";
+        $count++;
+    }
+?&gt;
+            </div>
+
+            <h2>Do-While Loop</h2>
+            <p>Executes at least once, then checks condition</p>
+            <div class="code-block">
+&lt;?php
+    $num = 1;
+    do {
+        echo "Number: $num&lt;br&gt;";
+        $num++;
+    } while ($num <= 5);
+?&gt;
+            </div>
+
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <h4>While Loop</h4>
+                    <ul style="margin-left: 15px;">
+                        <li>Checks condition first</li>
+                        <li>May not execute if condition is false</li>
+                        <li>Use when condition may be false initially</li>
+                    </ul>
+                </div>
+                <div class="comparison-item">
+                    <h4>Do-While Loop</h4>
+                    <ul style="margin-left: 15px;">
+                        <li>Executes at least once</li>
+                        <li>Checks condition after execution</li>
+                        <li>Use when you need guaranteed execution</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Foreach Loop -->
+        <div class="slide">
+            <h1>🔄 Foreach Loop</h1>
+            
+            <h2>Foreach with Indexed Array</h2>
+            <div class="code-block">
+&lt;?php
+    $colors = ["Red", "Green", "Blue"];
+    foreach ($colors as $color) {
+        echo "$color&lt;br&gt;";
+    }
+?&gt;
+            </div>
+
+            <h2>Foreach with Associative Array</h2>
+            <div class="code-block">
+&lt;?php
+    $student = [
+        "name" => "John Doe",
+        "age" => 20,
+        "gpa" => 3.5
+    ];
+    
+    foreach ($student as $key => $value) {
+        echo "$key: $value&lt;br&gt;";
+    }
+?&gt;
+            </div>
+
+            <h2>Foreach with Multidimensional Array</h2>
+            <div class="code-block">
+&lt;?php
+    $students = [
+        ["name" => "A", "score" => 85],
+        ["name" => "B", "score" => 90]
+    ];
+    
+    foreach ($students as $index => $s) {
+        echo ($index + 1) . ". {$s['name']}: {$s['score']} points&lt;br&gt;";
+    }
+?&gt;
+            </div>
+
+            <div class="box-info">
+                <p><strong>💡 Best Practice:</strong> Use <span class="highlight">foreach</span> for arrays - it's cleaner and safer than for loops!</p>
+            </div>
+        </div>
+
+        <!-- Slide 20: Functions -->
+        <div class="slide">
+            <h1>⚙️ Functions</h1>
+            
+            <h2>Basic Function</h2>
+            <div class="code-block">
+&lt;?php
+    function sayHello() {
+        echo "Hello World!";
+    }
+    
+    sayHello();  // Call function
+?&gt;
+            </div>
+
+            <h2>Function with Parameters</h2>
+            <div class="code-block">
+&lt;?php
+    function greet($name) {
+        echo "Hello, $name!";
+    }
+    greet("John");  // Hello, John!
+?&gt;
+            </div>
+
+            <h2>Function with Default Value</h2>
+            <div class="code-block">
+&lt;?php
+    function greetWithDefault($name = "Guest") {
+        echo "Hello, $name!";
+    }
+    greetWithDefault();      // Hello, Guest!
+    greetWithDefault("Jane"); // Hello, Jane!
+?&gt;
+            </div>
+
+            <h2>Function with Return Value</h2>
+            <div class="code-block">
+&lt;?php
+    function add($a, $b) {
+        return $a + $b;
+    }
+    $sum = add(5, 3);  // 8
+    echo $sum;
+?&gt;
+            </div>
+        </div>
+
+        <!-- Slide 21: Functions with Type Hints -->
+        <div class="slide">
+            <h1>⚙️ Functions with Type Hints (PHP 7+)</h1>
+            
+            <h2>Type Hints for Parameters and Return</h2>
+            <div class="code-block">
+&lt;?php
+    function calculateArea(float $width, float $height): float {
+        return $width * $height;
+    }
+    
+    $area = calculateArea(5.5, 3.2);  // 17.6
+    echo $area;
+?&gt;
+            </div>
+
+            <h2>Nullable Types</h2>
+            <div class="code-block">
+&lt;?php
+    function findUser(?int $id): ?string {
+        if ($id === null) {
+            return null;
+        }
+        return "User $id";
+    }
+    
+    echo findUser(123);    // User 123
+    echo findUser(null);   // (empty)
+?&gt;
+            </div>
+
+            <div class="box-info">
+                <p><strong>💡 Benefits of Type Hints:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Better code documentation</li>
+                    <li>IDE autocomplete support</li>
+                    <li>Early error detection</li>
+                    <li>Improved code reliability</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 22: Example 1 - Calculate Average Score -->
+        <div class="slide">
+            <h1>📝 Example 1: Calculate Average Score</h1>
+            
+            <h2>Scenario</h2>
+            <p>Calculate average score and assign grade based on the average</p>
+
+            <h2>Code</h2>
+            <div class="code-block">
+&lt;?php
+    $math = 8.5;
+    $physics = 7.0;
+    $chemistry = 9.0;
+    
+    // Calculate average
+    $average = ($math + $physics + $chemistry) / 3;
+    $average = round($average, 2);
+    
+    // Grade classification
+    if ($average >= 9) {
+        $grade = "Excellent";
+    } elseif ($average >= 8) {
+        $grade = "Good";
+    } elseif ($average >= 7) {
+        $grade = "Fair";
+    } elseif ($average >= 5) {
+        $grade = "Average";
+    } else {
+        $grade = "Poor";
+    }
+    
+    echo "Average score: $average&lt;br&gt;";
+    echo "Grade: $grade";
+?&gt;
+            </div>
+
+            <h2>Explanation</h2>
+            <ul>
+                <li>Calculate average: sum of scores divided by count</li>
+                <li>Round to 2 decimal places for readability</li>
+                <li>Use if-elseif-else to classify grade</li>
+                <li>Display both average and grade</li>
+            </ul>
+        </div>
+
+        <!-- Slide 23: Example 2 - Student List -->
+        <div class="slide">
+            <h1>📝 Example 2: Student List with Foreach</h1>
+            
+            <h2>Code (Part 1 - Data)</h2>
+            <div class="code-block">
+&lt;?php
+    $students = [
+        ["name" => "John Doe", "score" => 85, "class" => "CS1"],
+        ["name" => "Jane Smith", "score" => 92, "class" => "CS1"],
+        ["name" => "Bob Johnson", "score" => 78, "class" => "CS2"],
+        ["name" => "Alice Brown", "score" => 95, "class" => "CS2"],
+    ];
+?&gt;
+            </div>
+
+            <h2>Code (Part 2 - Display)</h2>
+            <div class="code-block">
+&lt;table&gt;
+    &lt;tr&gt;
+        &lt;th&gt;No.&lt;/th&gt;
+        &lt;th&gt;Name&lt;/th&gt;
+        &lt;th&gt;Class&lt;/th&gt;
+        &lt;th&gt;Score&lt;/th&gt;
+        &lt;th&gt;Grade&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;?php foreach ($students as $index => $student): ?&gt;
+    &lt;tr&gt;
+        &lt;td&gt;&lt;?= $index + 1 ?&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;?= $student['name'] ?&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;?= $student['class'] ?&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;?= $student['score'] ?&gt;&lt;/td&gt;
+        &lt;td&gt;
+            &lt;?php
+            if ($student['score'] >= 90) echo "Excellent";
+            elseif ($student['score'] >= 80) echo "Good";
+            elseif ($student['score'] >= 70) echo "Fair";
+            else echo "Average";
+            ?&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;?php endforeach; ?&gt;
+&lt;/table&gt;
+            </div>
+        </div>
+
+        <!-- Slide 24: Practice Exercises -->
+        <div class="slide">
+            <h1>💪 Practice Exercises</h1>
+            
+            <h2>Exercise 1: BMI Calculator</h2>
+            <div class="box-info">
+                <p><strong>🎯 Objective:</strong> Calculate BMI and provide assessment</p>
+                <p><strong>📝 Requirements:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Declare variables for height (m) and weight (kg)</li>
+                    <li>Calculate BMI = weight / (height)²</li>
+                    <li>Assessment: Underweight (&lt;18.5), Normal (18.5-24.9), Overweight (25-29.9), Obese (&gt;=30)</li>
+                </ul>
+            </div>
+
+            <h2>Exercise 2: Print Multiplication Table</h2>
+            <div class="box-info">
+                <p><strong>🎯 Objective:</strong> Use nested loops</p>
+                <p><strong>📝 Requirements:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Print multiplication table from 2 to 9</li>
+                    <li>Beautiful HTML table format</li>
+                </ul>
+            </div>
+
+            <h2>Exercise 3: Find Prime Numbers (Challenge)</h2>
+            <div class="box-info">
+                <p><strong>🎯 Objective:</strong> Write function to check prime number</p>
+                <p><strong>📝 Requirements:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Write function <span class="highlight">isPrime($n)</span> returns true/false</li>
+                    <li>Print all prime numbers from 1 to 100</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 25: Knowledge to Achieve -->
+        <div class="slide">
+            <h1>✅ Knowledge to Achieve</h1>
+            
+            <h2>Theory</h2>
+            <ul>
+                <li>✓ Understand how to declare variables</li>
+                <li>✓ Distinguish between data types</li>
+                <li>✓ Can use operators (arithmetic, comparison, logical)</li>
+                <li>✓ Understand operator precedence</li>
+            </ul>
+
+            <h2>Practice</h2>
+            <ul>
+                <li>✓ Can write if-else, switch statements</li>
+                <li>✓ Can write loops (for, while, foreach)</li>
+                <li>✓ Can write basic functions</li>
+                <li>✓ Can process arrays with loops</li>
+                <li>✓ Can combine control structures for complex logic</li>
+            </ul>
+
+            <h2>Next Session Preview</h2>
+            <div class="box-info">
+                <p><strong>Session 03:</strong> Dynamic Websites - Form Handling</p>
+                <ul style="margin-left: 20px;">
+                    <li>HTML Forms</li>
+                    <li>GET vs POST</li>
+                    <li>Process form data</li>
+                    <li>Data validation</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">25</span></span>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            }
+            if (n < 1) {
+                currentSlide = 1;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        // Initialize
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

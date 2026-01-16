@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INS3064: Session 14: Security Methods</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 50px;
+            min-height: 700px;
+            background: white;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        .slide h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .slide p {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .slide strong {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.95em;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .box-info {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .box-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            color: #333;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+                <!-- Slide 1: Title Slide -->
+        <div class="slide active">
+            <div class="header-section">
+                <h1>🎓 INS3064</h1>
+                <h2>Multimedia Design & Web Development</h2>
+                <p style="font-size: 1.2em; margin-top: 30px; color: #667eea;"><strong>Session 14: Security Methods</strong></p>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 1.1em; margin: 20px 0;">Course Code: <strong>INS3064</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Instructor: <strong>M.Sc. Hieu Ta Chi</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Host Department: <strong>Applied Sciences Department - IS-VNU</strong></p>
+            </div>
+        </div>
+        <!-- Slide 2: 1. SQL INJECTION -->
+        <div class="slide">
+            <h1>1. SQL INJECTION</h1>
+            
+<h3>1.1 SQL Injection Là Gì?</h3>
+
+<strong>SQL Injection</strong> = Kỹ thuật tấn công bằng cách chèn mã SQL độc hại vào input.
+
+<h3>1.2 Ví Dụ Tấn Công</h3>
+
+<div class="code-block">&lt;?php
+<p>// ❌ Code dễ bị tấn công</p>
+<p>$username = $_POST[&#39;username&#39;];</p>
+<p>$password = $_POST[&#39;password&#39;];</p>
+
+<p>$sql = &quot;SELECT * FROM users WHERE username = &#39;$username&#39; AND password = &#39;$password&#39;&quot;;</p>
+<p>// Nếu nhập: username = admin&#39; --</p>
+<p>// SQL trở thành: SELECT * FROM users WHERE username = &#39;admin&#39; --&#39; AND password = &#39;&#39;</p>
+<p>// =&gt; Đăng nhập được mà không cần password!</p>
+<p>?&gt;</p>
+</div>
+
+<h3>1.3 Phòng Chống</h3>
+
+<div class="code-block">&lt;?php
+<p>// ✅ Sử dụng Prepared Statements</p>
+<p>$sql = &quot;SELECT * FROM users WHERE username = ? AND password = ?&quot;;</p>
+<p>$stmt = $pdo-&gt;prepare($sql);</p>
+<p>$stmt-&gt;execute([$username, $password]);</p>
+
+<p>// ✅ Named parameters</p>
+<p>$sql = &quot;SELECT * FROM users WHERE username = :username AND password = :password&quot;;</p>
+<p>$stmt = $pdo-&gt;prepare($sql);</p>
+<p>$stmt-&gt;execute([</p>
+<p>&#39;:username&#39; =&gt; $username,</p>
+<p>&#39;:password&#39; =&gt; $password</p>
+<p>]);</p>
+
+<p>// ✅ Escape strings (nếu bắt buộc dùng query trực tiếp)</p>
+<p>$username = $pdo-&gt;quote($username);</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 3: 2. CROSS-SITE SCRIPTING (XSS) -->
+        <div class="slide">
+            <h1>2. CROSS-SITE SCRIPTING (XSS)</h1>
+            
+<h3>2.1 XSS Là Gì?</h3>
+
+<strong>XSS</strong> = Tấn công bằng cách chèn mã JavaScript độc hại vào trang web.
+
+<h3>2.2 Các Loại XSS</h3>
+
+<p>| Loại | Mô tả |</p>
+<p>|------|-------|</p>
+<p>| <strong>Stored XSS</strong> | Script lưu trong database |</p>
+<p>| <strong>Reflected XSS</strong> | Script trong URL, phản hồi ngay |</p>
+<p>| <strong>DOM-based XSS</strong> | Script thực thi phía client |</p>
+
+<h3>2.3 Ví Dụ Tấn Công</h3>
+
+<div class="code-block">&lt;?php
+<p>// ❌ Code dễ bị tấn công</p>
+<p>$name = $_GET[&#39;name&#39;];</p>
+<p>echo &quot;Hello, $name!&quot;;</p>
+<p>// URL: page.php?name=&lt;script&gt;alert(&#39;XSS&#39;)&lt;/script&gt;</p>
+<p>// =&gt; Script độc hại được thực thi!</p>
+<p>?&gt;</p>
+</div>
+
+<h3>2.4 Phòng Chống</h3>
+
+<div class="code-block">&lt;?php
+<p>// ✅ Escape output với htmlspecialchars()</p>
+<p>$name = $_GET[&#39;name&#39;];</p>
+<p>echo &quot;Hello, &quot; . htmlspecialchars($name, ENT_QUOTES, &#39;UTF-8&#39;) . &quot;!&quot;;</p>
+
+<p>// ✅ Hàm helper</p>
+<p>function e($string) {</p>
+<p>return htmlspecialchars($string, ENT_QUOTES, &#39;UTF-8&#39;);</p>
+<p>}</p>
+
+<p>echo &quot;Hello, &quot; . e($name) . &quot;!&quot;;</p>
+
+<p>// ✅ Content Security Policy header</p>
+<p>header(&quot;Content-Security-Policy: default-src &#39;self&#39;; script-src &#39;self&#39;&quot;);</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 4: 3. CROSS-SITE REQUEST FORGERY (CSRF) -->
+        <div class="slide">
+            <h1>3. CROSS-SITE REQUEST FORGERY (CSRF)</h1>
+            
+<h3>3.1 CSRF Là Gì?</h3>
+
+<strong>CSRF</strong> = Tấn công bằng cách lừa user thực hiện hành động không mong muốn.
+
+<h3>3.2 Ví Dụ Tấn Công</h3>
+
+<div class="code-block">&lt;!-- Trang độc hại --&gt;
+<p>&lt;img src=&quot;https://bank.com/transfer?to=hacker&amp;amount=1000&quot;&gt;</p>
+<p>&lt;!-- Nếu user đang đăng nhập bank.com, tiền sẽ bị chuyển! --&gt;</p>
+</div>
+
+<h3>3.3 Phòng Chống</h3>
+
+<div class="code-block">&lt;?php
+<p>// ✅ Tạo CSRF Token</p>
+<p>session_start();</p>
+
+<p>function generateCsrfToken() {</p>
+<p>if (empty($_SESSION[&#39;csrf_token&#39;])) {</p>
+<p>$_SESSION[&#39;csrf_token&#39;] = bin2hex(random_bytes(32));</p>
+<p>}</p>
+<p>return $_SESSION[&#39;csrf_token&#39;];</p>
+<p>}</p>
+
+<p>function verifyCsrfToken($token) {</p>
+<p>return isset($_SESSION[&#39;csrf_token&#39;]) &amp;&amp; hash_equals($_SESSION[&#39;csrf_token&#39;], $token);</p>
+<p>}</p>
+<p>?&gt;</p>
+
+<p>&lt;!-- Trong form --&gt;</p>
+<p>&lt;form method=&quot;POST&quot;&gt;</p>
+<p>&lt;input type=&quot;hidden&quot; name=&quot;csrf_token&quot; value=&quot;&lt;?= generateCsrfToken() ?&gt;&quot;&gt;</p>
+<p>&lt;!-- other fields --&gt;</p>
+<p>&lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;</p>
+<p>&lt;/form&gt;</p>
+
+<p>&lt;?php</p>
+<p>// Xử lý form</p>
+<p>if ($_SERVER[&#39;REQUEST_METHOD&#39;] === &#39;POST&#39;) {</p>
+<p>if (!verifyCsrfToken($_POST[&#39;csrf_token&#39;] ?? &#39;&#39;)) {</p>
+<p>die(&#39;CSRF token validation failed&#39;);</p>
+<p>}</p>
+<p>// Process form...</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 5: 4. PASSWORD SECURITY -->
+        <div class="slide">
+            <h1>4. PASSWORD SECURITY</h1>
+            
+<h3>4.1 Hash Password</h3>
+
+<div class="code-block">&lt;?php
+<p>// ✅ Hash password khi đăng ký</p>
+<p>$password = $_POST[&#39;password&#39;];</p>
+<p>$hashedPassword = password_hash($password, PASSWORD_DEFAULT);</p>
+
+<p>// Lưu $hashedPassword vào database</p>
+
+<p>// ✅ Verify password khi đăng nhập</p>
+<p>$inputPassword = $_POST[&#39;password&#39;];</p>
+<p>$storedHash = $user[&#39;password&#39;];  // Từ database</p>
+
+<p>if (password_verify($inputPassword, $storedHash)) {</p>
+<p>// Đăng nhập thành công</p>
+<p>} else {</p>
+<p>// Sai password</p>
+<p>}</p>
+
+<p>// ✅ Kiểm tra cần rehash (khi algorithm thay đổi)</p>
+<p>if (password_needs_rehash($storedHash, PASSWORD_DEFAULT)) {</p>
+<p>$newHash = password_hash($inputPassword, PASSWORD_DEFAULT);</p>
+<p>// Update database với $newHash</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<h3>4.2 Password Policy</h3>
+
+<div class="code-block">&lt;?php
+<p>function validatePassword($password) {</p>
+<p>$errors = [];</p>
+    
+<p>if (strlen($password) &lt; 8) {</p>
+<p>$errors[] = &quot;Password must be at least 8 characters&quot;;</p>
+<p>}</p>
+    
+<p>if (!preg_match(&#39;/[A-Z]/&#39;, $password)) {</p>
+<p>$errors[] = &quot;Password must contain uppercase letter&quot;;</p>
+<p>}</p>
+    
+<p>if (!preg_match(&#39;/[a-z]/&#39;, $password)) {</p>
+<p>$errors[] = &quot;Password must contain lowercase letter&quot;;</p>
+<p>}</p>
+    
+<p>if (!preg_match(&#39;/[0-9]/&#39;, $password)) {</p>
+<p>$errors[] = &quot;Password must contain number&quot;;</p>
+<p>}</p>
+    
+<p>if (!preg_match(&#39;/[!@#$%^&amp;*]/&#39;, $password)) {</p>
+<p>$errors[] = &quot;Password must contain special character&quot;;</p>
+<p>}</p>
+    
+<p>return $errors;</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 6: 5. INPUT VALIDATION & SANITIZATION -->
+        <div class="slide">
+            <h1>5. INPUT VALIDATION &amp; SANITIZATION</h1>
+            
+<div class="code-block">&lt;?php
+<p>// ✅ Validation</p>
+<p>function validateEmail($email) {</p>
+<p>return filter_var($email, FILTER_VALIDATE_EMAIL);</p>
+<p>}</p>
+
+<p>function validateUrl($url) {</p>
+<p>return filter_var($url, FILTER_VALIDATE_URL);</p>
+<p>}</p>
+
+<p>function validateInt($value, $min = null, $max = null) {</p>
+<p>$options = [];</p>
+<p>if ($min !== null) $options[&#39;min_range&#39;] = $min;</p>
+<p>if ($max !== null) $options[&#39;max_range&#39;] = $max;</p>
+    
+<p>return filter_var($value, FILTER_VALIDATE_INT, [&#39;options&#39; =&gt; $options]);</p>
+<p>}</p>
+
+<p>// ✅ Sanitization</p>
+<p>function sanitizeString($string) {</p>
+<p>return htmlspecialchars(trim($string), ENT_QUOTES, &#39;UTF-8&#39;);</p>
+<p>}</p>
+
+<p>function sanitizeEmail($email) {</p>
+<p>return filter_var($email, FILTER_SANITIZE_EMAIL);</p>
+<p>}</p>
+
+<p>function sanitizeUrl($url) {</p>
+<p>return filter_var($url, FILTER_SANITIZE_URL);</p>
+<p>}</p>
+
+<p>function sanitizeInt($value) {</p>
+<p>return filter_var($value, FILTER_SANITIZE_NUMBER_INT);</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 7: 6. FILE UPLOAD SECURITY -->
+        <div class="slide">
+            <h1>6. FILE UPLOAD SECURITY</h1>
+            
+<div class="code-block">&lt;?php
+<p>function secureFileUpload($file, $uploadDir) {</p>
+<p>$errors = [];</p>
+    
+<p>// Kiểm tra lỗi upload</p>
+<p>if ($file[&#39;error&#39;] !== UPLOAD_ERR_OK) {</p>
+<p>return [&#39;error&#39; =&gt; &#39;Upload failed&#39;];</p>
+<p>}</p>
+    
+<p>// Kiểm tra kích thước (5MB max)</p>
+<p>if ($file[&#39;size&#39;] &gt; 5 * 1024 * 1024) {</p>
+<p>return [&#39;error&#39; =&gt; &#39;File too large&#39;];</p>
+<p>}</p>
+    
+<p>// Kiểm tra MIME type</p>
+<p>$allowedTypes = [&#39;image/jpeg&#39;, &#39;image/png&#39;, &#39;image/gif&#39;];</p>
+<p>$finfo = finfo_open(FILEINFO_MIME_TYPE);</p>
+<p>$mimeType = finfo_file($finfo, $file[&#39;tmp_name&#39;]);</p>
+<p>finfo_close($finfo);</p>
+    
+<p>if (!in_array($mimeType, $allowedTypes)) {</p>
+<p>return [&#39;error&#39; =&gt; &#39;Invalid file type&#39;];</p>
+<p>}</p>
+    
+<p>// Tạo tên file an toàn</p>
+<p>$extension = pathinfo($file[&#39;name&#39;], PATHINFO_EXTENSION);</p>
+<p>$newName = bin2hex(random_bytes(16)) . &#39;.&#39; . $extension;</p>
+<p>$destination = $uploadDir . &#39;/&#39; . $newName;</p>
+    
+<p>// Di chuyển file</p>
+<p>if (!move_uploaded_file($file[&#39;tmp_name&#39;], $destination)) {</p>
+<p>return [&#39;error&#39; =&gt; &#39;Failed to save file&#39;];</p>
+<p>}</p>
+    
+<p>return [&#39;success&#39; =&gt; true, &#39;filename&#39; =&gt; $newName];</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 8: 7. SECURITY HEADERS -->
+        <div class="slide">
+            <h1>7. SECURITY HEADERS</h1>
+            
+<div class="code-block">&lt;?php
+<p>// Thêm vào đầu mỗi page hoặc trong .htaccess</p>
+<p>header(&quot;X-Content-Type-Options: nosniff&quot;);</p>
+<p>header(&quot;X-Frame-Options: DENY&quot;);</p>
+<p>header(&quot;X-XSS-Protection: 1; mode=block&quot;);</p>
+<p>header(&quot;Strict-Transport-Security: max-age=31536000; includeSubDomains&quot;);</p>
+<p>header(&quot;Content-Security-Policy: default-src &#39;self&#39;&quot;);</p>
+<p>header(&quot;Referrer-Policy: strict-origin-when-cross-origin&quot;);</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+<p># THỰC HÀNH</p>
+
+        </div>
+        <!-- Slide 9: BÀI 1: Secure Login Form -->
+        <div class="slide">
+            <h1>BÀI 1: Secure Login Form</h1>
+            
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>CSRF protection</li>
+<li>SQL Injection prevention</li>
+<li>XSS prevention</li>
+<li>Password hashing</li></ul>
+
+        </div>
+        <!-- Slide 10: BÀI 2: Secure File Upload -->
+        <div class="slide">
+            <h1>BÀI 2: Secure File Upload</h1>
+            
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Validate file type</li>
+<li>Limit file size</li>
+<li>Secure filename</li>
+<li>Store outside webroot</li></ul>
+
+<p>---</p>
+
+<p># ✅ KIẾN THỨC CẦN ĐẠT</p>
+
+<ul><li>[ ] Hiểu SQL Injection và cách phòng chống</li>
+<li>[ ] Hiểu XSS và cách phòng chống</li>
+<li>[ ] Hiểu CSRF và cách phòng chống</li>
+<li>[ ] Bảo mật password và file upload</li></ul>
+
+<p>---</p>
+
+<strong>Chương tiếp theo: [Buổi 15 - jQuery Introduction →](./buoi_15_jquery_intro.md)</strong>
+
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">10</span></span>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 10;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            }
+            if (n < 1) {
+                currentSlide = 1;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

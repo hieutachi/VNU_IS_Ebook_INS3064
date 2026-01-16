@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INS3064: Introduction to MySQL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 50px;
+            min-height: 700px;
+            background: white;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        .slide h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .slide p {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .slide strong {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.95em;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .box-info {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .box-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            color: #333;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Slide 1: Title Slide -->
+        <div class="slide active">
+            <div class="header-section">
+                <h1>🎓 INS3064</h1>
+                <h2>Multimedia Design & Web Development</h2>
+                <p style="font-size: 1.2em; margin-top: 30px; color: #667eea;"><strong>Session 04: Introduction to MySQL</strong></p>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 1.1em; margin: 20px 0;">Course Code: <strong>INS3064</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Instructor: <strong>M.Sc. Hieu Ta Chi</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Host Department: <strong>Applied Sciences Department - IS-VNU</strong></p>
+                <p style="font-size: 1.1em; margin-top: 50px; color: #764ba2;">Master Database Management</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Session Information -->
+        <div class="slide">
+            <h1>📌 Session Information</h1>
+            <div class="box-info">
+                <p><strong>📅 Time:</strong> 3 hours (Theory: 1.5 hours, Practice: 1.5 hours)</p>
+                <p><strong>📚 Reference:</strong> Chapter 4 - PHP & MySQL Web Development</p>
+                <p><strong>📖 Preparation:</strong> XAMPP installed</p>
+                <p><strong>🔗 Learning Outcomes:</strong> LO3</p>
+            </div>
+
+            <h2>🎯 Session Objectives</h2>
+            <ul>
+                <li>Understand what Database is</li>
+                <li>Install and configure MySQL</li>
+                <li>Use phpMyAdmin to manage database</li>
+                <li>Create first Database and Table</li>
+                <li>Understand data types in MySQL</li>
+            </ul>
+        </div>
+
+        <!-- Slide 3: Learning Objectives -->
+        <div class="slide">
+            <h1>🎯 Learning Objectives</h1>
+            <h2>After This Session, You Will:</h2>
+            <ul>
+                <li>✓ <strong>Understand</strong> what Database and MySQL are</li>
+                <li>✓ <strong>Use</strong> phpMyAdmin to manage database</li>
+                <li>✓ <strong>Create</strong> Database and Table</li>
+                <li>✓ <strong>Understand</strong> data types in MySQL</li>
+            </ul>
+
+            <h2>Key Concepts</h2>
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <h4>🗄️ Database</h4>
+                    <p>Organized storage for data</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>📊 MySQL</h4>
+                    <p>Relational Database Management System</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>🔧 phpMyAdmin</h4>
+                    <p>Web tool to manage MySQL</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>📋 Tables</h4>
+                    <p>Structured data storage</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: What is Database? -->
+        <div class="slide">
+            <h1>🗄️ What is Database?</h1>
+            <h2>Definition</h2>
+            <p style="font-size: 1.2em; margin-bottom: 20px;"><strong>Database = Organized storage place for data</strong></p>
+            <p>A database can retrieve, manage and update data efficiently.</p>
+
+            <h2>🎒 Real-life Analogy</h2>
+            <div class="box-info">
+                <p>Database is like an <strong>office filing cabinet</strong>:</p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Database</strong> = Filing cabinet</li>
+                    <li><strong>Table</strong> = Drawer</li>
+                    <li><strong>Row</strong> = One file</li>
+                    <li><strong>Column</strong> = Information items on the file</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Why Do We Need Database? -->
+        <div class="slide">
+            <h1>❓ Why Do We Need Database?</h1>
+            <table>
+                <tr>
+                    <th>Problem</th>
+                    <th>Without DB</th>
+                    <th>With DB</th>
+                </tr>
+                <tr>
+                    <td><strong>Storage</strong></td>
+                    <td>Text files, hard to manage</td>
+                    <td>Structured, easy to manage</td>
+                </tr>
+                <tr>
+                    <td><strong>Search</strong></td>
+                    <td>Slow, must read all</td>
+                    <td>Fast with index</td>
+                </tr>
+                <tr>
+                    <td><strong>Security</strong></td>
+                    <td>Hard to control</td>
+                    <td>Has users, permissions</td>
+                </tr>
+                <tr>
+                    <td><strong>Concurrency</strong></td>
+                    <td>Data conflicts</td>
+                    <td>Transaction handling</td>
+                </tr>
+            </table>
+
+            <div class="box-info">
+                <p><strong>💡 Benefits:</strong> Databases provide structure, speed, security, and reliability for data management.</p>
+            </div>
+        </div>
+
+        <!-- Slide 6: What is MySQL? -->
+        <div class="slide">
+            <h1>📊 What is MySQL?</h1>
+            <p style="font-size: 1.2em; margin-bottom: 20px;"><strong>MySQL = Most popular Relational Database Management System (RDBMS)</strong></p>
+
+            <h2>Features</h2>
+            <ul>
+                <li>✅ <strong>Free, open source</strong> - No licensing costs</li>
+                <li>✅ <strong>Fast, stable</strong> - Optimized for performance</li>
+                <li>✅ <strong>Easy to use</strong> - Simple syntax</li>
+                <li>✅ <strong>Great integration with PHP</strong> - Perfect for web</li>
+                <li>✅ <strong>Large community</strong> - Extensive support</li>
+            </ul>
+
+            <h2>Who Uses MySQL?</h2>
+            <div class="box-info">
+                <p><strong>Major Companies:</strong> Facebook, Twitter, YouTube, Wikipedia, WordPress</p>
+                <p style="margin-top: 10px;"><strong>77% of websites</strong> use MySQL or MariaDB!</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: MySQL in XAMPP -->
+        <div class="slide">
+            <h1>🔧 MySQL in XAMPP</h1>
+            <p>MySQL is already installed in XAMPP - no separate installation needed!</p>
+
+            <h2>Steps to Start MySQL</h2>
+            <ol>
+                <li>Open <strong>XAMPP Control Panel</strong></li>
+                <li>Click <strong>Start</strong> next to MySQL</li>
+                <li>Status should show: <span class="highlight">Running</span> (green)</li>
+            </ol>
+
+            <div class="box-info">
+                <p><strong>💡 Default Settings:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Host: <span class="highlight">localhost</span></li>
+                    <li>Port: <span class="highlight">3306</span></li>
+                    <li>Username: <span class="highlight">root</span></li>
+                    <li>Password: <span class="highlight">(empty)</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 8: Access phpMyAdmin -->
+        <div class="slide">
+            <h1>🌐 Access phpMyAdmin</h1>
+            <h2>What is phpMyAdmin?</h2>
+            <p style="font-size: 1.1em; margin-bottom: 20px;"><strong>phpMyAdmin = Web tool to manage MySQL</strong></p>
+            <p>Graphical interface to create databases, tables, and run SQL queries.</p>
+
+            <h2>How to Access</h2>
+            <ol>
+                <li>Make sure <strong>Apache</strong> and <strong>MySQL</strong> are running in XAMPP</li>
+                <li>Open browser</li>
+                <li>Visit: <span class="highlight">http://localhost/phpmyadmin</span></li>
+                <li>Login with:
+                    <ul>
+                        <li>Username: <span class="highlight">root</span></li>
+                        <li>Password: <span class="highlight">(leave blank)</span></li>
+                    </ul>
+                </li>
+            </ol>
+
+            <div class="box-warning">
+                <p><strong>⚠️ Note:</strong> If you can't access, check that Apache is running!</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: phpMyAdmin Interface -->
+        <div class="slide">
+            <h1>🖥️ phpMyAdmin Interface</h1>
+            <div class="diagram">
+┌─────────────────────────────────────────────────────────────┐
+│ phpMyAdmin                                                   │
+├─────────────┬───────────────────────────────────────────────┤
+│             │                                               │
+│ [Databases] │  Server: localhost                            │
+│ ├── mysql   │  Server version: 8.0.x                        │
+│ ├── test    │                                               │
+│ └── ...     │  [SQL] [Status] [Users] [Export] [Import]     │
+│             │                                               │
+│             │  ┌─────────────────────────────────────────┐  │
+│             │  │ Create database                         │  │
+│             │  │ [____________] [Create]                 │  │
+│             │  └─────────────────────────────────────────┘  │
+│             │                                               │
+└─────────────┴───────────────────────────────────────────────┘
+            </div>
+
+            <h2>Main Features</h2>
+            <ul>
+                <li><strong>Databases</strong> - List and manage databases</li>
+                <li><strong>SQL</strong> - Run SQL queries</li>
+                <li><strong>Import/Export</strong> - Backup and restore data</li>
+                <li><strong>Users</strong> - Manage database users</li>
+            </ul>
+        </div>
+
+        <!-- Slide 10: Create Database via phpMyAdmin -->
+        <div class="slide">
+            <h1>📦 Create Database via phpMyAdmin</h1>
+            <h2>Steps</h2>
+            <ol>
+                <li>Click <strong>New</strong> (or Databases tab)</li>
+                <li>Enter database name: <span class="highlight">ins3064_db</span></li>
+                <li>Select Collation: <span class="highlight">utf8mb4_unicode_ci</span></li>
+                <li>Click <strong>Create</strong></li>
+            </ol>
+
+            <div class="box-info">
+                <p><strong>💡 Why utf8mb4_unicode_ci?</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Supports all Unicode characters (including emojis)</li>
+                    <li>Case-insensitive collation</li>
+                    <li>Recommended for modern applications</li>
+                </ul>
+            </div>
+
+            <h2>📋 Naming Rules</h2>
+            <ul>
+                <li>Use lowercase</li>
+                <li>No spaces</li>
+                <li>Use underscore: <span class="highlight">my_database</span></li>
+                <li>Meaningful names: <span class="highlight">shop_db</span>, <span class="highlight">blog_db</span></li>
+            </ul>
+        </div>
+
+        <!-- Slide 11: Create Database via SQL -->
+        <div class="slide">
+            <h1>📦 Create Database via SQL</h1>
+            <h2>SQL Commands</h2>
+            <div class="code-block">
+-- Create database
+CREATE DATABASE ins3064_db
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+-- Use database
+USE ins3064_db;
+
+-- View list of databases
+SHOW DATABASES;
+
+-- Delete database (careful!)
+DROP DATABASE ins3064_db;
+            </div>
+
+            <h2>How to Run SQL</h2>
+            <ol>
+                <li>Open phpMyAdmin</li>
+                <li>Click <strong>SQL</strong> tab</li>
+                <li>Type SQL command</li>
+                <li>Click <strong>Go</strong></li>
+            </ol>
+
+            <div class="box-warning">
+                <p><strong>⚠️ Warning:</strong> <span class="highlight">DROP DATABASE</span> permanently deletes the database and all its data!</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Table Structure -->
+        <div class="slide">
+            <h1>📋 Table Structure</h1>
+            <p>A table is like a spreadsheet with rows and columns:</p>
+            
+            <div class="diagram">
+┌─────────────────────────────────────────────────────────┐
+│ Table: students                                          │
+├─────┬──────────┬─────────┬──────────┬──────────────────┤
+│ id  │ name     │ email   │ age      │ created_at       │
+├─────┼──────────┼─────────┼──────────┼──────────────────┤
+│ 1   │ John Doe │ j@e.com │ 20       │ 2024-01-01 10:00 │
+│ 2   │ Jane S.  │ j@e.com │ 21       │ 2024-01-02 11:00 │
+│ 3   │ Bob J.   │ b@e.com │ 19       │ 2024-01-03 12:00 │
+└─────┴──────────┴─────────┴──────────┴──────────────────┘
+            </div>
+
+            <h2>Table Components</h2>
+            <ul>
+                <li><strong>Table Name:</strong> <span class="highlight">students</span></li>
+                <li><strong>Columns:</strong> id, name, email, age, created_at</li>
+                <li><strong>Rows:</strong> Each row is one record</li>
+                <li><strong>Primary Key:</strong> id (unique identifier)</li>
+            </ul>
+        </div>
+
+        <!-- Slide 13: Create Table with SQL -->
+        <div class="slide">
+            <h1>📋 Create Table with SQL</h1>
+            <div class="code-block">
+-- Create table students
+CREATE TABLE students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    age INT,
+    gpa DECIMAL(3,2),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+            </div>
+
+            <h2>Table Management Commands</h2>
+            <div class="code-block">
+-- View table structure
+DESCRIBE students;
+
+-- View list of tables
+SHOW TABLES;
+
+-- Delete table (careful!)
+DROP TABLE students;
+            </div>
+
+            <div class="box-info">
+                <p><strong>💡 AUTO_INCREMENT:</strong> Automatically generates unique ID for each new row.</p>
+            </div>
+        </div>
+
+        <!-- Slide 14: Create Table via phpMyAdmin -->
+        <div class="slide">
+            <h1>📋 Create Table via phpMyAdmin</h1>
+            <h2>Steps</h2>
+            <ol>
+                <li>Select your database</li>
+                <li>Click <strong>New</strong> (Create table)</li>
+                <li>Enter table name: <span class="highlight">students</span></li>
+                <li>Number of columns: <span class="highlight">7</span></li>
+                <li>Fill information for each column:
+                    <ul>
+                        <li>Name, Type, Length, Default, etc.</li>
+                    </ul>
+                </li>
+                <li>Set <strong>Primary Key</strong> for id column</li>
+                <li>Click <strong>Save</strong></li>
+            </ol>
+
+            <div class="box-info">
+                <p><strong>💡 Tip:</strong> phpMyAdmin provides a visual interface, but learning SQL is essential for advanced operations!</p>
+            </div>
+        </div>
+
+        <!-- Slide 15: MySQL Data Types - Numeric -->
+        <div class="slide">
+            <h1>🔢 MySQL Data Types - Numeric</h1>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Range</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><span class="highlight">TINYINT</span></td>
+                    <td>Small integer</td>
+                    <td>-128 to 127</td>
+                    <td>Age</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">INT</span></td>
+                    <td>Integer</td>
+                    <td>±2 billion</td>
+                    <td>ID</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">BIGINT</span></td>
+                    <td>Large integer</td>
+                    <td>Very large</td>
+                    <td>Views</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">DECIMAL(M,D)</span></td>
+                    <td>Precise decimal</td>
+                    <td>-</td>
+                    <td>Money (10,2)</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">FLOAT</span></td>
+                    <td>Floating point</td>
+                    <td>-</td>
+                    <td>Score</td>
+                </tr>
+            </table>
+
+            <div class="box-info">
+                <p><strong>💡 DECIMAL vs FLOAT:</strong> Use <span class="highlight">DECIMAL</span> for money (precise), <span class="highlight">FLOAT</span> for scientific calculations.</p>
+            </div>
+        </div>
+
+        <!-- Slide 16: MySQL Data Types - String -->
+        <div class="slide">
+            <h1>📝 MySQL Data Types - String</h1>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Length</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><span class="highlight">CHAR(N)</span></td>
+                    <td>Fixed string</td>
+                    <td>0-255</td>
+                    <td>Code (10)</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">VARCHAR(N)</span></td>
+                    <td>Variable string</td>
+                    <td>0-65535</td>
+                    <td>Name (100)</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">TEXT</span></td>
+                    <td>Long text</td>
+                    <td>65535</td>
+                    <td>Content</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">LONGTEXT</span></td>
+                    <td>Very long text</td>
+                    <td>4GB</td>
+                    <td>Article</td>
+                </tr>
+            </table>
+
+            <h2>CHAR vs VARCHAR</h2>
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <h4>CHAR(N)</h4>
+                    <ul style="margin-left: 15px;">
+                        <li>Fixed length</li>
+                        <li>Always uses N bytes</li>
+                        <li>Faster for fixed data</li>
+                        <li>Use for: codes, status</li>
+                    </ul>
+                </div>
+                <div class="comparison-item">
+                    <h4>VARCHAR(N)</h4>
+                    <ul style="margin-left: 15px;">
+                        <li>Variable length</li>
+                        <li>Uses only needed bytes</li>
+                        <li>More flexible</li>
+                        <li>Use for: names, descriptions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: MySQL Data Types - Date/Time -->
+        <div class="slide">
+            <h1>📅 MySQL Data Types - Date/Time</h1>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Format</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><span class="highlight">DATE</span></td>
+                    <td>Date only</td>
+                    <td>YYYY-MM-DD</td>
+                    <td>2024-01-15</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">TIME</span></td>
+                    <td>Time only</td>
+                    <td>HH:MM:SS</td>
+                    <td>14:30:00</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">DATETIME</span></td>
+                    <td>Date + Time</td>
+                    <td>YYYY-MM-DD HH:MM:SS</td>
+                    <td>2024-01-15 14:30:00</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">TIMESTAMP</span></td>
+                    <td>Timestamp</td>
+                    <td>Auto update</td>
+                    <td>created_at</td>
+                </tr>
+            </table>
+
+            <h2>TIMESTAMP Features</h2>
+            <div class="code-block">
+CREATE TABLE posts (
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+                ON UPDATE CURRENT_TIMESTAMP
+);
+            </div>
+
+            <div class="box-info">
+                <p><strong>💡 Auto Timestamps:</strong> TIMESTAMP can automatically set creation and update times!</p>
+            </div>
+        </div>
+
+        <!-- Slide 18: MySQL Data Types - Other -->
+        <div class="slide">
+            <h1>📊 MySQL Data Types - Other</h1>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><span class="highlight">BOOLEAN</span></td>
+                    <td>True/False</td>
+                    <td>is_active</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">ENUM</span></td>
+                    <td>List of values</td>
+                    <td>status ENUM('active','inactive')</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">JSON</span></td>
+                    <td>JSON data</td>
+                    <td>settings</td>
+                </tr>
+            </table>
+
+            <h2>ENUM Example</h2>
+            <div class="code-block">
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    role ENUM('admin', 'author', 'user') DEFAULT 'user'
+);
+
+-- Valid values: 'admin', 'author', 'user'
+-- Invalid: 'guest' (not in list)
+            </div>
+
+            <h2>JSON Example</h2>
+            <div class="code-block">
+CREATE TABLE products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    settings JSON
+);
+
+-- Store: {{"color": "red", "size": "large"}}
+            </div>
+        </div>
+
+        <!-- Slide 19: Constraints -->
+        <div class="slide">
+            <h1>🔒 Constraints</h1>
+            <p>Constraints enforce rules on data to ensure integrity:</p>
+            
+            <div class="code-block">
+CREATE TABLE products (
+    -- PRIMARY KEY: Primary key, unique, not null
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    -- NOT NULL: Must have value
+    name VARCHAR(100) NOT NULL,
+    
+    -- UNIQUE: Unique value
+    sku VARCHAR(50) UNIQUE,
+    
+    -- DEFAULT: Default value
+    status VARCHAR(20) DEFAULT 'active',
+    
+    -- CHECK: Check condition (MySQL 8.0+)
+    price DECIMAL(10,2) CHECK (price > 0)
+);
+            </div>
+
+            <h2>Common Constraints</h2>
+            <ul>
+                <li><strong>PRIMARY KEY</strong> - Unique identifier</li>
+                <li><strong>NOT NULL</strong> - Required field</li>
+                <li><strong>UNIQUE</strong> - No duplicates</li>
+                <li><strong>DEFAULT</strong> - Default value</li>
+                <li><strong>CHECK</strong> - Validate condition</li>
+            </ul>
+        </div>
+
+        <!-- Slide 20: AUTO_INCREMENT -->
+        <div class="slide">
+            <h1>🔢 AUTO_INCREMENT</h1>
+            <p>Automatically generates unique ID for each new row:</p>
+            
+            <div class="code-block">
+-- Auto increment ID
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100)
+);
+
+-- Insert without ID
+INSERT INTO users (name) VALUES ('John');
+-- id = 1 (automatic)
+
+INSERT INTO users (name) VALUES ('Jane');
+-- id = 2 (automatic)
+            </div>
+
+            <h2>How It Works</h2>
+            <ul>
+                <li>Starts from 1 (or specified value)</li>
+                <li>Increments by 1 for each new row</li>
+                <li>Never reuses deleted IDs</li>
+                <li>Only one AUTO_INCREMENT column per table</li>
+            </ul>
+
+            <div class="box-info">
+                <p><strong>💡 Best Practice:</strong> Always use AUTO_INCREMENT for primary keys - it's fast and reliable!</p>
+            </div>
+        </div>
+
+        <!-- Slide 21: Example - Blog Database -->
+        <div class="slide">
+            <h1>📝 Example: Blog Database</h1>
+            <h2>Database Structure</h2>
+            <div class="code-block">
+-- Create database
+CREATE DATABASE blog_db
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+USE blog_db;
+            </div>
+
+            <h2>Tables Needed</h2>
+            <ul>
+                <li><strong>users</strong> - User accounts</li>
+                <li><strong>categories</strong> - Post categories</li>
+                <li><strong>posts</strong> - Blog posts</li>
+                <li><strong>comments</strong> - Post comments</li>
+            </ul>
+
+            <div class="box-info">
+                <p><strong>💡 Design Tip:</strong> Plan your tables before creating them. Think about relationships!</p>
+            </div>
+        </div>
+
+        <!-- Slide 22: Example - Users Table -->
+        <div class="slide">
+            <h1>📝 Example: Users Table</h1>
+            <div class="code-block">
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    full_name VARCHAR(100),
+    avatar VARCHAR(255),
+    role ENUM('admin', 'author', 'user') DEFAULT 'user',
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+                ON UPDATE CURRENT_TIMESTAMP
+);
+            </div>
+
+            <h2>Key Features</h2>
+            <ul>
+                <li><strong>UNIQUE</strong> constraints on username and email</li>
+                <li><strong>ENUM</strong> for role selection</li>
+                <li><strong>DEFAULT</strong> values for role and is_active</li>
+                <li><strong>TIMESTAMP</strong> for automatic date tracking</li>
+            </ul>
+        </div>
+
+        <!-- Slide 23: Example - Posts Table -->
+        <div class="slide">
+            <h1>📝 Example: Posts Table</h1>
+            <div class="code-block">
+CREATE TABLE posts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    content LONGTEXT,
+    excerpt TEXT,
+    featured_image VARCHAR(255),
+    status ENUM('draft', 'published', 'archived') DEFAULT 'draft',
+    views INT DEFAULT 0,
+    author_id INT NOT NULL,
+    category_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+                ON UPDATE CURRENT_TIMESTAMP,
+    published_at DATETIME,
+    FOREIGN KEY (author_id) REFERENCES users(id),
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+            </div>
+
+            <h2>Foreign Keys</h2>
+            <div class="box-info">
+                <p><strong>FOREIGN KEY:</strong> Links to another table's primary key</p>
+                <ul style="margin-left: 20px;">
+                    <li><span class="highlight">author_id</span> → references <span class="highlight">users(id)</span></li>
+                    <li><span class="highlight">category_id</span> → references <span class="highlight">categories(id)</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 24: Practice Exercises -->
+        <div class="slide">
+            <h1>💪 Practice Exercises</h1>
+            
+            <h2>Exercise 1: Create Student Database</h2>
+            <div class="box-info">
+                <p><strong>🎯 Objective:</strong> Create database to manage students</p>
+                <p><strong>📝 Requirements:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Create database: <span class="highlight">student_management</span></li>
+                    <li>Create table <span class="highlight">students</span>: id, student_id, name, email, phone, class, gpa, created_at</li>
+                    <li>Create table <span class="highlight">classes</span>: id, name, department</li>
+                </ul>
+            </div>
+
+            <h2>Exercise 2: Create Product Database</h2>
+            <div class="box-info">
+                <p><strong>🎯 Objective:</strong> Create database for online shop</p>
+                <p><strong>📝 Requirements:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Create database: <span class="highlight">shop_db</span></li>
+                    <li>Create table <span class="highlight">categories</span>: id, name, description</li>
+                    <li>Create table <span class="highlight">products</span>: id, name, price, stock, category_id, created_at</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 25: Knowledge to Achieve -->
+        <div class="slide">
+            <h1>✅ Knowledge to Achieve</h1>
+            
+            <h2>After This Session</h2>
+            <ul>
+                <li>✓ Understand what Database and MySQL are</li>
+                <li>✓ Can use phpMyAdmin</li>
+                <li>✓ Can create Database and Table</li>
+                <li>✓ Understand data types</li>
+                <li>✓ Understand constraints</li>
+            </ul>
+
+            <h2>Next Session Preview</h2>
+            <div class="box-info">
+                <p><strong>Session 05:</strong> Introduction to SQL</p>
+                <ul style="margin-left: 20px;">
+                    <li>SELECT, INSERT, UPDATE, DELETE</li>
+                    <li>WHERE, ORDER BY, LIMIT</li>
+                    <li>Basic SQL functions</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">25</span></span>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 25;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            }
+            if (n < 1) {
+                currentSlide = 1;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

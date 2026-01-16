@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INS3064: Session 11: Programming Techniques</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 50px;
+            min-height: 700px;
+            background: white;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        .slide h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .slide p {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .slide strong {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.95em;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .box-info {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .box-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            color: #333;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+                <!-- Slide 1: Title Slide -->
+        <div class="slide active">
+            <div class="header-section">
+                <h1>🎓 INS3064</h1>
+                <h2>Multimedia Design & Web Development</h2>
+                <p style="font-size: 1.2em; margin-top: 30px; color: #667eea;"><strong>Session 11: Programming Techniques</strong></p>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 1.1em; margin: 20px 0;">Course Code: <strong>INS3064</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Instructor: <strong>M.Sc. Hieu Ta Chi</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Host Department: <strong>Applied Sciences Department - IS-VNU</strong></p>
+            </div>
+        </div>
+        <!-- Slide 2: 1. OOP TRONG PHP -->
+        <div class="slide">
+            <h1>1. OOP TRONG PHP</h1>
+            
+<h3>1.1 Class và Object</h3>
+
+<div class="code-block">&lt;?php
+<p>class User {</p>
+<p>// Properties</p>
+<p>private $id;</p>
+<p>private $name;</p>
+<p>private $email;</p>
+    
+<p>// Constructor</p>
+<p>public function __construct($name, $email) {</p>
+<p>$this-&gt;name = $name;</p>
+<p>$this-&gt;email = $email;</p>
+<p>}</p>
+    
+<p>// Getters</p>
+<p>public function getName() {</p>
+<p>return $this-&gt;name;</p>
+<p>}</p>
+    
+<p>public function getEmail() {</p>
+<p>return $this-&gt;email;</p>
+<p>}</p>
+    
+<p>// Setters</p>
+<p>public function setName($name) {</p>
+<p>$this-&gt;name = $name;</p>
+<p>}</p>
+    
+<p>// Methods</p>
+<p>public function getInfo() {</p>
+<p>return &quot;Name: {$this-&gt;name}, Email: {$this-&gt;email}&quot;;</p>
+<p>}</p>
+<p>}</p>
+
+<p>// Sử dụng</p>
+<p>$user = new User(&quot;John&quot;, &quot;john@email.com&quot;);</p>
+<p>echo $user-&gt;getName();</p>
+<p>echo $user-&gt;getInfo();</p>
+<p>?&gt;</p>
+</div>
+
+<h3>1.2 Inheritance (Kế thừa)</h3>
+
+<div class="code-block">&lt;?php
+<p>class Person {</p>
+<p>protected $name;</p>
+    
+<p>public function __construct($name) {</p>
+<p>$this-&gt;name = $name;</p>
+<p>}</p>
+    
+<p>public function greet() {</p>
+<p>return &quot;Hello, I&#39;m {$this-&gt;name}&quot;;</p>
+<p>}</p>
+<p>}</p>
+
+<p>class Student extends Person {</p>
+<p>private $studentId;</p>
+    
+<p>public function __construct($name, $studentId) {</p>
+<p>parent::__construct($name);</p>
+<p>$this-&gt;studentId = $studentId;</p>
+<p>}</p>
+    
+<p>public function greet() {</p>
+<p>return parent::greet() . &quot;, Student ID: {$this-&gt;studentId}&quot;;</p>
+<p>}</p>
+<p>}</p>
+
+<p>$student = new Student(&quot;John&quot;, &quot;SV001&quot;);</p>
+<p>echo $student-&gt;greet();</p>
+<p>?&gt;</p>
+</div>
+
+<h3>1.3 Interface</h3>
+
+<div class="code-block">&lt;?php
+<p>interface Authenticatable {</p>
+<p>public function login($email, $password);</p>
+<p>public function logout();</p>
+<p>public function isAuthenticated();</p>
+<p>}</p>
+
+<p>class User implements Authenticatable {</p>
+<p>public function login($email, $password) {</p>
+<p>// Implementation</p>
+<p>}</p>
+    
+<p>public function logout() {</p>
+<p>// Implementation</p>
+<p>}</p>
+    
+<p>public function isAuthenticated() {</p>
+<p>// Implementation</p>
+<p>}</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<h3>1.4 Abstract Class</h3>
+
+<div class="code-block">&lt;?php
+<p>abstract class Model {</p>
+<p>protected $table;</p>
+<p>protected $db;</p>
+    
+<p>public function __construct() {</p>
+<p>$this-&gt;db = Database::getInstance();</p>
+<p>}</p>
+    
+<p>abstract public function validate($data);</p>
+    
+<p>public function all() {</p>
+<p>return $this-&gt;db-&gt;fetchAll(&quot;SELECT * FROM {$this-&gt;table}&quot;);</p>
+<p>}</p>
+    
+<p>public function find($id) {</p>
+<p>return $this-&gt;db-&gt;fetch(&quot;SELECT * FROM {$this-&gt;table} WHERE id = ?&quot;, [$id]);</p>
+<p>}</p>
+<p>}</p>
+
+<p>class UserModel extends Model {</p>
+<p>protected $table = &#39;users&#39;;</p>
+    
+<p>public function validate($data) {</p>
+<p>$errors = [];</p>
+<p>if (empty($data[&#39;name&#39;])) $errors[&#39;name&#39;] = &quot;Name required&quot;;</p>
+<p>if (empty($data[&#39;email&#39;])) $errors[&#39;email&#39;] = &quot;Email required&quot;;</p>
+<p>return $errors;</p>
+<p>}</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 3: 2. MVC PATTERN -->
+        <div class="slide">
+            <h1>2. MVC PATTERN</h1>
+            
+<h3>2.1 Cấu Trúc MVC</h3>
+
+<div class="code-block">project/
+<p>├── app/</p>
+<p>│   ├── Controllers/</p>
+<p>│   │   ├── HomeController.php</p>
+<p>│   │   └── UserController.php</p>
+<p>│   ├── Models/</p>
+<p>│   │   └── User.php</p>
+<p>│   └── Views/</p>
+<p>│       ├── layouts/</p>
+<p>│       │   └── main.php</p>
+<p>│       └── users/</p>
+<p>│           ├── index.php</p>
+<p>│           └── create.php</p>
+<p>├── config/</p>
+<p>│   └── database.php</p>
+<p>├── public/</p>
+<p>│   └── index.php</p>
+<p>└── core/</p>
+<p>├── Controller.php</p>
+<p>├── Model.php</p>
+<p>└── Router.php</p>
+</div>
+
+<h3>2.2 Base Controller</h3>
+
+<div class="code-block">&lt;?php
+<p>// core/Controller.php</p>
+<p>class Controller {</p>
+<p>protected function view($view, $data = []) {</p>
+<p>extract($data);</p>
+<p>$content = &quot;app/Views/$view.php&quot;;</p>
+<p>require &quot;app/Views/layouts/main.php&quot;;</p>
+<p>}</p>
+    
+<p>protected function redirect($url) {</p>
+<p>header(&quot;Location: $url&quot;);</p>
+<p>exit;</p>
+<p>}</p>
+    
+<p>protected function json($data, $status = 200) {</p>
+<p>http_response_code($status);</p>
+<p>header(&#39;Content-Type: application/json&#39;);</p>
+<p>echo json_encode($data);</p>
+<p>exit;</p>
+<p>}</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<h3>2.3 User Controller</h3>
+
+<div class="code-block">&lt;?php
+<p>// app/Controllers/UserController.php</p>
+<p>class UserController extends Controller {</p>
+<p>private $userModel;</p>
+    
+<p>public function __construct() {</p>
+<p>$this-&gt;userModel = new UserModel();</p>
+<p>}</p>
+    
+<p>public function index() {</p>
+<p>$users = $this-&gt;userModel-&gt;all();</p>
+<p>$this-&gt;view(&#39;users/index&#39;, [&#39;users&#39; =&gt; $users]);</p>
+<p>}</p>
+    
+<p>public function create() {</p>
+<p>if ($_SERVER[&#39;REQUEST_METHOD&#39;] === &#39;POST&#39;) {</p>
+<p>$data = [</p>
+<p>&#39;name&#39; =&gt; $_POST[&#39;name&#39;] ?? &#39;&#39;,</p>
+<p>&#39;email&#39; =&gt; $_POST[&#39;email&#39;] ?? &#39;&#39;</p>
+<p>];</p>
+            
+<p>$errors = $this-&gt;userModel-&gt;validate($data);</p>
+            
+<p>if (empty($errors)) {</p>
+<p>$this-&gt;userModel-&gt;create($data);</p>
+<p>$this-&gt;redirect(&#39;/users&#39;);</p>
+<p>}</p>
+            
+<p>$this-&gt;view(&#39;users/create&#39;, [&#39;errors&#39; =&gt; $errors, &#39;data&#39; =&gt; $data]);</p>
+<p>} else {</p>
+<p>$this-&gt;view(&#39;users/create&#39;);</p>
+<p>}</p>
+<p>}</p>
+    
+<p>public function show($id) {</p>
+<p>$user = $this-&gt;userModel-&gt;find($id);</p>
+<p>if (!$user) {</p>
+<p>$this-&gt;redirect(&#39;/users&#39;);</p>
+<p>}</p>
+<p>$this-&gt;view(&#39;users/show&#39;, [&#39;user&#39; =&gt; $user]);</p>
+<p>}</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<h3>2.4 Simple Router</h3>
+
+<div class="code-block">&lt;?php
+<p>// core/Router.php</p>
+<p>class Router {</p>
+<p>private $routes = [];</p>
+    
+<p>public function get($path, $callback) {</p>
+<p>$this-&gt;routes[&#39;GET&#39;][$path] = $callback;</p>
+<p>}</p>
+    
+<p>public function post($path, $callback) {</p>
+<p>$this-&gt;routes[&#39;POST&#39;][$path] = $callback;</p>
+<p>}</p>
+    
+<p>public function dispatch() {</p>
+<p>$method = $_SERVER[&#39;REQUEST_METHOD&#39;];</p>
+<p>$path = parse_url($_SERVER[&#39;REQUEST_URI&#39;], PHP_URL_PATH);</p>
+        
+<p>if (isset($this-&gt;routes[$method][$path])) {</p>
+<p>$callback = $this-&gt;routes[$method][$path];</p>
+            
+<p>if (is_callable($callback)) {</p>
+<p>call_user_func($callback);</p>
+<p>} elseif (is_string($callback)) {</p>
+<p>list($controller, $action) = explode(&#39;@&#39;, $callback);</p>
+<p>$controller = new $controller();</p>
+<p>$controller-&gt;$action();</p>
+<p>}</p>
+<p>} else {</p>
+<p>http_response_code(404);</p>
+<p>echo &quot;404 Not Found&quot;;</p>
+<p>}</p>
+<p>}</p>
+<p>}</p>
+
+<p>// public/index.php</p>
+<p>require_once &#39;../core/Router.php&#39;;</p>
+<p>require_once &#39;../app/Controllers/UserController.php&#39;;</p>
+
+<p>$router = new Router();</p>
+
+<p>$router-&gt;get(&#39;/&#39;, &#39;HomeController@index&#39;);</p>
+<p>$router-&gt;get(&#39;/users&#39;, &#39;UserController@index&#39;);</p>
+<p>$router-&gt;get(&#39;/users/create&#39;, &#39;UserController@create&#39;);</p>
+<p>$router-&gt;post(&#39;/users/create&#39;, &#39;UserController@create&#39;);</p>
+
+<p>$router-&gt;dispatch();</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 4: 3. AUTOLOADING -->
+        <div class="slide">
+            <h1>3. AUTOLOADING</h1>
+            
+<div class="code-block">&lt;?php
+<p>// autoload.php</p>
+<p>spl_autoload_register(function ($class) {</p>
+<p>$paths = [</p>
+<p>&#39;app/Controllers/&#39;,</p>
+<p>&#39;app/Models/&#39;,</p>
+<p>&#39;core/&#39;</p>
+<p>];</p>
+    
+<p>foreach ($paths as $path) {</p>
+<p>$file = $path . $class . &#39;.php&#39;;</p>
+<p>if (file_exists($file)) {</p>
+<p>require_once $file;</p>
+<p>return;</p>
+<p>}</p>
+<p>}</p>
+<p>});</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+<p># THỰC HÀNH</p>
+
+        </div>
+        <!-- Slide 5: BÀI 1: Tạo Model Class -->
+        <div class="slide">
+            <h1>BÀI 1: Tạo Model Class</h1>
+            
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Base Model với CRUD methods</li>
+<li>ProductModel extends Model</li>
+<li>Validation methods</li></ul>
+
+        </div>
+        <!-- Slide 6: BÀI 2: MVC Mini Project -->
+        <div class="slide">
+            <h1>BÀI 2: MVC Mini Project</h1>
+            
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Cấu trúc MVC</li>
+<li>CRUD Products</li>
+<li>Simple routing</li></ul>
+
+<p>---</p>
+
+<p># ✅ KIẾN THỨC CẦN ĐẠT</p>
+
+<ul><li>[ ] Hiểu OOP trong PHP</li>
+<li>[ ] Áp dụng MVC Pattern</li>
+<li>[ ] Tổ chức code chuyên nghiệp</li></ul>
+
+<p>---</p>
+
+<strong>Chương tiếp theo: [Buổi 12 - Web App Development →](./buoi_12_web_app_development.md)</strong>
+
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">6</span></span>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 6;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            }
+            if (n < 1) {
+                currentSlide = 1;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

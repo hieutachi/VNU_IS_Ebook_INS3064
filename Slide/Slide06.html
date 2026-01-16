@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INS3064: Session 06: Database Design</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 50px;
+            min-height: 700px;
+            background: white;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        .slide h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .slide p {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .slide strong {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.95em;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .box-info {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .box-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            color: #333;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+                <!-- Slide 1: Title Slide -->
+        <div class="slide active">
+            <div class="header-section">
+                <h1>🎓 INS3064</h1>
+                <h2>Multimedia Design & Web Development</h2>
+                <p style="font-size: 1.2em; margin-top: 30px; color: #667eea;"><strong>Session 06: Database Design</strong></p>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 1.1em; margin: 20px 0;">Course Code: <strong>INS3064</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Instructor: <strong>M.Sc. Hieu Ta Chi</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Host Department: <strong>Applied Sciences Department - IS-VNU</strong></p>
+            </div>
+        </div>
+        <!-- Slide 2: 1. NORMALIZATION (CHUẨN HÓA) -->
+        <div class="slide">
+            <h1>1. NORMALIZATION (CHUẨN HÓA)</h1>
+            
+<h3>1.1 Tại Sao Cần Chuẩn Hóa?</h3>
+
+<strong>Vấn đề khi không chuẩn hóa:</strong>
+
+<div class="code-block">Table: orders (CHƯA CHUẨN HÓA)
+<p>┌────┬──────────┬───────────────┬──────────────┬───────────┐</p>
+<p>│ id │ customer │ customer_addr │ product      │ price     │</p>
+<p>├────┼──────────┼───────────────┼──────────────┼───────────┤</p>
+<p>│ 1  │ Nguyen A │ 123 ABC St    │ Laptop       │ 1000      │</p>
+<p>│ 2  │ Nguyen A │ 123 ABC St    │ Mouse        │ 25        │</p>
+<p>│ 3  │ Tran B   │ 456 XYZ St    │ Laptop       │ 1000      │</p>
+<p>└────┴──────────┴───────────────┴──────────────┴───────────┘</p>
+</div>
+
+<strong>Vấn đề:</strong>
+<ul><li>❌ Dữ liệu trùng lặp (Nguyen A, địa chỉ)</li>
+<li>❌ Khó cập nhật (đổi địa chỉ phải sửa nhiều nơi)</li>
+<li>❌ Tốn bộ nhớ</li></ul>
+
+<h3>1.2 Các Dạng Chuẩn</h3>
+
+<p>#### 1NF (First Normal Form)</p>
+<ul><li>Mỗi cell chỉ chứa 1 giá trị</li>
+<li>Không có cột lặp lại</li></ul>
+
+<div class="code-block">-- ❌ Vi phạm 1NF
+<p>CREATE TABLE students (</p>
+<p>id INT,</p>
+<p>name VARCHAR(100),</p>
+<p>phones VARCHAR(200)  -- &quot;0901234567, 0909876543&quot;</p>
+<p>);</p>
+
+<p>-- ✅ Đúng 1NF</p>
+<p>CREATE TABLE students (</p>
+<p>id INT PRIMARY KEY,</p>
+<p>name VARCHAR(100)</p>
+<p>);</p>
+
+<p>CREATE TABLE student_phones (</p>
+<p>id INT PRIMARY KEY,</p>
+<p>student_id INT,</p>
+<p>phone VARCHAR(20),</p>
+<p>FOREIGN KEY (student_id) REFERENCES students(id)</p>
+<p>);</p>
+</div>
+
+<p>#### 2NF (Second Normal Form)</p>
+<ul><li>Đạt 1NF</li>
+<li>Không có phụ thuộc một phần vào khóa chính</li></ul>
+
+<p>#### 3NF (Third Normal Form)</p>
+<ul><li>Đạt 2NF</li>
+<li>Không có phụ thuộc bắc cầu</li></ul>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 3: 2. RELATIONSHIPS (QUAN HỆ) -->
+        <div class="slide">
+            <h1>2. RELATIONSHIPS (QUAN HỆ)</h1>
+            
+<h3>2.1 One-to-One (1:1)</h3>
+
+<p>Mỗi record trong Table A liên kết với 1 record trong Table B.</p>
+
+<div class="code-block">-- Ví dụ: User và Profile
+<p>CREATE TABLE users (</p>
+<p>id INT PRIMARY KEY AUTO_INCREMENT,</p>
+<p>email VARCHAR(100) UNIQUE NOT NULL,</p>
+<p>password VARCHAR(255) NOT NULL</p>
+<p>);</p>
+
+<p>CREATE TABLE profiles (</p>
+<p>id INT PRIMARY KEY AUTO_INCREMENT,</p>
+<p>user_id INT UNIQUE NOT NULL,  -- UNIQUE = 1:1</p>
+<p>full_name VARCHAR(100),</p>
+<p>bio TEXT,</p>
+<p>avatar VARCHAR(255),</p>
+<p>FOREIGN KEY (user_id) REFERENCES users(id)</p>
+<p>);</p>
+</div>
+
+<h3>2.2 One-to-Many (1:N)</h3>
+
+<p>Mỗi record trong Table A liên kết với nhiều records trong Table B.</p>
+
+<div class="code-block">-- Ví dụ: Category và Products
+<p>CREATE TABLE categories (</p>
+<p>id INT PRIMARY KEY AUTO_INCREMENT,</p>
+<p>name VARCHAR(100) NOT NULL</p>
+<p>);</p>
+
+<p>CREATE TABLE products (</p>
+<p>id INT PRIMARY KEY AUTO_INCREMENT,</p>
+<p>name VARCHAR(100) NOT NULL,</p>
+<p>price DECIMAL(10,2),</p>
+<p>category_id INT,  -- Không UNIQUE = 1:N</p>
+<p>FOREIGN KEY (category_id) REFERENCES categories(id)</p>
+<p>);</p>
+</div>
+
+<h3>2.3 Many-to-Many (N:N)</h3>
+
+<p>Nhiều records trong Table A liên kết với nhiều records trong Table B.</p>
+
+<div class="code-block">-- Ví dụ: Students và Courses
+<p>CREATE TABLE students (</p>
+<p>id INT PRIMARY KEY AUTO_INCREMENT,</p>
+<p>name VARCHAR(100) NOT NULL</p>
+<p>);</p>
+
+<p>CREATE TABLE courses (</p>
+<p>id INT PRIMARY KEY AUTO_INCREMENT,</p>
+<p>name VARCHAR(100) NOT NULL</p>
+<p>);</p>
+
+<p>-- Bảng trung gian (Junction/Pivot table)</p>
+<p>CREATE TABLE enrollments (</p>
+<p>id INT PRIMARY KEY AUTO_INCREMENT,</p>
+<p>student_id INT NOT NULL,</p>
+<p>course_id INT NOT NULL,</p>
+<p>enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,</p>
+<p>grade DECIMAL(3,2),</p>
+<p>FOREIGN KEY (student_id) REFERENCES students(id),</p>
+<p>FOREIGN KEY (course_id) REFERENCES courses(id),</p>
+<p>UNIQUE KEY (student_id, course_id)  -- Không đăng ký trùng</p>
+<p>);</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 4: 3. FOREIGN KEYS -->
+        <div class="slide">
+            <h1>3. FOREIGN KEYS</h1>
+            
+<h3>3.1 Cú Pháp</h3>
+
+<div class="code-block">CREATE TABLE orders (
+<p>id INT PRIMARY KEY AUTO_INCREMENT,</p>
+<p>customer_id INT NOT NULL,</p>
+<p>total DECIMAL(10,2),</p>
+<p>FOREIGN KEY (customer_id) REFERENCES customers(id)</p>
+<p>ON DELETE CASCADE</p>
+<p>ON UPDATE CASCADE</p>
+<p>);</p>
+</div>
+
+<h3>3.2 ON DELETE / ON UPDATE Options</h3>
+
+<p>| Option | Mô tả |</p>
+<p>|--------|-------|</p>
+<p>| <span class="highlight">CASCADE</span> | Xóa/Cập nhật theo |</p>
+<p>| <span class="highlight">SET NULL</span> | Đặt thành NULL |</p>
+<p>| <span class="highlight">RESTRICT</span> | Không cho xóa/cập nhật |</p>
+<p>| <span class="highlight">NO ACTION</span> | Giống RESTRICT |</p>
+
+<div class="code-block">-- Khi xóa category, set product.category_id = NULL
+<p>FOREIGN KEY (category_id) REFERENCES categories(id)</p>
+<p>ON DELETE SET NULL</p>
+<p>ON UPDATE CASCADE</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 5: 4. VÍ DỤ THIẾT KẾ: E-COMMERCE DATABASE -->
+        <div class="slide">
+            <h1>4. VÍ DỤ THIẾT KẾ: E-COMMERCE DATABASE</h1>
+            
+<div class="code-block">-- Database cho shop online
+<p>CREATE DATABASE shop_db;</p>
+<p>USE shop_db;</p>
+
+<p>-- 1. Users</p>
+<p>CREATE TABLE users (</p>
+<p>id INT PRIMARY KEY AUTO_INCREMENT,</p>
+<p>email VARCHAR(100) UNIQUE NOT NULL,</p>
+<p>password VARCHAR(255) NOT NULL,</p>
+<p>role ENUM(&#39;admin&#39;, &#39;customer&#39;) DEFAULT &#39;customer&#39;,</p>
+<p>created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP</p>
+<p>);</p>
+
+<p>-- 2. Categories</p>
+<p>CREATE TABLE categories (</p>
+<p>id INT PRIMARY KEY AUTO_INCREMENT,</p>
+<p>name VARCHAR(100) NOT NULL,</p>
+<p>slug VARCHAR(100) UNIQUE NOT NULL,</p>
+<p>parent_id INT,</p>
+<p>FOREIGN KEY (parent_id) REFERENCES categories(id)</p>
+<p>);</p>
+
+<p>-- 3. Products</p>
+<p>CREATE TABLE products (</p>
+<p>id INT PRIMARY KEY AUTO_INCREMENT,</p>
+<p>name VARCHAR(255) NOT NULL,</p>
+<p>slug VARCHAR(255) UNIQUE NOT NULL,</p>
+<p>description TEXT,</p>
+<p>price DECIMAL(10,2) NOT NULL,</p>
+<p>sale_price DECIMAL(10,2),</p>
+<p>stock INT DEFAULT 0,</p>
+<p>category_id INT,</p>
+<p>created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,</p>
+<p>FOREIGN KEY (category_id) REFERENCES categories(id)</p>
+<p>);</p>
+
+<p>-- 4. Orders</p>
+<p>CREATE TABLE orders (</p>
+<p>id INT PRIMARY KEY AUTO_INCREMENT,</p>
+<p>user_id INT NOT NULL,</p>
+<p>total DECIMAL(10,2) NOT NULL,</p>
+<p>status ENUM(&#39;pending&#39;, &#39;processing&#39;, &#39;shipped&#39;, &#39;delivered&#39;, &#39;cancelled&#39;) DEFAULT &#39;pending&#39;,</p>
+<p>shipping_address TEXT,</p>
+<p>created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,</p>
+<p>FOREIGN KEY (user_id) REFERENCES users(id)</p>
+<p>);</p>
+
+<p>-- 5. Order Items (N:N giữa Orders và Products)</p>
+<p>CREATE TABLE order_items (</p>
+<p>id INT PRIMARY KEY AUTO_INCREMENT,</p>
+<p>order_id INT NOT NULL,</p>
+<p>product_id INT NOT NULL,</p>
+<p>quantity INT NOT NULL,</p>
+<p>price DECIMAL(10,2) NOT NULL,</p>
+<p>FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,</p>
+<p>FOREIGN KEY (product_id) REFERENCES products(id)</p>
+<p>);</p>
+
+<p>-- 6. Product Images (1:N)</p>
+<p>CREATE TABLE product_images (</p>
+<p>id INT PRIMARY KEY AUTO_INCREMENT,</p>
+<p>product_id INT NOT NULL,</p>
+<p>image_url VARCHAR(255) NOT NULL,</p>
+<p>is_primary BOOLEAN DEFAULT FALSE,</p>
+<p>FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE</p>
+<p>);</p>
+</div>
+
+<p>---</p>
+
+<p># THỰC HÀNH</p>
+
+        </div>
+        <!-- Slide 6: BÀI 1: Thiết Kế Database Blog -->
+        <div class="slide">
+            <h1>BÀI 1: Thiết Kế Database Blog</h1>
+            
+<p>🎯 <strong>Mục tiêu:</strong> Thiết kế database cho blog</p>
+
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Users (tác giả)</li>
+<li>Categories</li>
+<li>Posts</li>
+<li>Comments</li>
+<li>Tags (N:N với Posts)</li></ul>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 7: BÀI 2: Thiết Kế Database Thư Viện -->
+        <div class="slide">
+            <h1>BÀI 2: Thiết Kế Database Thư Viện</h1>
+            
+<p>🎯 <strong>Mục tiêu:</strong> Quản lý thư viện</p>
+
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Books</li>
+<li>Members</li>
+<li>Borrowings (mượn sách)</li>
+<li>Authors (N:N với Books)</li></ul>
+
+<p>---</p>
+
+<p># ✅ KIẾN THỨC CẦN ĐẠT</p>
+
+<ul><li>[ ] Hiểu Normalization</li>
+<li>[ ] Thiết kế được các loại relationships</li>
+<li>[ ] Sử dụng được Foreign Keys</li>
+<li>[ ] Thiết kế database hoàn chỉnh</li></ul>
+
+<p>---</p>
+
+<strong>Chương tiếp theo: [Buổi 07 - Advanced SQL →](./buoi_07_advanced_sql.md)</strong>
+
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">7</span></span>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 7;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            }
+            if (n < 1) {
+                currentSlide = 1;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

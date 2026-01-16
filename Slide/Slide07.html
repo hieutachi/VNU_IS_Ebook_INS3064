@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INS3064: Session 07: Advanced SQL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 50px;
+            min-height: 700px;
+            background: white;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        .slide h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .slide p {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .slide strong {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.95em;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .box-info {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .box-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            color: #333;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+                <!-- Slide 1: Title Slide -->
+        <div class="slide active">
+            <div class="header-section">
+                <h1>🎓 INS3064</h1>
+                <h2>Multimedia Design & Web Development</h2>
+                <p style="font-size: 1.2em; margin-top: 30px; color: #667eea;"><strong>Session 07: Advanced SQL</strong></p>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 1.1em; margin: 20px 0;">Course Code: <strong>INS3064</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Instructor: <strong>M.Sc. Hieu Ta Chi</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Host Department: <strong>Applied Sciences Department - IS-VNU</strong></p>
+            </div>
+        </div>
+        <!-- Slide 2: 1. JOIN - KẾT NỐI BẢNG -->
+        <div class="slide">
+            <h1>1. JOIN - KẾT NỐI BẢNG</h1>
+            
+<h3>1.1 INNER JOIN</h3>
+
+<p>Lấy records có trong CẢ HAI bảng.</p>
+
+<div class="code-block">-- Lấy products với tên category
+<p>SELECT</p>
+<p>p.id,</p>
+<p>p.name AS product_name,</p>
+<p>p.price,</p>
+<p>c.name AS category_name</p>
+<p>FROM products p</p>
+<p>INNER JOIN categories c ON p.category_id = c.id;</p>
+</div>
+
+<h3>1.2 LEFT JOIN</h3>
+
+<p>Lấy TẤT CẢ records từ bảng trái, kể cả không có match.</p>
+
+<div class="code-block">-- Lấy tất cả products, kể cả không có category
+<p>SELECT</p>
+<p>p.name AS product_name,</p>
+<p>c.name AS category_name</p>
+<p>FROM products p</p>
+<p>LEFT JOIN categories c ON p.category_id = c.id;</p>
+</div>
+
+<h3>1.3 RIGHT JOIN</h3>
+
+<p>Lấy TẤT CẢ records từ bảng phải.</p>
+
+<div class="code-block">-- Lấy tất cả categories, kể cả không có products
+<p>SELECT</p>
+<p>c.name AS category_name,</p>
+<p>p.name AS product_name</p>
+<p>FROM products p</p>
+<p>RIGHT JOIN categories c ON p.category_id = c.id;</p>
+</div>
+
+<h3>1.4 Multiple JOINs</h3>
+
+<div class="code-block">-- Orders với customer và products
+<p>SELECT</p>
+<p>o.id AS order_id,</p>
+<p>u.email AS customer_email,</p>
+<p>p.name AS product_name,</p>
+<p>oi.quantity,</p>
+<p>oi.price</p>
+<p>FROM orders o</p>
+<p>INNER JOIN users u ON o.user_id = u.id</p>
+<p>INNER JOIN order_items oi ON o.id = oi.order_id</p>
+<p>INNER JOIN products p ON oi.product_id = p.id</p>
+<p>WHERE o.status = &#39;delivered&#39;;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 3: 2. SUBQUERIES -->
+        <div class="slide">
+            <h1>2. SUBQUERIES</h1>
+            
+<h3>2.1 Subquery trong WHERE</h3>
+
+<div class="code-block">-- Sản phẩm có giá cao hơn trung bình
+<p>SELECT * FROM products</p>
+<p>WHERE price &gt; (SELECT AVG(price) FROM products);</p>
+
+<p>-- Khách hàng đã mua hàng</p>
+<p>SELECT * FROM users</p>
+<p>WHERE id IN (SELECT DISTINCT user_id FROM orders);</p>
+</div>
+
+<h3>2.2 Subquery trong FROM</h3>
+
+<div class="code-block">-- Top categories theo doanh thu
+<p>SELECT</p>
+<p>category_name,</p>
+<p>total_revenue</p>
+<p>FROM (</p>
+<p>SELECT</p>
+<p>c.name AS category_name,</p>
+<p>SUM(oi.price * oi.quantity) AS total_revenue</p>
+<p>FROM categories c</p>
+<p>JOIN products p ON c.id = p.category_id</p>
+<p>JOIN order_items oi ON p.id = oi.product_id</p>
+<p>GROUP BY c.id</p>
+<p>) AS category_revenue</p>
+<p>ORDER BY total_revenue DESC</p>
+<p>LIMIT 5;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 4: 3. GROUP BY VÀ HAVING -->
+        <div class="slide">
+            <h1>3. GROUP BY VÀ HAVING</h1>
+            
+<h3>3.1 GROUP BY</h3>
+
+<div class="code-block">-- Đếm products theo category
+<p>SELECT</p>
+<p>category_id,</p>
+<p>COUNT(*) AS product_count,</p>
+<p>AVG(price) AS avg_price,</p>
+<p>SUM(stock) AS total_stock</p>
+<p>FROM products</p>
+<p>GROUP BY category_id;</p>
+</div>
+
+<h3>3.2 HAVING (Lọc sau GROUP BY)</h3>
+
+<div class="code-block">-- Categories có nhiều hơn 5 products
+<p>SELECT</p>
+<p>c.name,</p>
+<p>COUNT(p.id) AS product_count</p>
+<p>FROM categories c</p>
+<p>LEFT JOIN products p ON c.id = p.category_id</p>
+<p>GROUP BY c.id</p>
+<p>HAVING product_count &gt; 5;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 5: 4. VIEWS -->
+        <div class="slide">
+            <h1>4. VIEWS</h1>
+            
+<div class="code-block">-- Tạo View
+<p>CREATE VIEW product_summary AS</p>
+<p>SELECT</p>
+<p>p.id,</p>
+<p>p.name,</p>
+<p>p.price,</p>
+<p>c.name AS category_name,</p>
+<p>p.stock</p>
+<p>FROM products p</p>
+<p>LEFT JOIN categories c ON p.category_id = c.id;</p>
+
+<p>-- Sử dụng View</p>
+<p>SELECT * FROM product_summary WHERE price &gt; 100;</p>
+
+<p>-- Xóa View</p>
+<p>DROP VIEW product_summary;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 6: 5. INDEX -->
+        <div class="slide">
+            <h1>5. INDEX</h1>
+            
+<div class="code-block">-- Tạo Index
+<p>CREATE INDEX idx_products_name ON products(name);</p>
+<p>CREATE INDEX idx_products_category ON products(category_id);</p>
+
+<p>-- Index nhiều cột</p>
+<p>CREATE INDEX idx_orders_user_status ON orders(user_id, status);</p>
+
+<p>-- Xem Indexes</p>
+<p>SHOW INDEX FROM products;</p>
+
+<p>-- Xóa Index</p>
+<p>DROP INDEX idx_products_name ON products;</p>
+</div>
+
+<p>---</p>
+
+<p># VÍ DỤ THỰC TẾ</p>
+
+<div class="code-block">-- Báo cáo doanh thu theo tháng
+<p>SELECT</p>
+<p>DATE_FORMAT(o.created_at, &#39;%Y-%m&#39;) AS month,</p>
+<p>COUNT(DISTINCT o.id) AS total_orders,</p>
+<p>COUNT(DISTINCT o.user_id) AS total_customers,</p>
+<p>SUM(oi.quantity) AS items_sold,</p>
+<p>SUM(oi.price * oi.quantity) AS revenue</p>
+<p>FROM orders o</p>
+<p>JOIN order_items oi ON o.id = oi.order_id</p>
+<p>WHERE o.status = &#39;delivered&#39;</p>
+<p>GROUP BY DATE_FORMAT(o.created_at, &#39;%Y-%m&#39;)</p>
+<p>ORDER BY month DESC;</p>
+
+<p>-- Top 10 sản phẩm bán chạy</p>
+<p>SELECT</p>
+<p>p.name,</p>
+<p>SUM(oi.quantity) AS total_sold,</p>
+<p>SUM(oi.price * oi.quantity) AS revenue</p>
+<p>FROM products p</p>
+<p>JOIN order_items oi ON p.id = oi.product_id</p>
+<p>JOIN orders o ON oi.order_id = o.id</p>
+<p>WHERE o.status = &#39;delivered&#39;</p>
+<p>GROUP BY p.id</p>
+<p>ORDER BY total_sold DESC</p>
+<p>LIMIT 10;</p>
+</div>
+
+<p>---</p>
+
+<p># THỰC HÀNH</p>
+
+        </div>
+        <!-- Slide 7: BÀI 1: JOIN Queries -->
+        <div class="slide">
+            <h1>BÀI 1: JOIN Queries</h1>
+            
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Lấy danh sách orders với thông tin customer</li>
+<li>Lấy products với category name</li>
+<li>Lấy categories không có products</li></ul>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 8: BÀI 2: Báo Cáo Thống Kê -->
+        <div class="slide">
+            <h1>BÀI 2: Báo Cáo Thống Kê</h1>
+            
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Doanh thu theo category</li>
+<li>Top 5 khách hàng mua nhiều nhất</li>
+<li>Sản phẩm chưa bán được</li></ul>
+
+<p>---</p>
+
+<p># ✅ KIẾN THỨC CẦN ĐẠT</p>
+
+<ul><li>[ ] Sử dụng được các loại JOIN</li>
+<li>[ ] Viết được Subqueries</li>
+<li>[ ] Sử dụng GROUP BY và HAVING</li>
+<li>[ ] Tạo Views và Indexes</li></ul>
+
+<p>---</p>
+
+<strong>Chương tiếp theo: [Buổi 08 - Review & Midterm →](../buoi_08_review_midterm.md)</strong>
+
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">8</span></span>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 8;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            }
+            if (n < 1) {
+                currentSlide = 1;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

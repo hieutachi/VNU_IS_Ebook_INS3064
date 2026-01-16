@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INS3064: Session 10: PHP + MySQL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 50px;
+            min-height: 700px;
+            background: white;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        .slide h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .slide p {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .slide strong {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.95em;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .box-info {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .box-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            color: #333;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+                <!-- Slide 1: Title Slide -->
+        <div class="slide active">
+            <div class="header-section">
+                <h1>🎓 INS3064</h1>
+                <h2>Multimedia Design & Web Development</h2>
+                <p style="font-size: 1.2em; margin-top: 30px; color: #667eea;"><strong>Session 10: PHP + MySQL</strong></p>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 1.1em; margin: 20px 0;">Course Code: <strong>INS3064</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Instructor: <strong>M.Sc. Hieu Ta Chi</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Host Department: <strong>Applied Sciences Department - IS-VNU</strong></p>
+            </div>
+        </div>
+        <!-- Slide 2: 1. KẾT NỐI DATABASE -->
+        <div class="slide">
+            <h1>1. KẾT NỐI DATABASE</h1>
+            
+<h3>1.1 Sử Dụng PDO (Khuyến nghị)</h3>
+
+<div class="code-block">&lt;?php
+<p>$host = &#39;localhost&#39;;</p>
+<p>$dbname = &#39;test_db&#39;;</p>
+<p>$username = &#39;root&#39;;</p>
+<p>$password = &#39;&#39;;</p>
+
+<p>try {</p>
+<p>$pdo = new PDO(</p>
+<p>&quot;mysql:host=$host;dbname=$dbname;charset=utf8mb4&quot;,</p>
+<p>$username,</p>
+<p>$password,</p>
+<p>[</p>
+<p>PDO::ATTR_ERRMODE =&gt; PDO::ERRMODE_EXCEPTION,</p>
+<p>PDO::ATTR_DEFAULT_FETCH_MODE =&gt; PDO::FETCH_ASSOC,</p>
+<p>PDO::ATTR_EMULATE_PREPARES =&gt; false</p>
+<p>]</p>
+<p>);</p>
+<p>echo &quot;Kết nối thành công!&quot;;</p>
+<p>} catch (PDOException $e) {</p>
+<p>die(&quot;Lỗi kết nối: &quot; . $e-&gt;getMessage());</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<h3>1.2 File Config</h3>
+
+<div class="code-block">&lt;?php
+<p>// config/database.php</p>
+<p>return [</p>
+<p>&#39;host&#39; =&gt; &#39;localhost&#39;,</p>
+<p>&#39;dbname&#39; =&gt; &#39;test_db&#39;,</p>
+<p>&#39;username&#39; =&gt; &#39;root&#39;,</p>
+<p>&#39;password&#39; =&gt; &#39;&#39;,</p>
+<p>&#39;charset&#39; =&gt; &#39;utf8mb4&#39;</p>
+<p>];</p>
+
+<p>// Sử dụng</p>
+<p>$config = require &#39;config/database.php&#39;;</p>
+<p>$dsn = &quot;mysql:host={$config[&#39;host&#39;]};dbname={$config[&#39;dbname&#39;]};charset={$config[&#39;charset&#39;]}&quot;;</p>
+<p>$pdo = new PDO($dsn, $config[&#39;username&#39;], $config[&#39;password&#39;]);</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 3: 2. CRUD OPERATIONS -->
+        <div class="slide">
+            <h1>2. CRUD OPERATIONS</h1>
+            
+<h3>2.1 CREATE (Insert)</h3>
+
+<div class="code-block">&lt;?php
+<p>// Insert một record</p>
+<p>$sql = &quot;INSERT INTO users (name, email, password) VALUES (?, ?, ?)&quot;;</p>
+<p>$stmt = $pdo-&gt;prepare($sql);</p>
+<p>$stmt-&gt;execute([$name, $email, password_hash($password, PASSWORD_DEFAULT)]);</p>
+
+<p>// Lấy ID vừa insert</p>
+<p>$lastId = $pdo-&gt;lastInsertId();</p>
+
+<p>// Named parameters</p>
+<p>$sql = &quot;INSERT INTO users (name, email) VALUES (:name, :email)&quot;;</p>
+<p>$stmt = $pdo-&gt;prepare($sql);</p>
+<p>$stmt-&gt;execute([</p>
+<p>&#39;:name&#39; =&gt; $name,</p>
+<p>&#39;:email&#39; =&gt; $email</p>
+<p>]);</p>
+<p>?&gt;</p>
+</div>
+
+<h3>2.2 READ (Select)</h3>
+
+<div class="code-block">&lt;?php
+<p>// Lấy tất cả</p>
+<p>$sql = &quot;SELECT * FROM users&quot;;</p>
+<p>$stmt = $pdo-&gt;query($sql);</p>
+<p>$users = $stmt-&gt;fetchAll();</p>
+
+<p>// Lấy một record</p>
+<p>$sql = &quot;SELECT * FROM users WHERE id = ?&quot;;</p>
+<p>$stmt = $pdo-&gt;prepare($sql);</p>
+<p>$stmt-&gt;execute([$id]);</p>
+<p>$user = $stmt-&gt;fetch();</p>
+
+<p>// Lấy với điều kiện</p>
+<p>$sql = &quot;SELECT * FROM users WHERE status = ? AND role = ?&quot;;</p>
+<p>$stmt = $pdo-&gt;prepare($sql);</p>
+<p>$stmt-&gt;execute([&#39;active&#39;, &#39;admin&#39;]);</p>
+<p>$users = $stmt-&gt;fetchAll();</p>
+
+<p>// Đếm records</p>
+<p>$sql = &quot;SELECT COUNT(*) FROM users&quot;;</p>
+<p>$count = $pdo-&gt;query($sql)-&gt;fetchColumn();</p>
+<p>?&gt;</p>
+</div>
+
+<h3>2.3 UPDATE</h3>
+
+<div class="code-block">&lt;?php
+<p>$sql = &quot;UPDATE users SET name = ?, email = ? WHERE id = ?&quot;;</p>
+<p>$stmt = $pdo-&gt;prepare($sql);</p>
+<p>$stmt-&gt;execute([$name, $email, $id]);</p>
+
+<p>// Kiểm tra số rows affected</p>
+<p>$rowCount = $stmt-&gt;rowCount();</p>
+<p>if ($rowCount &gt; 0) {</p>
+<p>echo &quot;Cập nhật thành công!&quot;;</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<h3>2.4 DELETE</h3>
+
+<div class="code-block">&lt;?php
+<p>$sql = &quot;DELETE FROM users WHERE id = ?&quot;;</p>
+<p>$stmt = $pdo-&gt;prepare($sql);</p>
+<p>$stmt-&gt;execute([$id]);</p>
+
+<p>if ($stmt-&gt;rowCount() &gt; 0) {</p>
+<p>echo &quot;Xóa thành công!&quot;;</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 4: 3. DATABASE CLASS -->
+        <div class="slide">
+            <h1>3. DATABASE CLASS</h1>
+            
+<div class="code-block">&lt;?php
+<p>// classes/Database.php</p>
+<p>class Database {</p>
+<p>private static $instance = null;</p>
+<p>private $pdo;</p>
+    
+<p>private function __construct() {</p>
+<p>$config = require &#39;config/database.php&#39;;</p>
+<p>$dsn = &quot;mysql:host={$config[&#39;host&#39;]};dbname={$config[&#39;dbname&#39;]};charset={$config[&#39;charset&#39;]}&quot;;</p>
+        
+<p>$this-&gt;pdo = new PDO($dsn, $config[&#39;username&#39;], $config[&#39;password&#39;], [</p>
+<p>PDO::ATTR_ERRMODE =&gt; PDO::ERRMODE_EXCEPTION,</p>
+<p>PDO::ATTR_DEFAULT_FETCH_MODE =&gt; PDO::FETCH_ASSOC</p>
+<p>]);</p>
+<p>}</p>
+    
+<p>public static function getInstance() {</p>
+<p>if (self::$instance === null) {</p>
+<p>self::$instance = new self();</p>
+<p>}</p>
+<p>return self::$instance;</p>
+<p>}</p>
+    
+<p>public function getConnection() {</p>
+<p>return $this-&gt;pdo;</p>
+<p>}</p>
+    
+<p>public function query($sql, $params = []) {</p>
+<p>$stmt = $this-&gt;pdo-&gt;prepare($sql);</p>
+<p>$stmt-&gt;execute($params);</p>
+<p>return $stmt;</p>
+<p>}</p>
+    
+<p>public function fetchAll($sql, $params = []) {</p>
+<p>return $this-&gt;query($sql, $params)-&gt;fetchAll();</p>
+<p>}</p>
+    
+<p>public function fetch($sql, $params = []) {</p>
+<p>return $this-&gt;query($sql, $params)-&gt;fetch();</p>
+<p>}</p>
+    
+<p>public function insert($table, $data) {</p>
+<p>$columns = implode(&#39;, &#39;, array_keys($data));</p>
+<p>$placeholders = implode(&#39;, &#39;, array_fill(0, count($data), &#39;?&#39;));</p>
+        
+<p>$sql = &quot;INSERT INTO $table ($columns) VALUES ($placeholders)&quot;;</p>
+<p>$this-&gt;query($sql, array_values($data));</p>
+        
+<p>return $this-&gt;pdo-&gt;lastInsertId();</p>
+<p>}</p>
+    
+<p>public function update($table, $data, $where, $whereParams = []) {</p>
+<p>$set = implode(&#39; = ?, &#39;, array_keys($data)) . &#39; = ?&#39;;</p>
+<p>$sql = &quot;UPDATE $table SET $set WHERE $where&quot;;</p>
+        
+<p>return $this-&gt;query($sql, array_merge(array_values($data), $whereParams))-&gt;rowCount();</p>
+<p>}</p>
+    
+<p>public function delete($table, $where, $params = []) {</p>
+<p>$sql = &quot;DELETE FROM $table WHERE $where&quot;;</p>
+<p>return $this-&gt;query($sql, $params)-&gt;rowCount();</p>
+<p>}</p>
+<p>}</p>
+
+<p>// Sử dụng</p>
+<p>$db = Database::getInstance();</p>
+
+<p>// Insert</p>
+<p>$id = $db-&gt;insert(&#39;users&#39;, [</p>
+<p>&#39;name&#39; =&gt; &#39;John&#39;,</p>
+<p>&#39;email&#39; =&gt; &#39;john@email.com&#39;</p>
+<p>]);</p>
+
+<p>// Select</p>
+<p>$users = $db-&gt;fetchAll(&quot;SELECT * FROM users WHERE status = ?&quot;, [&#39;active&#39;]);</p>
+<p>$user = $db-&gt;fetch(&quot;SELECT * FROM users WHERE id = ?&quot;, [1]);</p>
+
+<p>// Update</p>
+<p>$db-&gt;update(&#39;users&#39;, [&#39;name&#39; =&gt; &#39;Jane&#39;], &#39;id = ?&#39;, [1]);</p>
+
+<p>// Delete</p>
+<p>$db-&gt;delete(&#39;users&#39;, &#39;id = ?&#39;, [1]);</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 5: 4. VÍ DỤ CRUD HOÀN CHỈNH -->
+        <div class="slide">
+            <h1>4. VÍ DỤ CRUD HOÀN CHỈNH</h1>
+            
+<h3>4.1 Danh Sách Users</h3>
+
+<div class="code-block">&lt;?php
+<p>// users/index.php</p>
+<p>require_once &#39;classes/Database.php&#39;;</p>
+
+<p>$db = Database::getInstance();</p>
+<p>$users = $db-&gt;fetchAll(&quot;SELECT * FROM users ORDER BY created_at DESC&quot;);</p>
+<p>?&gt;</p>
+
+<p>&lt;!DOCTYPE html&gt;</p>
+<p>&lt;html&gt;</p>
+<p>&lt;head&gt;</p>
+<p>&lt;title&gt;Quản Lý Users&lt;/title&gt;</p>
+<p>&lt;style&gt;</p>
+<p>table { width: 100%; border-collapse: collapse; }</p>
+<p>th, td { padding: 10px; border: 1px solid #ddd; }</p>
+<p>th { background: #4CAF50; color: white; }</p>
+<p>.btn { padding: 5px 10px; text-decoration: none; border-radius: 3px; }</p>
+<p>.btn-edit { background: #2196F3; color: white; }</p>
+<p>.btn-delete { background: #f44336; color: white; }</p>
+<p>.btn-add { background: #4CAF50; color: white; margin-bottom: 20px; display: inline-block; }</p>
+<p>&lt;/style&gt;</p>
+<p>&lt;/head&gt;</p>
+<p>&lt;body&gt;</p>
+<p>&lt;h1&gt;Quản Lý Users&lt;/h1&gt;</p>
+    
+<p>&lt;a href=&quot;create.php&quot; class=&quot;btn btn-add&quot;&gt;+ Thêm User&lt;/a&gt;</p>
+    
+<p>&lt;table&gt;</p>
+<p>&lt;tr&gt;</p>
+<p>&lt;th&gt;ID&lt;/th&gt;</p>
+<p>&lt;th&gt;Name&lt;/th&gt;</p>
+<p>&lt;th&gt;Email&lt;/th&gt;</p>
+<p>&lt;th&gt;Created&lt;/th&gt;</p>
+<p>&lt;th&gt;Actions&lt;/th&gt;</p>
+<p>&lt;/tr&gt;</p>
+<p>&lt;?php foreach ($users as $user): ?&gt;</p>
+<p>&lt;tr&gt;</p>
+<p>&lt;td&gt;&lt;?= $user[&#39;id&#39;] ?&gt;&lt;/td&gt;</p>
+<p>&lt;td&gt;&lt;?= htmlspecialchars($user[&#39;name&#39;]) ?&gt;&lt;/td&gt;</p>
+<p>&lt;td&gt;&lt;?= htmlspecialchars($user[&#39;email&#39;]) ?&gt;&lt;/td&gt;</p>
+<p>&lt;td&gt;&lt;?= $user[&#39;created_at&#39;] ?&gt;&lt;/td&gt;</p>
+<p>&lt;td&gt;</p>
+<p>&lt;a href=&quot;edit.php?id=&lt;?= $user[&#39;id&#39;] ?&gt;&quot; class=&quot;btn btn-edit&quot;&gt;Sửa&lt;/a&gt;</p>
+<p>&lt;a href=&quot;delete.php?id=&lt;?= $user[&#39;id&#39;] ?&gt;&quot; class=&quot;btn btn-delete&quot;</p>
+<p>onclick=&quot;return confirm(&#39;Bạn chắc chắn muốn xóa?&#39;)&quot;&gt;Xóa&lt;/a&gt;</p>
+<p>&lt;/td&gt;</p>
+<p>&lt;/tr&gt;</p>
+<p>&lt;?php endforeach; ?&gt;</p>
+<p>&lt;/table&gt;</p>
+<p>&lt;/body&gt;</p>
+<p>&lt;/html&gt;</p>
+</div>
+
+<h3>4.2 Thêm User</h3>
+
+<div class="code-block">&lt;?php
+<p>// users/create.php</p>
+<p>require_once &#39;classes/Database.php&#39;;</p>
+
+<p>$errors = [];</p>
+<p>$name = $email = &#39;&#39;;</p>
+
+<p>if ($_SERVER[&#39;REQUEST_METHOD&#39;] === &#39;POST&#39;) {</p>
+<p>$name = trim($_POST[&#39;name&#39;] ?? &#39;&#39;);</p>
+<p>$email = trim($_POST[&#39;email&#39;] ?? &#39;&#39;);</p>
+<p>$password = $_POST[&#39;password&#39;] ?? &#39;&#39;;</p>
+    
+<p>// Validate</p>
+<p>if (empty($name)) $errors[&#39;name&#39;] = &quot;Name is required&quot;;</p>
+<p>if (empty($email)) $errors[&#39;email&#39;] = &quot;Email is required&quot;;</p>
+<p>if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[&#39;email&#39;] = &quot;Invalid email&quot;;</p>
+<p>if (strlen($password) &lt; 6) $errors[&#39;password&#39;] = &quot;Password min 6 chars&quot;;</p>
+    
+<p>if (empty($errors)) {</p>
+<p>$db = Database::getInstance();</p>
+        
+<p>// Check email exists</p>
+<p>$existing = $db-&gt;fetch(&quot;SELECT id FROM users WHERE email = ?&quot;, [$email]);</p>
+<p>if ($existing) {</p>
+<p>$errors[&#39;email&#39;] = &quot;Email already exists&quot;;</p>
+<p>} else {</p>
+<p>$db-&gt;insert(&#39;users&#39;, [</p>
+<p>&#39;name&#39; =&gt; $name,</p>
+<p>&#39;email&#39; =&gt; $email,</p>
+<p>&#39;password&#39; =&gt; password_hash($password, PASSWORD_DEFAULT)</p>
+<p>]);</p>
+            
+<p>header(&#39;Location: index.php?success=1&#39;);</p>
+<p>exit;</p>
+<p>}</p>
+<p>}</p>
+<p>}</p>
+<p>?&gt;</p>
+
+<p>&lt;!DOCTYPE html&gt;</p>
+<p>&lt;html&gt;</p>
+<p>&lt;head&gt;&lt;title&gt;Thêm User&lt;/title&gt;&lt;/head&gt;</p>
+<p>&lt;body&gt;</p>
+<p>&lt;h1&gt;Thêm User Mới&lt;/h1&gt;</p>
+    
+<p>&lt;form method=&quot;POST&quot;&gt;</p>
+<p>&lt;div&gt;</p>
+<p>&lt;label&gt;Name:&lt;/label&gt;</p>
+<p>&lt;input type=&quot;text&quot; name=&quot;name&quot; value=&quot;&lt;?= htmlspecialchars($name) ?&gt;&quot;&gt;</p>
+<p>&lt;?php if (isset($errors[&#39;name&#39;])): ?&gt;</p>
+<p>&lt;span style=&quot;color:red&quot;&gt;&lt;?= $errors[&#39;name&#39;] ?&gt;&lt;/span&gt;</p>
+<p>&lt;?php endif; ?&gt;</p>
+<p>&lt;/div&gt;</p>
+        
+<p>&lt;div&gt;</p>
+<p>&lt;label&gt;Email:&lt;/label&gt;</p>
+<p>&lt;input type=&quot;email&quot; name=&quot;email&quot; value=&quot;&lt;?= htmlspecialchars($email) ?&gt;&quot;&gt;</p>
+<p>&lt;?php if (isset($errors[&#39;email&#39;])): ?&gt;</p>
+<p>&lt;span style=&quot;color:red&quot;&gt;&lt;?= $errors[&#39;email&#39;] ?&gt;&lt;/span&gt;</p>
+<p>&lt;?php endif; ?&gt;</p>
+<p>&lt;/div&gt;</p>
+        
+<p>&lt;div&gt;</p>
+<p>&lt;label&gt;Password:&lt;/label&gt;</p>
+<p>&lt;input type=&quot;password&quot; name=&quot;password&quot;&gt;</p>
+<p>&lt;?php if (isset($errors[&#39;password&#39;])): ?&gt;</p>
+<p>&lt;span style=&quot;color:red&quot;&gt;&lt;?= $errors[&#39;password&#39;] ?&gt;&lt;/span&gt;</p>
+<p>&lt;?php endif; ?&gt;</p>
+<p>&lt;/div&gt;</p>
+        
+<p>&lt;button type=&quot;submit&quot;&gt;Thêm&lt;/button&gt;</p>
+<p>&lt;a href=&quot;index.php&quot;&gt;Hủy&lt;/a&gt;</p>
+<p>&lt;/form&gt;</p>
+<p>&lt;/body&gt;</p>
+<p>&lt;/html&gt;</p>
+</div>
+
+<p>---</p>
+
+<p># THỰC HÀNH</p>
+
+        </div>
+        <!-- Slide 6: BÀI 1: CRUD Products -->
+        <div class="slide">
+            <h1>BÀI 1: CRUD Products</h1>
+            
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Danh sách products</li>
+<li>Thêm, sửa, xóa product</li>
+<li>Tìm kiếm theo tên</li></ul>
+
+        </div>
+        <!-- Slide 7: BÀI 2: Phân Trang -->
+        <div class="slide">
+            <h1>BÀI 2: Phân Trang</h1>
+            
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Hiển thị 10 records/trang</li>
+<li>Navigation (Previous, Next, Page numbers)</li></ul>
+
+<p>---</p>
+
+<p># ✅ KIẾN THỨC CẦN ĐẠT</p>
+
+<ul><li>[ ] Kết nối PHP với MySQL</li>
+<li>[ ] Sử dụng PDO và Prepared Statements</li>
+<li>[ ] Thực hiện CRUD operations</li>
+<li>[ ] Xây dựng Database class</li></ul>
+
+<p>---</p>
+
+<strong>Chương tiếp theo: [Buổi 11 - Programming Techniques →](./buoi_11_programming_techniques.md)</strong>
+
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">7</span></span>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 7;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            }
+            if (n < 1) {
+                currentSlide = 1;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

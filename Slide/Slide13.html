@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INS3064: Session 13: Cookies & Sessions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 50px;
+            min-height: 700px;
+            background: white;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        .slide h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .slide p {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .slide strong {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.95em;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .box-info {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .box-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            color: #333;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+                <!-- Slide 1: Title Slide -->
+        <div class="slide active">
+            <div class="header-section">
+                <h1>🎓 INS3064</h1>
+                <h2>Multimedia Design & Web Development</h2>
+                <p style="font-size: 1.2em; margin-top: 30px; color: #667eea;"><strong>Session 13: Cookies & Sessions</strong></p>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 1.1em; margin: 20px 0;">Course Code: <strong>INS3064</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Instructor: <strong>M.Sc. Hieu Ta Chi</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Host Department: <strong>Applied Sciences Department - IS-VNU</strong></p>
+            </div>
+        </div>
+        <!-- Slide 2: 1. COOKIES -->
+        <div class="slide">
+            <h1>1. COOKIES</h1>
+            
+<h3>1.1 Cookie Là Gì?</h3>
+
+<strong>Cookie</strong> = Dữ liệu nhỏ lưu trên browser của người dùng.
+
+<h3>1.2 Tạo Cookie</h3>
+
+<div class="code-block">&lt;?php
+<p>// Tạo cookie</p>
+<p>setcookie(&quot;username&quot;, &quot;john&quot;, time() + 3600);  // 1 giờ</p>
+<p>setcookie(&quot;theme&quot;, &quot;dark&quot;, time() + (86400 * 30));  // 30 ngày</p>
+
+<p>// Cookie với options (PHP 7.3+)</p>
+<p>setcookie(&quot;remember&quot;, &quot;yes&quot;, [</p>
+<p>&#39;expires&#39; =&gt; time() + (86400 * 30),</p>
+<p>&#39;path&#39; =&gt; &#39;/&#39;,</p>
+<p>&#39;domain&#39; =&gt; &#39;&#39;,</p>
+<p>&#39;secure&#39; =&gt; true,</p>
+<p>&#39;httponly&#39; =&gt; true,</p>
+<p>&#39;samesite&#39; =&gt; &#39;Strict&#39;</p>
+<p>]);</p>
+<p>?&gt;</p>
+</div>
+
+<h3>1.3 Đọc Cookie</h3>
+
+<div class="code-block">&lt;?php
+<p>// Đọc cookie</p>
+<p>$username = $_COOKIE[&#39;username&#39;] ?? &#39;Guest&#39;;</p>
+
+<p>// Kiểm tra tồn tại</p>
+<p>if (isset($_COOKIE[&#39;theme&#39;])) {</p>
+<p>$theme = $_COOKIE[&#39;theme&#39;];</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<h3>1.4 Xóa Cookie</h3>
+
+<div class="code-block">&lt;?php
+<p>// Xóa cookie (set thời gian quá khứ)</p>
+<p>setcookie(&quot;username&quot;, &quot;&quot;, time() - 3600);</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 3: 2. SESSIONS -->
+        <div class="slide">
+            <h1>2. SESSIONS</h1>
+            
+<h3>2.1 Session Là Gì?</h3>
+
+<strong>Session</strong> = Dữ liệu lưu trên server, định danh bằng session ID.
+
+<h3>2.2 Khởi Tạo Session</h3>
+
+<div class="code-block">&lt;?php
+<p>// Phải gọi đầu tiên, trước bất kỳ output nào</p>
+<p>session_start();</p>
+
+<p>// Lưu dữ liệu</p>
+<p>$_SESSION[&#39;user_id&#39;] = 1;</p>
+<p>$_SESSION[&#39;username&#39;] = &#39;john&#39;;</p>
+<p>$_SESSION[&#39;role&#39;] = &#39;admin&#39;;</p>
+
+<p>// Đọc dữ liệu</p>
+<p>$userId = $_SESSION[&#39;user_id&#39;] ?? null;</p>
+
+<p>// Kiểm tra tồn tại</p>
+<p>if (isset($_SESSION[&#39;user_id&#39;])) {</p>
+<p>echo &quot;Logged in as: &quot; . $_SESSION[&#39;username&#39;];</p>
+<p>}</p>
+
+<p>// Xóa một session variable</p>
+<p>unset($_SESSION[&#39;temp_data&#39;]);</p>
+
+<p>// Xóa tất cả session</p>
+<p>session_destroy();</p>
+<p>?&gt;</p>
+</div>
+
+<h3>2.3 So Sánh Cookie vs Session</h3>
+
+<p>| Đặc điểm | Cookie | Session |</p>
+<p>|----------|--------|---------|</p>
+<p>| Lưu trữ | Browser | Server |</p>
+<p>| Dung lượng | 4KB | Không giới hạn |</p>
+<p>| Bảo mật | Kém (client-side) | Tốt (server-side) |</p>
+<p>| Thời gian | Tùy chỉnh | Đến khi đóng browser |</p>
+<p>| Sử dụng | Remember me, preferences | User authentication |</p>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 4: 3. HỆ THỐNG ĐĂNG NHẬP -->
+        <div class="slide">
+            <h1>3. HỆ THỐNG ĐĂNG NHẬP</h1>
+            
+<h3>3.1 Database</h3>
+
+<div class="code-block">CREATE TABLE users (
+<p>id INT AUTO_INCREMENT PRIMARY KEY,</p>
+<p>username VARCHAR(50) UNIQUE NOT NULL,</p>
+<p>email VARCHAR(100) UNIQUE NOT NULL,</p>
+<p>password VARCHAR(255) NOT NULL,</p>
+<p>role ENUM(&#39;admin&#39;, &#39;user&#39;) DEFAULT &#39;user&#39;,</p>
+<p>created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP</p>
+<p>);</p>
+
+<p>-- Insert user mẫu (password: 123456)</p>
+<p>INSERT INTO users (username, email, password, role) VALUES</p>
+<p>(&#39;admin&#39;, &#39;admin@email.com&#39;, &#39;$2y$10$...&#39;, &#39;admin&#39;);</p>
+</div>
+
+<h3>3.2 Register</h3>
+
+<div class="code-block">&lt;?php
+<p>// register.php</p>
+<p>session_start();</p>
+<p>require_once &#39;classes/Database.php&#39;;</p>
+
+<p>$errors = [];</p>
+<p>$data = [&#39;username&#39; =&gt; &#39;&#39;, &#39;email&#39; =&gt; &#39;&#39;];</p>
+
+<p>if ($_SERVER[&#39;REQUEST_METHOD&#39;] === &#39;POST&#39;) {</p>
+<p>$data = [</p>
+<p>&#39;username&#39; =&gt; trim($_POST[&#39;username&#39;] ?? &#39;&#39;),</p>
+<p>&#39;email&#39; =&gt; trim($_POST[&#39;email&#39;] ?? &#39;&#39;),</p>
+<p>&#39;password&#39; =&gt; $_POST[&#39;password&#39;] ?? &#39;&#39;,</p>
+<p>&#39;confirm_password&#39; =&gt; $_POST[&#39;confirm_password&#39;] ?? &#39;&#39;</p>
+<p>];</p>
+    
+<p>// Validation</p>
+<p>if (empty($data[&#39;username&#39;])) {</p>
+<p>$errors[&#39;username&#39;] = &quot;Username is required&quot;;</p>
+<p>} elseif (strlen($data[&#39;username&#39;]) &lt; 3) {</p>
+<p>$errors[&#39;username&#39;] = &quot;Username min 3 characters&quot;;</p>
+<p>}</p>
+    
+<p>if (empty($data[&#39;email&#39;])) {</p>
+<p>$errors[&#39;email&#39;] = &quot;Email is required&quot;;</p>
+<p>} elseif (!filter_var($data[&#39;email&#39;], FILTER_VALIDATE_EMAIL)) {</p>
+<p>$errors[&#39;email&#39;] = &quot;Invalid email&quot;;</p>
+<p>}</p>
+    
+<p>if (strlen($data[&#39;password&#39;]) &lt; 6) {</p>
+<p>$errors[&#39;password&#39;] = &quot;Password min 6 characters&quot;;</p>
+<p>}</p>
+    
+<p>if ($data[&#39;password&#39;] !== $data[&#39;confirm_password&#39;]) {</p>
+<p>$errors[&#39;confirm_password&#39;] = &quot;Passwords do not match&quot;;</p>
+<p>}</p>
+    
+<p>if (empty($errors)) {</p>
+<p>$db = Database::getInstance();</p>
+        
+<p>// Check existing</p>
+<p>$existing = $db-&gt;fetch(</p>
+<p>&quot;SELECT id FROM users WHERE username = ? OR email = ?&quot;,</p>
+<p>[$data[&#39;username&#39;], $data[&#39;email&#39;]]</p>
+<p>);</p>
+        
+<p>if ($existing) {</p>
+<p>$errors[&#39;username&#39;] = &quot;Username or email already exists&quot;;</p>
+<p>} else {</p>
+<p>// Insert user</p>
+<p>$db-&gt;query(</p>
+<p>&quot;INSERT INTO users (username, email, password) VALUES (?, ?, ?)&quot;,</p>
+<p>[</p>
+<p>$data[&#39;username&#39;],</p>
+<p>$data[&#39;email&#39;],</p>
+<p>password_hash($data[&#39;password&#39;], PASSWORD_DEFAULT)</p>
+<p>]</p>
+<p>);</p>
+            
+<p>$_SESSION[&#39;success&#39;] = &quot;Registration successful! Please login.&quot;;</p>
+<p>header(&#39;Location: login.php&#39;);</p>
+<p>exit;</p>
+<p>}</p>
+<p>}</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<h3>3.3 Login</h3>
+
+<div class="code-block">&lt;?php
+<p>// login.php</p>
+<p>session_start();</p>
+<p>require_once &#39;classes/Database.php&#39;;</p>
+
+<p>// Redirect if already logged in</p>
+<p>if (isset($_SESSION[&#39;user_id&#39;])) {</p>
+<p>header(&#39;Location: dashboard.php&#39;);</p>
+<p>exit;</p>
+<p>}</p>
+
+<p>$errors = [];</p>
+<p>$username = &#39;&#39;;</p>
+
+<p>if ($_SERVER[&#39;REQUEST_METHOD&#39;] === &#39;POST&#39;) {</p>
+<p>$username = trim($_POST[&#39;username&#39;] ?? &#39;&#39;);</p>
+<p>$password = $_POST[&#39;password&#39;] ?? &#39;&#39;;</p>
+<p>$remember = isset($_POST[&#39;remember&#39;]);</p>
+    
+<p>if (empty($username) || empty($password)) {</p>
+<p>$errors[&#39;login&#39;] = &quot;Please enter username and password&quot;;</p>
+<p>} else {</p>
+<p>$db = Database::getInstance();</p>
+<p>$user = $db-&gt;fetch(</p>
+<p>&quot;SELECT * FROM users WHERE username = ? OR email = ?&quot;,</p>
+<p>[$username, $username]</p>
+<p>);</p>
+        
+<p>if ($user &amp;&amp; password_verify($password, $user[&#39;password&#39;])) {</p>
+<p>// Login success</p>
+<p>$_SESSION[&#39;user_id&#39;] = $user[&#39;id&#39;];</p>
+<p>$_SESSION[&#39;username&#39;] = $user[&#39;username&#39;];</p>
+<p>$_SESSION[&#39;role&#39;] = $user[&#39;role&#39;];</p>
+            
+<p>// Remember me</p>
+<p>if ($remember) {</p>
+<p>$token = bin2hex(random_bytes(32));</p>
+<p>setcookie(&#39;remember_token&#39;, $token, time() + (86400 * 30), &#39;/&#39;, &#39;&#39;, false, true);</p>
+<p>// Save token to database...</p>
+<p>}</p>
+            
+<p>header(&#39;Location: dashboard.php&#39;);</p>
+<p>exit;</p>
+<p>} else {</p>
+<p>$errors[&#39;login&#39;] = &quot;Invalid username or password&quot;;</p>
+<p>}</p>
+<p>}</p>
+<p>}</p>
+<p>?&gt;</p>
+
+<p>&lt;!DOCTYPE html&gt;</p>
+<p>&lt;html&gt;</p>
+<p>&lt;head&gt;</p>
+<p>&lt;title&gt;Login&lt;/title&gt;</p>
+<p>&lt;link href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css&quot; rel=&quot;stylesheet&quot;&gt;</p>
+<p>&lt;/head&gt;</p>
+<p>&lt;body class=&quot;bg-light&quot;&gt;</p>
+<p>&lt;div class=&quot;container&quot;&gt;</p>
+<p>&lt;div class=&quot;row justify-content-center mt-5&quot;&gt;</p>
+<p>&lt;div class=&quot;col-md-4&quot;&gt;</p>
+<p>&lt;div class=&quot;card&quot;&gt;</p>
+<p>&lt;div class=&quot;card-header text-center&quot;&gt;</p>
+<p>&lt;h4&gt;🔐 Login&lt;/h4&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;div class=&quot;card-body&quot;&gt;</p>
+<p>&lt;?php if (isset($_SESSION[&#39;success&#39;])): ?&gt;</p>
+<p>&lt;div class=&quot;alert alert-success&quot;&gt;&lt;?= $_SESSION[&#39;success&#39;] ?&gt;&lt;/div&gt;</p>
+<p>&lt;?php unset($_SESSION[&#39;success&#39;]); ?&gt;</p>
+<p>&lt;?php endif; ?&gt;</p>
+                        
+<p>&lt;?php if (isset($errors[&#39;login&#39;])): ?&gt;</p>
+<p>&lt;div class=&quot;alert alert-danger&quot;&gt;&lt;?= $errors[&#39;login&#39;] ?&gt;&lt;/div&gt;</p>
+<p>&lt;?php endif; ?&gt;</p>
+                        
+<p>&lt;form method=&quot;POST&quot;&gt;</p>
+<p>&lt;div class=&quot;mb-3&quot;&gt;</p>
+<p>&lt;label&gt;Username or Email&lt;/label&gt;</p>
+<p>&lt;input type=&quot;text&quot; name=&quot;username&quot; class=&quot;form-control&quot;</p>
+<p>value=&quot;&lt;?= htmlspecialchars($username) ?&gt;&quot;&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;div class=&quot;mb-3&quot;&gt;</p>
+<p>&lt;label&gt;Password&lt;/label&gt;</p>
+<p>&lt;input type=&quot;password&quot; name=&quot;password&quot; class=&quot;form-control&quot;&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;div class=&quot;mb-3 form-check&quot;&gt;</p>
+<p>&lt;input type=&quot;checkbox&quot; name=&quot;remember&quot; class=&quot;form-check-input&quot; id=&quot;remember&quot;&gt;</p>
+<p>&lt;label class=&quot;form-check-label&quot; for=&quot;remember&quot;&gt;Remember me&lt;/label&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;button type=&quot;submit&quot; class=&quot;btn btn-primary w-100&quot;&gt;Login&lt;/button&gt;</p>
+<p>&lt;/form&gt;</p>
+<p>&lt;p class=&quot;mt-3 text-center&quot;&gt;</p>
+<p>Don&#39;t have account? &lt;a href=&quot;register.php&quot;&gt;Register&lt;/a&gt;</p>
+<p>&lt;/p&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;/body&gt;</p>
+<p>&lt;/html&gt;</p>
+</div>
+
+<h3>3.4 Auth Middleware</h3>
+
+<div class="code-block">&lt;?php
+<p>// includes/auth.php</p>
+<p>session_start();</p>
+
+<p>function isLoggedIn() {</p>
+<p>return isset($_SESSION[&#39;user_id&#39;]);</p>
+<p>}</p>
+
+<p>function requireLogin() {</p>
+<p>if (!isLoggedIn()) {</p>
+<p>header(&#39;Location: login.php&#39;);</p>
+<p>exit;</p>
+<p>}</p>
+<p>}</p>
+
+<p>function requireAdmin() {</p>
+<p>requireLogin();</p>
+<p>if ($_SESSION[&#39;role&#39;] !== &#39;admin&#39;) {</p>
+<p>header(&#39;Location: unauthorized.php&#39;);</p>
+<p>exit;</p>
+<p>}</p>
+<p>}</p>
+
+<p>function getCurrentUser() {</p>
+<p>if (!isLoggedIn()) return null;</p>
+<p>return [</p>
+<p>&#39;id&#39; =&gt; $_SESSION[&#39;user_id&#39;],</p>
+<p>&#39;username&#39; =&gt; $_SESSION[&#39;username&#39;],</p>
+<p>&#39;role&#39; =&gt; $_SESSION[&#39;role&#39;]</p>
+<p>];</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<h3>3.5 Logout</h3>
+
+<div class="code-block">&lt;?php
+<p>// logout.php</p>
+<p>session_start();</p>
+
+<p>// Clear session</p>
+<p>$_SESSION = [];</p>
+
+<p>// Delete session cookie</p>
+<p>if (ini_get(&quot;session.use_cookies&quot;)) {</p>
+<p>$params = session_get_cookie_params();</p>
+<p>setcookie(session_name(), &#39;&#39;, time() - 42000, $params[&quot;path&quot;]);</p>
+<p>}</p>
+
+<p>// Delete remember cookie</p>
+<p>setcookie(&#39;remember_token&#39;, &#39;&#39;, time() - 3600, &#39;/&#39;);</p>
+
+<p>// Destroy session</p>
+<p>session_destroy();</p>
+
+<p>header(&#39;Location: login.php&#39;);</p>
+<p>exit;</p>
+<p>?&gt;</p>
+</div>
+
+<h3>3.6 Protected Page</h3>
+
+<div class="code-block">&lt;?php
+<p>// dashboard.php</p>
+<p>require_once &#39;includes/auth.php&#39;;</p>
+<p>requireLogin();</p>
+
+<p>$user = getCurrentUser();</p>
+<p>?&gt;</p>
+
+<p>&lt;!DOCTYPE html&gt;</p>
+<p>&lt;html&gt;</p>
+<p>&lt;head&gt;&lt;title&gt;Dashboard&lt;/title&gt;&lt;/head&gt;</p>
+<p>&lt;body&gt;</p>
+<p>&lt;h1&gt;Welcome, &lt;?= htmlspecialchars($user[&#39;username&#39;]) ?&gt;!&lt;/h1&gt;</p>
+<p>&lt;p&gt;Role: &lt;?= $user[&#39;role&#39;] ?&gt;&lt;/p&gt;</p>
+<p>&lt;a href=&quot;logout.php&quot;&gt;Logout&lt;/a&gt;</p>
+<p>&lt;/body&gt;</p>
+<p>&lt;/html&gt;</p>
+</div>
+
+<p>---</p>
+
+<p># THỰC HÀNH</p>
+
+        </div>
+        <!-- Slide 5: BÀI 1: Hoàn Thiện Auth System -->
+        <div class="slide">
+            <h1>BÀI 1: Hoàn Thiện Auth System</h1>
+            
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Register với validation</li>
+<li>Login với remember me</li>
+<li>Profile page</li>
+<li>Change password</li></ul>
+
+        </div>
+        <!-- Slide 6: BÀI 2: Role-based Access -->
+        <div class="slide">
+            <h1>BÀI 2: Role-based Access</h1>
+            
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Admin dashboard (chỉ admin)</li>
+<li>User dashboard</li>
+<li>Unauthorized page</li></ul>
+
+<p>---</p>
+
+<p># ✅ KIẾN THỨC CẦN ĐẠT</p>
+
+<ul><li>[ ] Hiểu Cookies và Sessions</li>
+<li>[ ] Xây dựng được hệ thống đăng nhập</li>
+<li>[ ] Quản lý trạng thái người dùng</li>
+<li>[ ] Bảo mật session</li></ul>
+
+<p>---</p>
+
+<strong>Chương tiếp theo: [Buổi 14 - Security Methods →](./buoi_14_security_methods.md)</strong>
+
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">6</span></span>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 6;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            }
+            if (n < 1) {
+                currentSlide = 1;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

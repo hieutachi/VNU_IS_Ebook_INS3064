@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INS3064: Session 12: Web App Development</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 50px;
+            min-height: 700px;
+            background: white;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        .slide h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .slide p {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .slide strong {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.95em;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .box-info {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .box-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            color: #333;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+                <!-- Slide 1: Title Slide -->
+        <div class="slide active">
+            <div class="header-section">
+                <h1>🎓 INS3064</h1>
+                <h2>Multimedia Design & Web Development</h2>
+                <p style="font-size: 1.2em; margin-top: 30px; color: #667eea;"><strong>Session 12: Web App Development</strong></p>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 1.1em; margin: 20px 0;">Course Code: <strong>INS3064</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Instructor: <strong>M.Sc. Hieu Ta Chi</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Host Department: <strong>Applied Sciences Department - IS-VNU</strong></p>
+            </div>
+        </div>
+        <!-- Slide 2: 1. CẤU TRÚC DỰ ÁN -->
+        <div class="slide">
+            <h1>1. CẤU TRÚC DỰ ÁN</h1>
+            
+<div class="code-block">product_management/
+<p>├── config/</p>
+<p>│   └── database.php</p>
+<p>├── classes/</p>
+<p>│   └── Database.php</p>
+<p>├── includes/</p>
+<p>│   ├── header.php</p>
+<p>│   └── footer.php</p>
+<p>├── products/</p>
+<p>│   ├── index.php</p>
+<p>│   ├── create.php</p>
+<p>│   ├── edit.php</p>
+<p>│   └── delete.php</p>
+<p>├── assets/</p>
+<p>│   └── css/</p>
+<p>│       └── style.css</p>
+<p>└── index.php</p>
+</div>
+
+        </div>
+        <!-- Slide 3: 2. DATABASE -->
+        <div class="slide">
+            <h1>2. DATABASE</h1>
+            
+<div class="code-block">CREATE DATABASE product_management;
+<p>USE product_management;</p>
+
+<p>CREATE TABLE categories (</p>
+<p>id INT AUTO_INCREMENT PRIMARY KEY,</p>
+<p>name VARCHAR(100) NOT NULL,</p>
+<p>created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP</p>
+<p>);</p>
+
+<p>CREATE TABLE products (</p>
+<p>id INT AUTO_INCREMENT PRIMARY KEY,</p>
+<p>name VARCHAR(255) NOT NULL,</p>
+<p>description TEXT,</p>
+<p>price DECIMAL(10,2) NOT NULL,</p>
+<p>stock INT DEFAULT 0,</p>
+<p>category_id INT,</p>
+<p>image VARCHAR(255),</p>
+<p>created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,</p>
+<p>FOREIGN KEY (category_id) REFERENCES categories(id)</p>
+<p>);</p>
+
+<p>-- Sample data</p>
+<p>INSERT INTO categories (name) VALUES (&#39;Electronics&#39;), (&#39;Clothing&#39;), (&#39;Books&#39;);</p>
+<p>INSERT INTO products (name, price, stock, category_id) VALUES</p>
+<p>(&#39;Laptop&#39;, 999.99, 10, 1),</p>
+<p>(&#39;T-Shirt&#39;, 19.99, 50, 2),</p>
+<p>(&#39;PHP Book&#39;, 39.99, 20, 3);</p>
+</div>
+
+        </div>
+        <!-- Slide 4: 3. CODE CHÍNH -->
+        <div class="slide">
+            <h1>3. CODE CHÍNH</h1>
+            
+<h3>3.1 Config</h3>
+
+<div class="code-block">&lt;?php
+<p>// config/database.php</p>
+<p>return [</p>
+<p>&#39;host&#39; =&gt; &#39;localhost&#39;,</p>
+<p>&#39;dbname&#39; =&gt; &#39;product_management&#39;,</p>
+<p>&#39;username&#39; =&gt; &#39;root&#39;,</p>
+<p>&#39;password&#39; =&gt; &#39;&#39;,</p>
+<p>&#39;charset&#39; =&gt; &#39;utf8mb4&#39;</p>
+<p>];</p>
+</div>
+
+<h3>3.2 Database Class</h3>
+
+<div class="code-block">&lt;?php
+<p>// classes/Database.php</p>
+<p>class Database {</p>
+<p>private static $instance = null;</p>
+<p>private $pdo;</p>
+    
+<p>private function __construct() {</p>
+<p>$config = require __DIR__ . &#39;/../config/database.php&#39;;</p>
+<p>$dsn = &quot;mysql:host={$config[&#39;host&#39;]};dbname={$config[&#39;dbname&#39;]};charset={$config[&#39;charset&#39;]}&quot;;</p>
+        
+<p>$this-&gt;pdo = new PDO($dsn, $config[&#39;username&#39;], $config[&#39;password&#39;], [</p>
+<p>PDO::ATTR_ERRMODE =&gt; PDO::ERRMODE_EXCEPTION,</p>
+<p>PDO::ATTR_DEFAULT_FETCH_MODE =&gt; PDO::FETCH_ASSOC</p>
+<p>]);</p>
+<p>}</p>
+    
+<p>public static function getInstance() {</p>
+<p>if (self::$instance === null) {</p>
+<p>self::$instance = new self();</p>
+<p>}</p>
+<p>return self::$instance;</p>
+<p>}</p>
+    
+<p>public function query($sql, $params = []) {</p>
+<p>$stmt = $this-&gt;pdo-&gt;prepare($sql);</p>
+<p>$stmt-&gt;execute($params);</p>
+<p>return $stmt;</p>
+<p>}</p>
+    
+<p>public function fetchAll($sql, $params = []) {</p>
+<p>return $this-&gt;query($sql, $params)-&gt;fetchAll();</p>
+<p>}</p>
+    
+<p>public function fetch($sql, $params = []) {</p>
+<p>return $this-&gt;query($sql, $params)-&gt;fetch();</p>
+<p>}</p>
+    
+<p>public function lastInsertId() {</p>
+<p>return $this-&gt;pdo-&gt;lastInsertId();</p>
+<p>}</p>
+<p>}</p>
+</div>
+
+<h3>3.3 Header</h3>
+
+<div class="code-block">&lt;?php
+<p>// includes/header.php</p>
+<p>?&gt;</p>
+<p>&lt;!DOCTYPE html&gt;</p>
+<p>&lt;html lang=&quot;vi&quot;&gt;</p>
+<p>&lt;head&gt;</p>
+<p>&lt;meta charset=&quot;UTF-8&quot;&gt;</p>
+<p>&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;</p>
+<p>&lt;title&gt;&lt;?= $pageTitle ?? &#39;Product Management&#39; ?&gt;&lt;/title&gt;</p>
+<p>&lt;link href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css&quot; rel=&quot;stylesheet&quot;&gt;</p>
+<p>&lt;style&gt;</p>
+<p>.navbar { margin-bottom: 20px; }</p>
+<p>.card { margin-bottom: 20px; }</p>
+<p>&lt;/style&gt;</p>
+<p>&lt;/head&gt;</p>
+<p>&lt;body&gt;</p>
+<p>&lt;nav class=&quot;navbar navbar-expand-lg navbar-dark bg-primary&quot;&gt;</p>
+<p>&lt;div class=&quot;container&quot;&gt;</p>
+<p>&lt;a class=&quot;navbar-brand&quot; href=&quot;/product_management/&quot;&gt;🛒 Product Management&lt;/a&gt;</p>
+<p>&lt;div class=&quot;navbar-nav&quot;&gt;</p>
+<p>&lt;a class=&quot;nav-link&quot; href=&quot;/product_management/products/&quot;&gt;Products&lt;/a&gt;</p>
+<p>&lt;a class=&quot;nav-link&quot; href=&quot;/product_management/products/create.php&quot;&gt;Add Product&lt;/a&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;/nav&gt;</p>
+<p>&lt;div class=&quot;container&quot;&gt;</p>
+</div>
+
+<h3>3.4 Footer</h3>
+
+<div class="code-block">&lt;?php
+<p>// includes/footer.php</p>
+<p>?&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;footer class=&quot;text-center mt-5 py-3 bg-light&quot;&gt;</p>
+<p>&lt;p&gt;&amp;copy; &lt;?= date(&#39;Y&#39;) ?&gt; Product Management - INS3064&lt;/p&gt;</p>
+<p>&lt;/footer&gt;</p>
+<p>&lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;</p>
+<p>&lt;/body&gt;</p>
+<p>&lt;/html&gt;</p>
+</div>
+
+<h3>3.5 Products List</h3>
+
+<div class="code-block">&lt;?php
+<p>// products/index.php</p>
+<p>require_once &#39;../classes/Database.php&#39;;</p>
+
+<p>$db = Database::getInstance();</p>
+
+<p>// Search</p>
+<p>$search = $_GET[&#39;search&#39;] ?? &#39;&#39;;</p>
+<p>$category = $_GET[&#39;category&#39;] ?? &#39;&#39;;</p>
+
+<p>$sql = &quot;SELECT p.*, c.name as category_name</p>
+<p>FROM products p</p>
+<p>LEFT JOIN categories c ON p.category_id = c.id</p>
+<p>WHERE 1=1&quot;;</p>
+<p>$params = [];</p>
+
+<p>if ($search) {</p>
+<p>$sql .= &quot; AND p.name LIKE ?&quot;;</p>
+<p>$params[] = &quot;%$search%&quot;;</p>
+<p>}</p>
+
+<p>if ($category) {</p>
+<p>$sql .= &quot; AND p.category_id = ?&quot;;</p>
+<p>$params[] = $category;</p>
+<p>}</p>
+
+<p>$sql .= &quot; ORDER BY p.created_at DESC&quot;;</p>
+<p>$products = $db-&gt;fetchAll($sql, $params);</p>
+<p>$categories = $db-&gt;fetchAll(&quot;SELECT * FROM categories&quot;);</p>
+
+<p>$pageTitle = &quot;Products&quot;;</p>
+<p>include &#39;../includes/header.php&#39;;</p>
+<p>?&gt;</p>
+
+<p>&lt;h1&gt;📦 Products&lt;/h1&gt;</p>
+
+<p>&lt;?php if (isset($_GET[&#39;success&#39;])): ?&gt;</p>
+<p>&lt;div class=&quot;alert alert-success&quot;&gt;Operation successful!&lt;/div&gt;</p>
+<p>&lt;?php endif; ?&gt;</p>
+
+<p>&lt;!-- Search Form --&gt;</p>
+<p>&lt;div class=&quot;card&quot;&gt;</p>
+<p>&lt;div class=&quot;card-body&quot;&gt;</p>
+<p>&lt;form method=&quot;GET&quot; class=&quot;row g-3&quot;&gt;</p>
+<p>&lt;div class=&quot;col-md-4&quot;&gt;</p>
+<p>&lt;input type=&quot;text&quot; name=&quot;search&quot; class=&quot;form-control&quot;</p>
+<p>placeholder=&quot;Search...&quot; value=&quot;&lt;?= htmlspecialchars($search) ?&gt;&quot;&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;div class=&quot;col-md-3&quot;&gt;</p>
+<p>&lt;select name=&quot;category&quot; class=&quot;form-select&quot;&gt;</p>
+<p>&lt;option value=&quot;&quot;&gt;All Categories&lt;/option&gt;</p>
+<p>&lt;?php foreach ($categories as $cat): ?&gt;</p>
+<p>&lt;option value=&quot;&lt;?= $cat[&#39;id&#39;] ?&gt;&quot; &lt;?= $category == $cat[&#39;id&#39;] ? &#39;selected&#39; : &#39;&#39; ?&gt;&gt;</p>
+<p>&lt;?= htmlspecialchars($cat[&#39;name&#39;]) ?&gt;</p>
+<p>&lt;/option&gt;</p>
+<p>&lt;?php endforeach; ?&gt;</p>
+<p>&lt;/select&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;div class=&quot;col-md-2&quot;&gt;</p>
+<p>&lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot;&gt;Search&lt;/button&gt;</p>
+<p>&lt;a href=&quot;index.php&quot; class=&quot;btn btn-secondary&quot;&gt;Reset&lt;/a&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;/form&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;/div&gt;</p>
+
+<p>&lt;!-- Products Table --&gt;</p>
+<p>&lt;div class=&quot;card&quot;&gt;</p>
+<p>&lt;div class=&quot;card-header d-flex justify-content-between&quot;&gt;</p>
+<p>&lt;span&gt;Products (&lt;?= count($products) ?&gt;)&lt;/span&gt;</p>
+<p>&lt;a href=&quot;create.php&quot; class=&quot;btn btn-success btn-sm&quot;&gt;+ Add Product&lt;/a&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;div class=&quot;card-body&quot;&gt;</p>
+<p>&lt;table class=&quot;table table-striped&quot;&gt;</p>
+<p>&lt;thead&gt;</p>
+<p>&lt;tr&gt;</p>
+<p>&lt;th&gt;ID&lt;/th&gt;</p>
+<p>&lt;th&gt;Name&lt;/th&gt;</p>
+<p>&lt;th&gt;Category&lt;/th&gt;</p>
+<p>&lt;th&gt;Price&lt;/th&gt;</p>
+<p>&lt;th&gt;Stock&lt;/th&gt;</p>
+<p>&lt;th&gt;Actions&lt;/th&gt;</p>
+<p>&lt;/tr&gt;</p>
+<p>&lt;/thead&gt;</p>
+<p>&lt;tbody&gt;</p>
+<p>&lt;?php foreach ($products as $product): ?&gt;</p>
+<p>&lt;tr&gt;</p>
+<p>&lt;td&gt;&lt;?= $product[&#39;id&#39;] ?&gt;&lt;/td&gt;</p>
+<p>&lt;td&gt;&lt;?= htmlspecialchars($product[&#39;name&#39;]) ?&gt;&lt;/td&gt;</p>
+<p>&lt;td&gt;&lt;?= htmlspecialchars($product[&#39;category_name&#39;] ?? &#39;N/A&#39;) ?&gt;&lt;/td&gt;</p>
+<p>&lt;td&gt;$&lt;?= number_format($product[&#39;price&#39;], 2) ?&gt;&lt;/td&gt;</p>
+<p>&lt;td&gt;</p>
+<p>&lt;span class=&quot;badge &lt;?= $product[&#39;stock&#39;] &gt; 0 ? &#39;bg-success&#39; : &#39;bg-danger&#39; ?&gt;&quot;&gt;</p>
+<p>&lt;?= $product[&#39;stock&#39;] ?&gt;</p>
+<p>&lt;/span&gt;</p>
+<p>&lt;/td&gt;</p>
+<p>&lt;td&gt;</p>
+<p>&lt;a href=&quot;edit.php?id=&lt;?= $product[&#39;id&#39;] ?&gt;&quot; class=&quot;btn btn-sm btn-warning&quot;&gt;Edit&lt;/a&gt;</p>
+<p>&lt;a href=&quot;delete.php?id=&lt;?= $product[&#39;id&#39;] ?&gt;&quot; class=&quot;btn btn-sm btn-danger&quot;</p>
+<p>onclick=&quot;return confirm(&#39;Delete this product?&#39;)&quot;&gt;Delete&lt;/a&gt;</p>
+<p>&lt;/td&gt;</p>
+<p>&lt;/tr&gt;</p>
+<p>&lt;?php endforeach; ?&gt;</p>
+<p>&lt;/tbody&gt;</p>
+<p>&lt;/table&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;/div&gt;</p>
+
+<p>&lt;?php include &#39;../includes/footer.php&#39;; ?&gt;</p>
+</div>
+
+<h3>3.6 Create Product</h3>
+
+<div class="code-block">&lt;?php
+<p>// products/create.php</p>
+<p>require_once &#39;../classes/Database.php&#39;;</p>
+
+<p>$db = Database::getInstance();</p>
+<p>$categories = $db-&gt;fetchAll(&quot;SELECT * FROM categories&quot;);</p>
+
+<p>$errors = [];</p>
+<p>$data = [&#39;name&#39; =&gt; &#39;&#39;, &#39;description&#39; =&gt; &#39;&#39;, &#39;price&#39; =&gt; &#39;&#39;, &#39;stock&#39; =&gt; &#39;&#39;, &#39;category_id&#39; =&gt; &#39;&#39;];</p>
+
+<p>if ($_SERVER[&#39;REQUEST_METHOD&#39;] === &#39;POST&#39;) {</p>
+<p>$data = [</p>
+<p>&#39;name&#39; =&gt; trim($_POST[&#39;name&#39;] ?? &#39;&#39;),</p>
+<p>&#39;description&#39; =&gt; trim($_POST[&#39;description&#39;] ?? &#39;&#39;),</p>
+<p>&#39;price&#39; =&gt; $_POST[&#39;price&#39;] ?? &#39;&#39;,</p>
+<p>&#39;stock&#39; =&gt; $_POST[&#39;stock&#39;] ?? 0,</p>
+<p>&#39;category_id&#39; =&gt; $_POST[&#39;category_id&#39;] ?? null</p>
+<p>];</p>
+    
+<p>// Validation</p>
+<p>if (empty($data[&#39;name&#39;])) $errors[&#39;name&#39;] = &quot;Name is required&quot;;</p>
+<p>if (!is_numeric($data[&#39;price&#39;]) || $data[&#39;price&#39;] &lt;= 0) $errors[&#39;price&#39;] = &quot;Valid price required&quot;;</p>
+    
+<p>if (empty($errors)) {</p>
+<p>$sql = &quot;INSERT INTO products (name, description, price, stock, category_id) VALUES (?, ?, ?, ?, ?)&quot;;</p>
+<p>$db-&gt;query($sql, [</p>
+<p>$data[&#39;name&#39;],</p>
+<p>$data[&#39;description&#39;],</p>
+<p>$data[&#39;price&#39;],</p>
+<p>$data[&#39;stock&#39;],</p>
+<p>$data[&#39;category_id&#39;] ?: null</p>
+<p>]);</p>
+        
+<p>header(&#39;Location: index.php?success=1&#39;);</p>
+<p>exit;</p>
+<p>}</p>
+<p>}</p>
+
+<p>$pageTitle = &quot;Add Product&quot;;</p>
+<p>include &#39;../includes/header.php&#39;;</p>
+<p>?&gt;</p>
+
+<p>&lt;h1&gt;➕ Add Product&lt;/h1&gt;</p>
+
+<p>&lt;div class=&quot;card&quot;&gt;</p>
+<p>&lt;div class=&quot;card-body&quot;&gt;</p>
+<p>&lt;form method=&quot;POST&quot;&gt;</p>
+<p>&lt;div class=&quot;mb-3&quot;&gt;</p>
+<p>&lt;label class=&quot;form-label&quot;&gt;Name *&lt;/label&gt;</p>
+<p>&lt;input type=&quot;text&quot; name=&quot;name&quot; class=&quot;form-control &lt;?= isset($errors[&#39;name&#39;]) ? &#39;is-invalid&#39; : &#39;&#39; ?&gt;&quot;</p>
+<p>value=&quot;&lt;?= htmlspecialchars($data[&#39;name&#39;]) ?&gt;&quot;&gt;</p>
+<p>&lt;?php if (isset($errors[&#39;name&#39;])): ?&gt;</p>
+<p>&lt;div class=&quot;invalid-feedback&quot;&gt;&lt;?= $errors[&#39;name&#39;] ?&gt;&lt;/div&gt;</p>
+<p>&lt;?php endif; ?&gt;</p>
+<p>&lt;/div&gt;</p>
+            
+<p>&lt;div class=&quot;mb-3&quot;&gt;</p>
+<p>&lt;label class=&quot;form-label&quot;&gt;Description&lt;/label&gt;</p>
+<p>&lt;textarea name=&quot;description&quot; class=&quot;form-control&quot; rows=&quot;3&quot;&gt;&lt;?= htmlspecialchars($data[&#39;description&#39;]) ?&gt;&lt;/textarea&gt;</p>
+<p>&lt;/div&gt;</p>
+            
+<p>&lt;div class=&quot;row&quot;&gt;</p>
+<p>&lt;div class=&quot;col-md-4 mb-3&quot;&gt;</p>
+<p>&lt;label class=&quot;form-label&quot;&gt;Price *&lt;/label&gt;</p>
+<p>&lt;input type=&quot;number&quot; name=&quot;price&quot; step=&quot;0.01&quot; class=&quot;form-control &lt;?= isset($errors[&#39;price&#39;]) ? &#39;is-invalid&#39; : &#39;&#39; ?&gt;&quot;</p>
+<p>value=&quot;&lt;?= htmlspecialchars($data[&#39;price&#39;]) ?&gt;&quot;&gt;</p>
+<p>&lt;?php if (isset($errors[&#39;price&#39;])): ?&gt;</p>
+<p>&lt;div class=&quot;invalid-feedback&quot;&gt;&lt;?= $errors[&#39;price&#39;] ?&gt;&lt;/div&gt;</p>
+<p>&lt;?php endif; ?&gt;</p>
+<p>&lt;/div&gt;</p>
+                
+<p>&lt;div class=&quot;col-md-4 mb-3&quot;&gt;</p>
+<p>&lt;label class=&quot;form-label&quot;&gt;Stock&lt;/label&gt;</p>
+<p>&lt;input type=&quot;number&quot; name=&quot;stock&quot; class=&quot;form-control&quot; value=&quot;&lt;?= htmlspecialchars($data[&#39;stock&#39;]) ?&gt;&quot;&gt;</p>
+<p>&lt;/div&gt;</p>
+                
+<p>&lt;div class=&quot;col-md-4 mb-3&quot;&gt;</p>
+<p>&lt;label class=&quot;form-label&quot;&gt;Category&lt;/label&gt;</p>
+<p>&lt;select name=&quot;category_id&quot; class=&quot;form-select&quot;&gt;</p>
+<p>&lt;option value=&quot;&quot;&gt;-- Select --&lt;/option&gt;</p>
+<p>&lt;?php foreach ($categories as $cat): ?&gt;</p>
+<p>&lt;option value=&quot;&lt;?= $cat[&#39;id&#39;] ?&gt;&quot; &lt;?= $data[&#39;category_id&#39;] == $cat[&#39;id&#39;] ? &#39;selected&#39; : &#39;&#39; ?&gt;&gt;</p>
+<p>&lt;?= htmlspecialchars($cat[&#39;name&#39;]) ?&gt;</p>
+<p>&lt;/option&gt;</p>
+<p>&lt;?php endforeach; ?&gt;</p>
+<p>&lt;/select&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;/div&gt;</p>
+            
+<p>&lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot;&gt;Save&lt;/button&gt;</p>
+<p>&lt;a href=&quot;index.php&quot; class=&quot;btn btn-secondary&quot;&gt;Cancel&lt;/a&gt;</p>
+<p>&lt;/form&gt;</p>
+<p>&lt;/div&gt;</p>
+<p>&lt;/div&gt;</p>
+
+<p>&lt;?php include &#39;../includes/footer.php&#39;; ?&gt;</p>
+</div>
+
+<p>---</p>
+
+<p># THỰC HÀNH</p>
+
+        </div>
+        <!-- Slide 5: BÀI: Hoàn Thiện Mini Project -->
+        <div class="slide">
+            <h1>BÀI: Hoàn Thiện Mini Project</h1>
+            
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Hoàn thiện Edit và Delete</li>
+<li>Thêm phân trang</li>
+<li>Thêm upload ảnh sản phẩm</li>
+<li>Thêm thống kê dashboard</li></ul>
+
+<p>---</p>
+
+<p># ✅ KIẾN THỨC CẦN ĐẠT</p>
+
+<ul><li>[ ] Xây dựng được ứng dụng CRUD hoàn chỉnh</li>
+<li>[ ] Tích hợp PHP + MySQL</li>
+<li>[ ] Tổ chức code theo cấu trúc tốt</li></ul>
+
+<p>---</p>
+
+<strong>Chương tiếp theo: [Buổi 13 - Cookies & Sessions →](../phan_4_security_jquery/buoi_13_cookies_sessions.md)</strong>
+
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">5</span></span>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 5;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            }
+            if (n < 1) {
+                currentSlide = 1;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

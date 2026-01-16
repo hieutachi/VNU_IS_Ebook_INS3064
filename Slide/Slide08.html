@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INS3064: Session 08: Review & Midterm</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 50px;
+            min-height: 700px;
+            background: white;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        .slide h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .slide p {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .slide strong {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.95em;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .box-info {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .box-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            color: #333;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+                <!-- Slide 1: Title Slide -->
+        <div class="slide active">
+            <div class="header-section">
+                <h1>🎓 INS3064</h1>
+                <h2>Multimedia Design & Web Development</h2>
+                <p style="font-size: 1.2em; margin-top: 30px; color: #667eea;"><strong>Session 08: Review & Midterm</strong></p>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 1.1em; margin: 20px 0;">Course Code: <strong>INS3064</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Instructor: <strong>M.Sc. Hieu Ta Chi</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Host Department: <strong>Applied Sciences Department - IS-VNU</strong></p>
+            </div>
+        </div>
+        <!-- Slide 2: PHẦN 1: PHP CƠ BẢN (Buổi 1-3) -->
+        <div class="slide">
+            <h1>PHẦN 1: PHP CƠ BẢN (Buổi 1-3)</h1>
+            
+<h3>1.1 Cú Pháp PHP</h3>
+
+<div class="code-block">&lt;?php
+<p>// Biến</p>
+<p>$name = &quot;John&quot;;</p>
+<p>$age = 20;</p>
+<p>$gpa = 3.5;</p>
+<p>$isStudent = true;</p>
+
+<p>// Mảng</p>
+<p>$fruits = [&quot;Apple&quot;, &quot;Banana&quot;, &quot;Orange&quot;];</p>
+<p>$student = [&quot;name&quot; =&gt; &quot;John&quot;, &quot;age&quot; =&gt; 20];</p>
+
+<p>// Điều kiện</p>
+<p>if ($age &gt;= 18) {</p>
+<p>echo &quot;Người lớn&quot;;</p>
+<p>} else {</p>
+<p>echo &quot;Trẻ em&quot;;</p>
+<p>}</p>
+
+<p>// Vòng lặp</p>
+<p>for ($i = 0; $i &lt; 10; $i++) {</p>
+<p>echo $i;</p>
+<p>}</p>
+
+<p>foreach ($fruits as $fruit) {</p>
+<p>echo $fruit;</p>
+<p>}</p>
+
+<p>// Hàm</p>
+<p>function greet($name) {</p>
+<p>return &quot;Hello, $name!&quot;;</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<h3>1.2 Form Handling</h3>
+
+<div class="code-block">&lt;?php
+<p>// Xử lý form POST</p>
+<p>if ($_SERVER[&#39;REQUEST_METHOD&#39;] === &#39;POST&#39;) {</p>
+<p>$name = trim($_POST[&#39;name&#39;] ?? &#39;&#39;);</p>
+<p>$email = filter_var($_POST[&#39;email&#39;], FILTER_VALIDATE_EMAIL);</p>
+    
+<p>if (empty($name)) {</p>
+<p>$errors[] = &quot;Name is required&quot;;</p>
+<p>}</p>
+<p>}</p>
+<p>?&gt;</p>
+
+<p>&lt;form method=&quot;POST&quot;&gt;</p>
+<p>&lt;input type=&quot;text&quot; name=&quot;name&quot;&gt;</p>
+<p>&lt;input type=&quot;email&quot; name=&quot;email&quot;&gt;</p>
+<p>&lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;</p>
+<p>&lt;/form&gt;</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 3: PHẦN 2: MySQL & SQL (Buổi 4-7) -->
+        <div class="slide">
+            <h1>PHẦN 2: MySQL &amp; SQL (Buổi 4-7)</h1>
+            
+<h3>2.1 CRUD Operations</h3>
+
+<div class="code-block">-- CREATE
+<p>INSERT INTO students (name, email, age)</p>
+<p>VALUES (&#39;John&#39;, &#39;john@email.com&#39;, 20);</p>
+
+<p>-- READ</p>
+<p>SELECT * FROM students WHERE age &gt; 18 ORDER BY name;</p>
+
+<p>-- UPDATE</p>
+<p>UPDATE students SET age = 21 WHERE id = 1;</p>
+
+<p>-- DELETE</p>
+<p>DELETE FROM students WHERE id = 1;</p>
+</div>
+
+<h3>2.2 JOIN</h3>
+
+<div class="code-block">-- INNER JOIN
+<p>SELECT p.name, c.name AS category</p>
+<p>FROM products p</p>
+<p>INNER JOIN categories c ON p.category_id = c.id;</p>
+
+<p>-- LEFT JOIN</p>
+<p>SELECT p.name, c.name AS category</p>
+<p>FROM products p</p>
+<p>LEFT JOIN categories c ON p.category_id = c.id;</p>
+</div>
+
+<h3>2.3 GROUP BY</h3>
+
+<div class="code-block">SELECT category_id, COUNT(*) AS total, AVG(price) AS avg_price
+<p>FROM products</p>
+<p>GROUP BY category_id</p>
+<p>HAVING total &gt; 5;</p>
+</div>
+
+<p>---</p>
+
+<p># 📋 ĐỀ CƯƠNG ÔN TẬP</p>
+
+        </div>
+        <!-- Slide 4: Phần Lý Thuyết (40%) -->
+        <div class="slide">
+            <h1>Phần Lý Thuyết (40%)</h1>
+            
+<ul><li><strong>PHP Basics</strong></li></ul>
+<p>- Biến, kiểu dữ liệu</p>
+<p>- Toán tử</p>
+<p>- Cấu trúc điều khiển</p>
+<p>- Hàm</p>
+
+<ul><li><strong>Form Handling</strong></li></ul>
+<p>- GET vs POST</p>
+<p>- Validation</p>
+<p>- Sanitization</p>
+
+<ul><li><strong>MySQL</strong></li></ul>
+<p>- Kiểu dữ liệu</p>
+<p>- Constraints</p>
+<p>- Relationships</p>
+
+<ul><li><strong>SQL</strong></li></ul>
+<p>- SELECT, INSERT, UPDATE, DELETE</p>
+<p>- WHERE, ORDER BY, LIMIT</p>
+<p>- JOIN, GROUP BY</p>
+
+        </div>
+        <!-- Slide 5: Phần Thực Hành (60%) -->
+        <div class="slide">
+            <h1>Phần Thực Hành (60%)</h1>
+            
+<ul><li>Viết code PHP xử lý form</li>
+<li>Viết truy vấn SQL</li>
+<li>Thiết kế database</li></ul>
+
+<p>---</p>
+
+<p># 📝 BÀI TẬP ÔN TẬP</p>
+
+        </div>
+        <!-- Slide 6: Bài 1: PHP Form -->
+        <div class="slide">
+            <h1>Bài 1: PHP Form</h1>
+            
+<p>Tạo form đăng ký với:</p>
+<ul><li>Họ tên (bắt buộc, 2-50 ký tự)</li>
+<li>Email (bắt buộc, valid email)</li>
+<li>Tuổi (bắt buộc, 18-100)</li>
+<li>Validate và hiển thị lỗi</li></ul>
+
+        </div>
+        <!-- Slide 7: Bài 2: SQL Queries -->
+        <div class="slide">
+            <h1>Bài 2: SQL Queries</h1>
+            
+<p>Cho database với tables: <span class="highlight">users</span>, <span class="highlight">orders</span>, <span class="highlight">order_items</span>, <span class="highlight">products</span></p>
+
+<ul><li>Lấy danh sách users đã đặt hàng</li>
+<li>Tính tổng doanh thu theo tháng</li>
+<li>Top 5 sản phẩm bán chạy</li></ul>
+
+        </div>
+        <!-- Slide 8: Bài 3: Database Design -->
+        <div class="slide">
+            <h1>Bài 3: Database Design</h1>
+            
+<p>Thiết kế database cho hệ thống quản lý khóa học online:</p>
+<ul><li>Users (students, instructors)</li>
+<li>Courses</li>
+<li>Enrollments</li>
+<li>Lessons</li>
+<li>Reviews</li></ul>
+
+<p>---</p>
+
+<p># 🎯 HÌNH THỨC THI</p>
+
+<p>| Phần | Nội dung | Điểm |</p>
+<p>|------|----------|------|</p>
+<p>| Trắc nghiệm | 20 câu | 40% |</p>
+<p>| Tự luận | 2-3 câu | 30% |</p>
+<p>| Thực hành | Code PHP + SQL | 30% |</p>
+
+<strong>Thời gian:</strong> 90 phút
+
+<strong>Được phép:</strong> Không có tài liệu
+
+<p>---</p>
+
+<p># 💡 MẸO THI</p>
+
+<ul><li>Đọc kỹ đề trước khi làm</li>
+<li>Làm câu dễ trước</li>
+<li>Kiểm tra cú pháp SQL</li>
+<li>Chú ý dấu <span class="highlight">;</span> trong PHP</li>
+<li>Validate input khi xử lý form</li></ul>
+
+<p>---</p>
+
+<strong>Chương tiếp theo: [Buổi 09 - Error Handling →](./phan_3_integration_advanced/buoi_09_error_handling.md)</strong>
+
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">8</span></span>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 8;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            }
+            if (n < 1) {
+                currentSlide = 1;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

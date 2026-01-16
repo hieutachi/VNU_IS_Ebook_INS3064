@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INS3064: Introduction to SQL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 50px;
+            min-height: 700px;
+            background: white;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        .slide h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .slide p {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .slide strong {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.95em;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .box-info {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .box-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Slide 1: Title Slide -->
+        <div class="slide active">
+            <div class="header-section">
+                <h1>🎓 INS3064</h1>
+                <h2>Multimedia Design & Web Development</h2>
+                <p style="font-size: 1.2em; margin-top: 30px; color: #667eea;"><strong>Session 05: Introduction to SQL</strong></p>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 1.1em; margin: 20px 0;">Course Code: <strong>INS3064</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Instructor: <strong>M.Sc. Hieu Ta Chi</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Host Department: <strong>Applied Sciences Department - IS-VNU</strong></p>
+                <p style="font-size: 1.1em; margin-top: 50px; color: #764ba2;">Master SQL - The Language of Databases</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Session Information -->
+        <div class="slide">
+            <h1>📌 Session Information</h1>
+            <div class="box-info">
+                <p><strong>📅 Time:</strong> 3 hours (Theory: 1.5 hours, Practice: 1.5 hours)</p>
+                <p><strong>📚 Reference:</strong> Chapter 5 - PHP & MySQL Web Development</p>
+                <p><strong>🔗 Learning Outcomes:</strong> LO4</p>
+            </div>
+
+            <h2>🎯 Session Objectives</h2>
+            <ul>
+                <li>Understand what SQL is</li>
+                <li>Perform CRUD operations</li>
+                <li>Use WHERE, ORDER BY, LIMIT</li>
+                <li>Master basic SQL functions</li>
+            </ul>
+        </div>
+
+        <!-- Slide 3: Learning Objectives -->
+        <div class="slide">
+            <h1>🎯 Learning Objectives</h1>
+            <h2>After This Session, You Will:</h2>
+            <ul>
+                <li>✓ <strong>Write</strong> SELECT queries to retrieve data</li>
+                <li>✓ <strong>Perform</strong> INSERT, UPDATE, DELETE operations</li>
+                <li>✓ <strong>Use</strong> WHERE to filter data</li>
+                <li>✓ <strong>Sort</strong> with ORDER BY</li>
+                <li>✓ <strong>Limit</strong> results with LIMIT</li>
+                <li>✓ <strong>Use</strong> basic SQL functions</li>
+            </ul>
+
+            <h2>Key Concepts</h2>
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <h4>📖 SELECT</h4>
+                    <p>Retrieve data</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>➕ INSERT</h4>
+                    <p>Add new records</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>✏️ UPDATE</h4>
+                    <p>Modify data</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>🗑️ DELETE</h4>
+                    <p>Remove records</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: What is SQL? -->
+        <div class="slide">
+            <h1>📖 What is SQL?</h1>
+            <p style="font-size: 1.2em; margin-bottom: 20px;"><strong>SQL = Structured Query Language</strong></p>
+            <p>The language used to communicate with databases.</p>
+
+            <h2>🎒 Real-life Analogy</h2>
+            <div class="box-info">
+                <p>SQL is like <strong>the language to talk to a librarian</strong>:</p>
+                <ul style="margin-left: 20px;">
+                    <li>"Show me all books" → <span class="highlight">SELECT * FROM books</span></li>
+                    <li>"Find books by author X" → <span class="highlight">SELECT * FROM books WHERE author = 'X'</span></li>
+                    <li>"Add a new book" → <span class="highlight">INSERT INTO books...</span></li>
+                </ul>
+            </div>
+
+            <h2>Types of SQL Commands</h2>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Commands</th>
+                </tr>
+                <tr>
+                    <td><strong>DDL</strong></td>
+                    <td>Data Definition</td>
+                    <td>CREATE, ALTER, DROP</td>
+                </tr>
+                <tr>
+                    <td><strong>DML</strong></td>
+                    <td>Data Manipulation</td>
+                    <td>SELECT, INSERT, UPDATE, DELETE</td>
+                </tr>
+                <tr>
+                    <td><strong>DCL</strong></td>
+                    <td>Data Control</td>
+                    <td>GRANT, REVOKE</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 5: SELECT - Basic Syntax -->
+        <div class="slide">
+            <h1>📖 SELECT - Query Data</h1>
+            <h2>Basic Syntax</h2>
+            <div class="code-block">
+-- Get all columns
+SELECT * FROM students;
+
+-- Get specific columns
+SELECT name, email FROM students;
+
+-- Set alias for column
+SELECT name AS 'Full Name', email AS 'Email' FROM students;
+            </div>
+
+            <h2>SELECT Structure</h2>
+            <div class="box-info">
+                <p><strong>Syntax:</strong> <span class="highlight">SELECT columns FROM table_name;</span></p>
+                <ul style="margin-left: 20px;">
+                    <li><span class="highlight">*</span> = All columns</li>
+                    <li>Column names = Specific columns</li>
+                    <li><span class="highlight">AS</span> = Alias (rename column in result)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 6: WHERE - Filter Data -->
+        <div class="slide">
+            <h1>🔍 WHERE - Filter Data</h1>
+            <h2>Comparison Operators</h2>
+            <div class="code-block">
+-- Equal
+SELECT * FROM students WHERE age = 20;
+
+-- Not equal
+SELECT * FROM students WHERE age != 20;
+SELECT * FROM students WHERE age <> 20;
+
+-- Greater/Less than
+SELECT * FROM students WHERE age > 18;
+SELECT * FROM students WHERE age >= 18;
+SELECT * FROM students WHERE age < 25;
+SELECT * FROM students WHERE age <= 25;
+            </div>
+
+            <h2>Special Operators</h2>
+            <div class="code-block">
+-- BETWEEN - In range
+SELECT * FROM students WHERE age BETWEEN 18 AND 25;
+
+-- IN - In list
+SELECT * FROM students WHERE class IN ('CS1', 'CS2', 'CS3');
+
+-- LIKE - Pattern search
+SELECT * FROM students WHERE name LIKE 'John%';    -- Starts with
+SELECT * FROM students WHERE name LIKE '%Smith';    -- Ends with
+SELECT * FROM students WHERE name LIKE '%John%';    -- Contains
+
+-- IS NULL / IS NOT NULL
+SELECT * FROM students WHERE phone IS NULL;
+SELECT * FROM students WHERE phone IS NOT NULL;
+            </div>
+        </div>
+
+        <!-- Slide 7: AND, OR, NOT -->
+        <div class="slide">
+            <h1>🔀 Logical Operators: AND, OR, NOT</h1>
+            <h2>AND - Both Conditions</h2>
+            <div class="code-block">
+SELECT * FROM students 
+WHERE age >= 18 AND gpa >= 3.0;
+            </div>
+
+            <h2>OR - At Least One</h2>
+            <div class="code-block">
+SELECT * FROM students 
+WHERE class = 'CS1' OR class = 'CS2';
+            </div>
+
+            <h2>NOT - Negation</h2>
+            <div class="code-block">
+SELECT * FROM students 
+WHERE NOT class = 'CS1';
+            </div>
+
+            <h2>Combining Operators</h2>
+            <div class="code-block">
+SELECT * FROM students 
+WHERE (class = 'CS1' OR class = 'CS2') 
+AND gpa >= 3.0;
+            </div>
+
+            <div class="box-info">
+                <p><strong>💡 Tip:</strong> Use parentheses <span class="highlight">()</span> to group conditions and control order of evaluation!</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: ORDER BY - Sort -->
+        <div class="slide">
+            <h1>📊 ORDER BY - Sort Data</h1>
+            <h2>Sort Ascending (Default)</h2>
+            <div class="code-block">
+-- Sort by name (A-Z)
+SELECT * FROM students ORDER BY name;
+SELECT * FROM students ORDER BY name ASC;
+            </div>
+
+            <h2>Sort Descending</h2>
+            <div class="code-block">
+-- Sort by GPA (highest first)
+SELECT * FROM students ORDER BY gpa DESC;
+            </div>
+
+            <h2>Sort Multiple Columns</h2>
+            <div class="code-block">
+-- Sort by class first, then GPA
+SELECT * FROM students 
+ORDER BY class ASC, gpa DESC;
+            </div>
+
+            <div class="box-info">
+                <p><strong>💡 Use Cases:</strong> Display top students, newest posts, alphabetical lists, etc.</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: LIMIT - Limit Results -->
+        <div class="slide">
+            <h1>📄 LIMIT - Limit Results</h1>
+            <h2>Get First N Records</h2>
+            <div class="code-block">
+-- Get first 10 records
+SELECT * FROM students LIMIT 10;
+            </div>
+
+            <h2>Pagination</h2>
+            <div class="code-block">
+-- Page 1 (records 1-10)
+SELECT * FROM students LIMIT 0, 10;
+
+-- Page 2 (records 11-20)
+SELECT * FROM students LIMIT 10, 10;
+
+-- Page 3 (records 21-30)
+SELECT * FROM students LIMIT 20, 10;
+            </div>
+
+            <h2>Formula</h2>
+            <div class="box-info">
+                <p><strong>Pagination Formula:</strong> <span class="highlight">LIMIT (page-1)*pageSize, pageSize</span></p>
+                <ul style="margin-left: 20px;">
+                    <li>Page 1: LIMIT 0, 10</li>
+                    <li>Page 2: LIMIT 10, 10</li>
+                    <li>Page 3: LIMIT 20, 10</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 10: DISTINCT -->
+        <div class="slide">
+            <h1>🔍 DISTINCT - Remove Duplicates</h1>
+            <div class="code-block">
+-- Get unique classes
+SELECT DISTINCT class FROM students;
+
+-- Count unique classes
+SELECT COUNT(DISTINCT class) FROM students;
+            </div>
+
+            <h2>Example</h2>
+            <table>
+                <tr>
+                    <th>Without DISTINCT</th>
+                    <th>With DISTINCT</th>
+                </tr>
+                <tr>
+                    <td>CS1, CS1, CS2, CS2, CS3</td>
+                    <td>CS1, CS2, CS3</td>
+                </tr>
+            </table>
+
+            <div class="box-info">
+                <p><strong>💡 Use Case:</strong> Get list of unique values, count distinct items, etc.</p>
+            </div>
+        </div>
+
+        <!-- Slide 11: INSERT - Add Data -->
+        <div class="slide">
+            <h1>➕ INSERT - Add Data</h1>
+            <h2>Insert Single Record</h2>
+            <div class="code-block">
+-- Insert with all columns
+INSERT INTO students (name, email, age, class, gpa)
+VALUES ('John Doe', 'john@email.com', 20, 'CS1', 3.5);
+
+-- Insert with NULL values
+INSERT INTO students (name, email, age, class, gpa)
+VALUES ('Jane Smith', 'jane@email.com', NULL, 'CS1', NULL);
+            </div>
+
+            <h2>Insert Multiple Records</h2>
+            <div class="code-block">
+INSERT INTO students (name, email, age, class, gpa)
+VALUES 
+    ('John Doe', 'john@email.com', 20, 'CS1', 3.5),
+    ('Jane Smith', 'jane@email.com', 21, 'CS2', 3.8),
+    ('Bob Johnson', 'bob@email.com', 19, 'CS1', 3.2);
+            </div>
+
+            <div class="box-info">
+                <p><strong>💡 Best Practice:</strong> Always specify column names for clarity and safety!</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: UPDATE - Modify Data -->
+        <div class="slide">
+            <h1>✏️ UPDATE - Modify Data</h1>
+            <h2>Update Single Column</h2>
+            <div class="code-block">
+UPDATE students SET gpa = 3.6 WHERE id = 1;
+            </div>
+
+            <h2>Update Multiple Columns</h2>
+            <div class="code-block">
+UPDATE students 
+SET gpa = 3.6, class = 'CS2' 
+WHERE id = 1;
+            </div>
+
+            <h2>Update with Complex Condition</h2>
+            <div class="code-block">
+UPDATE students 
+SET is_active = FALSE 
+WHERE gpa < 2.0 AND age > 25;
+            </div>
+
+            <div class="box-warning">
+                <p><strong>⚠️ DANGEROUS:</strong> <span class="highlight">UPDATE students SET gpa = 0;</span></p>
+                <p>This updates ALL records! Always use WHERE clause!</p>
+            </div>
+        </div>
+
+        <!-- Slide 13: DELETE - Remove Data -->
+        <div class="slide">
+            <h1>🗑️ DELETE - Remove Data</h1>
+            <h2>Delete Single Record</h2>
+            <div class="code-block">
+DELETE FROM students WHERE id = 1;
+            </div>
+
+            <h2>Delete Multiple Records</h2>
+            <div class="code-block">
+DELETE FROM students 
+WHERE class = 'CS1' AND gpa < 2.0;
+            </div>
+
+            <h2>TRUNCATE vs DELETE</h2>
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <h4>DELETE</h4>
+                    <ul style="margin-left: 15px;">
+                        <li>Can use WHERE</li>
+                        <li>Doesn't reset AUTO_INCREMENT</li>
+                        <li>Can be rolled back</li>
+                    </ul>
+                </div>
+                <div class="comparison-item">
+                    <h4>TRUNCATE</h4>
+                    <ul style="margin-left: 15px;">
+                        <li>Deletes all records</li>
+                        <li>Resets AUTO_INCREMENT</li>
+                        <li>Faster</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="box-warning">
+                <p><strong>⚠️ DANGEROUS:</strong> <span class="highlight">DELETE FROM students;</span></p>
+                <p>This deletes ALL records! Always use WHERE clause!</p>
+            </div>
+        </div>
+
+        <!-- Slide 14: Aggregate Functions -->
+        <div class="slide">
+            <h1>📊 Aggregate Functions</h1>
+            <h2>Basic Functions</h2>
+            <div class="code-block">
+-- COUNT - Count records
+SELECT COUNT(*) FROM students;
+SELECT COUNT(*) FROM students WHERE class = 'CS1';
+
+-- SUM - Sum values
+SELECT SUM(gpa) FROM students;
+
+-- AVG - Average
+SELECT AVG(gpa) FROM students;
+SELECT AVG(gpa) FROM students WHERE class = 'CS1';
+
+-- MAX / MIN
+SELECT MAX(gpa) FROM students;
+SELECT MIN(gpa) FROM students;
+            </div>
+
+            <h2>Combining Functions</h2>
+            <div class="code-block">
+SELECT 
+    COUNT(*) AS total_students,
+    AVG(gpa) AS average_gpa,
+    MAX(gpa) AS highest_gpa,
+    MIN(gpa) AS lowest_gpa
+FROM students;
+            </div>
+        </div>
+
+        <!-- Slide 15: String Functions -->
+        <div class="slide">
+            <h1>📝 String Functions</h1>
+            <div class="code-block">
+-- CONCAT - Concatenate strings
+SELECT CONCAT(first_name, ' ', last_name) AS full_name FROM users;
+
+-- UPPER / LOWER
+SELECT UPPER(name) FROM students;
+SELECT LOWER(email) FROM students;
+
+-- LENGTH
+SELECT name, LENGTH(name) AS name_length FROM students;
+
+-- SUBSTRING
+SELECT SUBSTRING(name, 1, 5) FROM students;
+
+-- TRIM
+SELECT TRIM(name) FROM students;
+
+-- REPLACE
+SELECT REPLACE(email, '@gmail.com', '@yahoo.com') FROM students;
+            </div>
+
+            <h2>Common Use Cases</h2>
+            <ul>
+                <li><strong>CONCAT</strong> - Combine first and last name</li>
+                <li><strong>UPPER/LOWER</strong> - Normalize text</li>
+                <li><strong>LENGTH</strong> - Validate input length</li>
+                <li><strong>SUBSTRING</strong> - Extract part of string</li>
+            </ul>
+        </div>
+
+        <!-- Slide 16: Date Functions -->
+        <div class="slide">
+            <h1>📅 Date Functions</h1>
+            <div class="code-block">
+-- NOW() - Current date and time
+SELECT NOW();
+
+-- CURDATE() - Current date
+SELECT CURDATE();
+
+-- DATE_FORMAT
+SELECT DATE_FORMAT(created_at, '%d/%m/%Y') FROM students;
+SELECT DATE_FORMAT(created_at, '%H:%i:%s') FROM students;
+
+-- DATE_ADD / DATE_SUB
+SELECT DATE_ADD(NOW(), INTERVAL 7 DAY);
+SELECT DATE_SUB(NOW(), INTERVAL 1 MONTH);
+
+-- DATEDIFF - Days between dates
+SELECT DATEDIFF(NOW(), created_at) AS days_ago FROM students;
+
+-- YEAR, MONTH, DAY
+SELECT YEAR(created_at), MONTH(created_at), DAY(created_at) FROM students;
+            </div>
+        </div>
+
+        <!-- Slide 17: Conditional Functions -->
+        <div class="slide">
+            <h1>🔀 Conditional Functions</h1>
+            <h2>IF Function</h2>
+            <div class="code-block">
+SELECT name, 
+       IF(gpa >= 3.0, 'Good', 'Average') AS level 
+FROM students;
+            </div>
+
+            <h2>CASE WHEN</h2>
+            <div class="code-block">
+SELECT name, gpa,
+    CASE 
+        WHEN gpa >= 3.6 THEN 'Excellent'
+        WHEN gpa >= 3.2 THEN 'Good'
+        WHEN gpa >= 2.5 THEN 'Fair'
+        WHEN gpa >= 2.0 THEN 'Average'
+        ELSE 'Poor'
+    END AS level
+FROM students;
+            </div>
+
+            <h2>COALESCE</h2>
+            <div class="code-block">
+-- First non-NULL value
+SELECT COALESCE(phone, email, 'N/A') AS contact FROM students;
+            </div>
+        </div>
+
+        <!-- Slide 18: Example - Student Management -->
+        <div class="slide">
+            <h1>📝 Example: Student Management</h1>
+            <h2>Common Queries</h2>
+            <div class="code-block">
+-- 1. Get all students
+SELECT * FROM students;
+
+-- 2. Get students in class CS1
+SELECT * FROM students WHERE class = 'CS1';
+
+-- 3. Get students with GPA >= 3.5
+SELECT name, gpa FROM students WHERE gpa >= 3.5;
+
+-- 4. Sort by GPA descending
+SELECT * FROM students ORDER BY gpa DESC;
+
+-- 5. Top 3 students
+SELECT * FROM students ORDER BY gpa DESC LIMIT 3;
+            </div>
+        </div>
+
+        <!-- Slide 19: Example - Statistics -->
+        <div class="slide">
+            <h1>📊 Example: Statistics by Class</h1>
+            <div class="code-block">
+-- Statistics by class
+SELECT 
+    class,
+    COUNT(*) AS total,
+    AVG(gpa) AS avg_gpa,
+    MAX(gpa) AS max_gpa,
+    MIN(gpa) AS min_gpa
+FROM students 
+GROUP BY class;
+            </div>
+
+            <h2>Other Useful Queries</h2>
+            <div class="code-block">
+-- Students without phone
+SELECT * FROM students WHERE phone IS NULL;
+
+-- Search by name
+SELECT * FROM students WHERE name LIKE '%John%';
+
+-- Update GPA
+UPDATE students SET gpa = 3.6 WHERE id = 1;
+
+-- Delete student
+DELETE FROM students WHERE id = 5;
+            </div>
+        </div>
+
+        <!-- Slide 20: Practice Exercises -->
+        <div class="slide">
+            <h1>💪 Practice Exercises</h1>
+            
+            <h2>Exercise 1: Basic CRUD</h2>
+            <div class="box-info">
+                <p><strong>🎯 Objective:</strong> Practice CRUD operations</p>
+                <p><strong>📝 Requirements:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Create table <span class="highlight">products</span> (id, name, price, stock, category)</li>
+                    <li>Insert 10 products</li>
+                    <li>Select products with price > 100</li>
+                    <li>Update product price</li>
+                    <li>Delete out-of-stock products</li>
+                </ul>
+            </div>
+
+            <h2>Exercise 2: Advanced Queries</h2>
+            <div class="box-info">
+                <p><strong>🎯 Objective:</strong> Use WHERE, ORDER BY, LIMIT</p>
+                <p><strong>📝 Requirements:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Get 5 most expensive products</li>
+                    <li>Search products by name</li>
+                    <li>Statistics by category</li>
+                    <li>Pagination (10 products/page)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 21: Knowledge to Achieve -->
+        <div class="slide">
+            <h1>✅ Knowledge to Achieve</h1>
+            
+            <h2>After This Session</h2>
+            <ul>
+                <li>✓ Can write SELECT with WHERE</li>
+                <li>✓ Can perform INSERT, UPDATE, DELETE</li>
+                <li>✓ Can use ORDER BY, LIMIT</li>
+                <li>✓ Can use basic SQL functions</li>
+            </ul>
+
+            <h2>Next Session Preview</h2>
+            <div class="box-info">
+                <p><strong>Session 06:</strong> Database Design</p>
+                <ul style="margin-left: 20px;">
+                    <li>Normalization</li>
+                    <li>Relationships (1-1, 1-N, N-N)</li>
+                    <li>Foreign Keys</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">21</span></span>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 21;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            }
+            if (n < 1) {
+                currentSlide = 1;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INS3064: Session 15: jQuery Introduction</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 50px;
+            min-height: 700px;
+            background: white;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        .slide h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .slide p {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .slide strong {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.95em;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .box-info {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .box-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            color: #333;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+                <!-- Slide 1: Title Slide -->
+        <div class="slide active">
+            <div class="header-section">
+                <h1>🎓 INS3064</h1>
+                <h2>Multimedia Design & Web Development</h2>
+                <p style="font-size: 1.2em; margin-top: 30px; color: #667eea;"><strong>Session 15: jQuery Introduction</strong></p>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 1.1em; margin: 20px 0;">Course Code: <strong>INS3064</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Instructor: <strong>M.Sc. Hieu Ta Chi</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Host Department: <strong>Applied Sciences Department - IS-VNU</strong></p>
+            </div>
+        </div>
+        <!-- Slide 2: 1. JQUERY LÀ GÌ? -->
+        <div class="slide">
+            <h1>1. JQUERY LÀ GÌ?</h1>
+            
+<strong>jQuery</strong> = Thư viện JavaScript giúp thao tác DOM, xử lý events và AJAX dễ dàng hơn.
+
+<h3>1.1 Cài Đặt</h3>
+
+<div class="code-block">&lt;!-- CDN --&gt;
+<p>&lt;script src=&quot;https://code.jquery.com/jquery-3.7.1.min.js&quot;&gt;&lt;/script&gt;</p>
+
+<p>&lt;!-- Local --&gt;</p>
+<p>&lt;script src=&quot;js/jquery.min.js&quot;&gt;&lt;/script&gt;</p>
+</div>
+
+<h3>1.2 Document Ready</h3>
+
+<div class="code-block">// Cách 1: Full syntax
+<p>$(document).ready(function() {</p>
+<p>// Code ở đây chạy sau khi DOM loaded</p>
+<p>});</p>
+
+<p>// Cách 2: Shorthand</p>
+<p>$(function() {</p>
+<p>// Code ở đây</p>
+<p>});</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 3: 2. SELECTORS -->
+        <div class="slide">
+            <h1>2. SELECTORS</h1>
+            
+<div class="code-block">// ID selector
+<p>$(&#39;#myId&#39;)</p>
+
+<p>// Class selector</p>
+<p>$(&#39;.myClass&#39;)</p>
+
+<p>// Element selector</p>
+<p>$(&#39;div&#39;)</p>
+<p>$(&#39;p&#39;)</p>
+
+<p>// Attribute selector</p>
+<p>$(&#39;input[type=&quot;text&quot;]&#39;)</p>
+<p>$(&#39;a[href^=&quot;https&quot;]&#39;)</p>
+
+<p>// Multiple selectors</p>
+<p>$(&#39;h1, h2, h3&#39;)</p>
+
+<p>// Descendant selector</p>
+<p>$(&#39;div p&#39;)</p>
+
+<p>// Child selector</p>
+<p>$(&#39;ul &gt; li&#39;)</p>
+
+<p>// First, Last</p>
+<p>$(&#39;li:first&#39;)</p>
+<p>$(&#39;li:last&#39;)</p>
+
+<p>// Even, Odd</p>
+<p>$(&#39;tr:even&#39;)</p>
+<p>$(&#39;tr:odd&#39;)</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 4: 3. DOM MANIPULATION -->
+        <div class="slide">
+            <h1>3. DOM MANIPULATION</h1>
+            
+<h3>3.1 Get/Set Content</h3>
+
+<div class="code-block">// Get text
+<p>var text = $(&#39;#element&#39;).text();</p>
+
+<p>// Set text</p>
+<p>$(&#39;#element&#39;).text(&#39;New text&#39;);</p>
+
+<p>// Get HTML</p>
+<p>var html = $(&#39;#element&#39;).html();</p>
+
+<p>// Set HTML</p>
+<p>$(&#39;#element&#39;).html(&#39;&lt;strong&gt;Bold text&lt;/strong&gt;&#39;);</p>
+
+<p>// Get value (input)</p>
+<p>var value = $(&#39;#input&#39;).val();</p>
+
+<p>// Set value</p>
+<p>$(&#39;#input&#39;).val(&#39;New value&#39;);</p>
+</div>
+
+<h3>3.2 Attributes</h3>
+
+<div class="code-block">// Get attribute
+<p>var href = $(&#39;a&#39;).attr(&#39;href&#39;);</p>
+
+<p>// Set attribute</p>
+<p>$(&#39;a&#39;).attr(&#39;href&#39;, &#39;https://google.com&#39;);</p>
+
+<p>// Remove attribute</p>
+<p>$(&#39;a&#39;).removeAttr(&#39;target&#39;);</p>
+
+<p>// Add/Remove/Toggle class</p>
+<p>$(&#39;#element&#39;).addClass(&#39;active&#39;);</p>
+<p>$(&#39;#element&#39;).removeClass(&#39;active&#39;);</p>
+<p>$(&#39;#element&#39;).toggleClass(&#39;active&#39;);</p>
+
+<p>// Check class</p>
+<p>if ($(&#39;#element&#39;).hasClass(&#39;active&#39;)) {</p>
+<p>// ...</p>
+<p>}</p>
+</div>
+
+<h3>3.3 CSS</h3>
+
+<div class="code-block">// Get CSS property
+<p>var color = $(&#39;#element&#39;).css(&#39;color&#39;);</p>
+
+<p>// Set CSS property</p>
+<p>$(&#39;#element&#39;).css(&#39;color&#39;, &#39;red&#39;);</p>
+
+<p>// Set multiple CSS</p>
+<p>$(&#39;#element&#39;).css({</p>
+<p>&#39;color&#39;: &#39;red&#39;,</p>
+<p>&#39;font-size&#39;: &#39;20px&#39;,</p>
+<p>&#39;background&#39;: &#39;#f0f0f0&#39;</p>
+<p>});</p>
+</div>
+
+<h3>3.4 Add/Remove Elements</h3>
+
+<div class="code-block">// Append (thêm vào cuối)
+<p>$(&#39;#list&#39;).append(&#39;&lt;li&gt;New item&lt;/li&gt;&#39;);</p>
+
+<p>// Prepend (thêm vào đầu)</p>
+<p>$(&#39;#list&#39;).prepend(&#39;&lt;li&gt;First item&lt;/li&gt;&#39;);</p>
+
+<p>// After (thêm sau element)</p>
+<p>$(&#39;#element&#39;).after(&#39;&lt;p&gt;After text&lt;/p&gt;&#39;);</p>
+
+<p>// Before (thêm trước element)</p>
+<p>$(&#39;#element&#39;).before(&#39;&lt;p&gt;Before text&lt;/p&gt;&#39;);</p>
+
+<p>// Remove</p>
+<p>$(&#39;#element&#39;).remove();</p>
+
+<p>// Empty (xóa nội dung)</p>
+<p>$(&#39;#element&#39;).empty();</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 5: 4. EVENTS -->
+        <div class="slide">
+            <h1>4. EVENTS</h1>
+            
+<h3>4.1 Common Events</h3>
+
+<div class="code-block">// Click
+<p>$(&#39;#button&#39;).click(function() {</p>
+<p>alert(&#39;Clicked!&#39;);</p>
+<p>});</p>
+
+<p>// Double click</p>
+<p>$(&#39;#element&#39;).dblclick(function() {</p>
+<p>// ...</p>
+<p>});</p>
+
+<p>// Mouse events</p>
+<p>$(&#39;#element&#39;).mouseenter(function() {</p>
+<p>$(this).css(&#39;background&#39;, &#39;yellow&#39;);</p>
+<p>});</p>
+
+<p>$(&#39;#element&#39;).mouseleave(function() {</p>
+<p>$(this).css(&#39;background&#39;, &#39;white&#39;);</p>
+<p>});</p>
+
+<p>// Hover (mouseenter + mouseleave)</p>
+<p>$(&#39;#element&#39;).hover(</p>
+<p>function() { $(this).addClass(&#39;hover&#39;); },</p>
+<p>function() { $(this).removeClass(&#39;hover&#39;); }</p>
+<p>);</p>
+
+<p>// Focus/Blur</p>
+<p>$(&#39;input&#39;).focus(function() {</p>
+<p>$(this).css(&#39;border-color&#39;, &#39;blue&#39;);</p>
+<p>});</p>
+
+<p>$(&#39;input&#39;).blur(function() {</p>
+<p>$(this).css(&#39;border-color&#39;, &#39;gray&#39;);</p>
+<p>});</p>
+
+<p>// Change (select, checkbox, radio)</p>
+<p>$(&#39;select&#39;).change(function() {</p>
+<p>var value = $(this).val();</p>
+<p>console.log(&#39;Selected: &#39; + value);</p>
+<p>});</p>
+
+<p>// Submit</p>
+<p>$(&#39;form&#39;).submit(function(e) {</p>
+<p>e.preventDefault();</p>
+<p>// Handle form...</p>
+<p>});</p>
+
+<p>// Keyup/Keydown</p>
+<p>$(&#39;input&#39;).keyup(function() {</p>
+<p>var value = $(this).val();</p>
+<p>console.log(&#39;Typing: &#39; + value);</p>
+<p>});</p>
+</div>
+
+<h3>4.2 Event Delegation</h3>
+
+<div class="code-block">// Cho elements được thêm động
+<p>$(document).on(&#39;click&#39;, &#39;.dynamic-button&#39;, function() {</p>
+<p>alert(&#39;Dynamic button clicked!&#39;);</p>
+<p>});</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 6: 5. EFFECTS -->
+        <div class="slide">
+            <h1>5. EFFECTS</h1>
+            
+<div class="code-block">// Hide/Show
+<p>$(&#39;#element&#39;).hide();</p>
+<p>$(&#39;#element&#39;).show();</p>
+<p>$(&#39;#element&#39;).toggle();</p>
+
+<p>// Fade</p>
+<p>$(&#39;#element&#39;).fadeIn();</p>
+<p>$(&#39;#element&#39;).fadeOut();</p>
+<p>$(&#39;#element&#39;).fadeToggle();</p>
+<p>$(&#39;#element&#39;).fadeTo(&#39;slow&#39;, 0.5);</p>
+
+<p>// Slide</p>
+<p>$(&#39;#element&#39;).slideDown();</p>
+<p>$(&#39;#element&#39;).slideUp();</p>
+<p>$(&#39;#element&#39;).slideToggle();</p>
+
+<p>// Animate</p>
+<p>$(&#39;#element&#39;).animate({</p>
+<p>&#39;width&#39;: &#39;300px&#39;,</p>
+<p>&#39;height&#39;: &#39;200px&#39;,</p>
+<p>&#39;opacity&#39;: 0.5</p>
+<p>}, 1000);</p>
+
+<p>// Chain animations</p>
+<p>$(&#39;#element&#39;)</p>
+<p>.fadeOut(500)</p>
+<p>.fadeIn(500)</p>
+<p>.slideUp(500)</p>
+<p>.slideDown(500);</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 7: 6. AJAX -->
+        <div class="slide">
+            <h1>6. AJAX</h1>
+            
+<h3>6.1 $.ajax()</h3>
+
+<div class="code-block">$.ajax({
+<p>url: &#39;api/users.php&#39;,</p>
+<p>method: &#39;GET&#39;,</p>
+<p>dataType: &#39;json&#39;,</p>
+<p>success: function(data) {</p>
+<p>console.log(data);</p>
+<p>},</p>
+<p>error: function(xhr, status, error) {</p>
+<p>console.error(&#39;Error:&#39;, error);</p>
+<p>}</p>
+<p>});</p>
+</div>
+
+<h3>6.2 $.get() và $.post()</h3>
+
+<div class="code-block">// GET request
+<p>$.get(&#39;api/users.php&#39;, { id: 1 }, function(data) {</p>
+<p>console.log(data);</p>
+<p>});</p>
+
+<p>// POST request</p>
+<p>$.post(&#39;api/users.php&#39;, { name: &#39;John&#39;, email: &#39;john@email.com&#39; }, function(data) {</p>
+<p>console.log(data);</p>
+<p>});</p>
+</div>
+
+<h3>6.3 $.getJSON()</h3>
+
+<div class="code-block">$.getJSON(&#39;api/products.php&#39;, function(data) {
+<p>$.each(data, function(index, product) {</p>
+<p>$(&#39;#products&#39;).append(&#39;&lt;li&gt;&#39; + product.name + &#39;&lt;/li&gt;&#39;);</p>
+<p>});</p>
+<p>});</p>
+</div>
+
+<h3>6.4 AJAX với Form</h3>
+
+<div class="code-block">$(&#39;#myForm&#39;).submit(function(e) {
+<p>e.preventDefault();</p>
+    
+<p>$.ajax({</p>
+<p>url: $(this).attr(&#39;action&#39;),</p>
+<p>method: &#39;POST&#39;,</p>
+<p>data: $(this).serialize(),</p>
+<p>dataType: &#39;json&#39;,</p>
+<p>beforeSend: function() {</p>
+<p>$(&#39;#submit-btn&#39;).prop(&#39;disabled&#39;, true).text(&#39;Loading...&#39;);</p>
+<p>},</p>
+<p>success: function(response) {</p>
+<p>if (response.success) {</p>
+<p>alert(&#39;Success!&#39;);</p>
+<p>$(&#39;#myForm&#39;)[0].reset();</p>
+<p>} else {</p>
+<p>alert(&#39;Error: &#39; + response.message);</p>
+<p>}</p>
+<p>},</p>
+<p>error: function() {</p>
+<p>alert(&#39;Request failed&#39;);</p>
+<p>},</p>
+<p>complete: function() {</p>
+<p>$(&#39;#submit-btn&#39;).prop(&#39;disabled&#39;, false).text(&#39;Submit&#39;);</p>
+<p>}</p>
+<p>});</p>
+<p>});</p>
+</div>
+
+<p>---</p>
+
+        </div>
+        <!-- Slide 8: 7. VÍ DỤ THỰC TẾ -->
+        <div class="slide">
+            <h1>7. VÍ DỤ THỰC TẾ</h1>
+            
+<h3>7.1 Live Search</h3>
+
+<div class="code-block">&lt;input type=&quot;text&quot; id=&quot;search&quot; placeholder=&quot;Search products...&quot;&gt;
+<p>&lt;div id=&quot;results&quot;&gt;&lt;/div&gt;</p>
+
+<p>&lt;script&gt;</p>
+<p>$(&#39;#search&#39;).keyup(function() {</p>
+<p>var query = $(this).val();</p>
+    
+<p>if (query.length &lt; 2) {</p>
+<p>$(&#39;#results&#39;).empty();</p>
+<p>return;</p>
+<p>}</p>
+    
+<p>$.get(&#39;api/search.php&#39;, { q: query }, function(data) {</p>
+<p>var html = &#39;&#39;;</p>
+<p>$.each(data, function(i, item) {</p>
+<p>html += &#39;&lt;div class=&quot;result-item&quot;&gt;&#39; + item.name + &#39;&lt;/div&gt;&#39;;</p>
+<p>});</p>
+<p>$(&#39;#results&#39;).html(html);</p>
+<p>});</p>
+<p>});</p>
+<p>&lt;/script&gt;</p>
+</div>
+
+<h3>7.2 CRUD với AJAX</h3>
+
+<div class="code-block">// Create
+<p>$(&#39;#createForm&#39;).submit(function(e) {</p>
+<p>e.preventDefault();</p>
+<p>$.post(&#39;api/products.php&#39;, $(this).serialize(), function(response) {</p>
+<p>if (response.success) {</p>
+<p>location.reload();</p>
+<p>}</p>
+<p>}, &#39;json&#39;);</p>
+<p>});</p>
+
+<p>// Delete</p>
+<p>$(document).on(&#39;click&#39;, &#39;.delete-btn&#39;, function() {</p>
+<p>if (!confirm(&#39;Delete this item?&#39;)) return;</p>
+    
+<p>var id = $(this).data(&#39;id&#39;);</p>
+<p>$.ajax({</p>
+<p>url: &#39;api/products.php?id=&#39; + id,</p>
+<p>method: &#39;DELETE&#39;,</p>
+<p>success: function(response) {</p>
+<p>if (response.success) {</p>
+<p>$(&#39;#product-&#39; + id).fadeOut(function() {</p>
+<p>$(this).remove();</p>
+<p>});</p>
+<p>}</p>
+<p>}</p>
+<p>});</p>
+<p>});</p>
+</div>
+
+<h3>7.3 PHP API Endpoint</h3>
+
+<div class="code-block">&lt;?php
+<p>// api/products.php</p>
+<p>header(&#39;Content-Type: application/json&#39;);</p>
+
+<p>require_once &#39;../classes/Database.php&#39;;</p>
+<p>$db = Database::getInstance();</p>
+
+<p>$method = $_SERVER[&#39;REQUEST_METHOD&#39;];</p>
+
+<p>switch ($method) {</p>
+<p>case &#39;GET&#39;:</p>
+<p>if (isset($_GET[&#39;id&#39;])) {</p>
+<p>$product = $db-&gt;fetch(&quot;SELECT * FROM products WHERE id = ?&quot;, [$_GET[&#39;id&#39;]]);</p>
+<p>echo json_encode($product);</p>
+<p>} else {</p>
+<p>$products = $db-&gt;fetchAll(&quot;SELECT * FROM products&quot;);</p>
+<p>echo json_encode($products);</p>
+<p>}</p>
+<p>break;</p>
+        
+<p>case &#39;POST&#39;:</p>
+<p>$name = $_POST[&#39;name&#39;] ?? &#39;&#39;;</p>
+<p>$price = $_POST[&#39;price&#39;] ?? 0;</p>
+        
+<p>$db-&gt;query(&quot;INSERT INTO products (name, price) VALUES (?, ?)&quot;, [$name, $price]);</p>
+<p>echo json_encode([&#39;success&#39; =&gt; true, &#39;id&#39; =&gt; $db-&gt;lastInsertId()]);</p>
+<p>break;</p>
+        
+<p>case &#39;DELETE&#39;:</p>
+<p>$id = $_GET[&#39;id&#39;] ?? 0;</p>
+<p>$db-&gt;query(&quot;DELETE FROM products WHERE id = ?&quot;, [$id]);</p>
+<p>echo json_encode([&#39;success&#39; =&gt; true]);</p>
+<p>break;</p>
+<p>}</p>
+<p>?&gt;</p>
+</div>
+
+<p>---</p>
+
+<p># THỰC HÀNH</p>
+
+        </div>
+        <!-- Slide 9: BÀI 1: Interactive UI -->
+        <div class="slide">
+            <h1>BÀI 1: Interactive UI</h1>
+            
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Accordion menu</li>
+<li>Tab navigation</li>
+<li>Modal popup</li></ul>
+
+        </div>
+        <!-- Slide 10: BÀI 2: AJAX CRUD -->
+        <div class="slide">
+            <h1>BÀI 2: AJAX CRUD</h1>
+            
+<p>📝 <strong>Yêu cầu:</strong></p>
+<ul><li>Load products với AJAX</li>
+<li>Add product không reload</li>
+<li>Delete với confirmation</li>
+<li>Live search</li></ul>
+
+<p>---</p>
+
+<p># ✅ KIẾN THỨC CẦN ĐẠT</p>
+
+<ul><li>[ ] Sử dụng jQuery selectors</li>
+<li>[ ] DOM manipulation</li>
+<li>[ ] Event handling</li>
+<li>[ ] AJAX requests</li></ul>
+
+<p>---</p>
+
+<p># 🎉 TỔNG KẾT KHÓA HỌC</p>
+
+<p>Chúc mừng bạn đã hoàn thành khóa học <strong>INS3064 - Multimedia Design & Web Development</strong>!</p>
+
+        </div>
+        <!-- Slide 11: Bạn Đã Học Được: -->
+        <div class="slide">
+            <h1>Bạn Đã Học Được:</h1>
+            
+<p>✅ PHP cơ bản đến nâng cao</p>
+<p>✅ MySQL và SQL</p>
+<p>✅ Kết nối PHP với MySQL</p>
+<p>✅ Xây dựng ứng dụng CRUD</p>
+<p>✅ Hệ thống đăng nhập</p>
+<p>✅ Bảo mật ứng dụng web</p>
+<p>✅ jQuery và AJAX</p>
+
+        </div>
+        <!-- Slide 12: Tiếp Theo: -->
+        <div class="slide">
+            <h1>Tiếp Theo:</h1>
+            
+<ul><li>Học Framework: Laravel, CodeIgniter</li>
+<li>Học JavaScript nâng cao: React, Vue</li>
+<li>Học về API: RESTful, GraphQL</li>
+<li>DevOps: Docker, CI/CD</li></ul>
+
+<strong>Chúc bạn thành công trong sự nghiệp Web Developer! 🚀</strong>
+
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">12</span></span>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 12;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            }
+            if (n < 1) {
+                currentSlide = 1;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

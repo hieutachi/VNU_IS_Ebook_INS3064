@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INS3064: Introduction to PHP & Web Development</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 50px;
+            min-height: 700px;
+            background: white;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        .slide h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .slide p {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .slide li {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .slide strong {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.95em;
+            color: #333;
+        }
+
+        .diagram {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .svg-diagram {
+            max-width: 100%;
+            height: auto;
+            margin: 20px auto;
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #f9f9f9;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .box-info {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .box-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .icon-row {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .icon-item {
+            text-align: center;
+            padding: 15px;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .icon-item .icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .icon-item p {
+            font-size: 0.95em;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Slide 1: Title Slide -->
+        <div class="slide active">
+            <div class="header-section">
+                <h1>🎓 INS3064</h1>
+                <h2>Multimedia Design & Web Development</h2>
+                <p style="font-size: 1.2em; margin-top: 30px; color: #667eea;"><strong>Introduction to PHP & Web Development</strong></p>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 1.1em; margin: 20px 0;">Course Code: <strong>INS3064</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Instructor: <strong>M.Sc. Hieu Ta Chi</strong></p>
+                <p style="font-size: 1.1em; margin: 20px 0;">Host Department: <strong>Applied Sciences Department - IS-VNU</strong></p>
+                <p style="font-size: 1.1em; margin-top: 50px; color: #764ba2;">Building Dynamic Websites with PHP & MySQL</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Course Overview & Objectives -->
+        <div class="slide">
+            <h1>📘 Course Overview</h1>
+            <h2>Material Objectives</h2>
+            <p>This course helps you master:</p>
+            <ul>
+                <li>Web design and programming with <strong>PHP & MySQL</strong></li>
+                <li>Building <strong>dynamic websites</strong> from basic to advanced</li>
+                <li>Designing and managing <strong>MySQL databases</strong></li>
+                <li>Implementing <strong>security mechanisms</strong>: SQL Injection, XSS Prevention</li>
+                <li>Hands-on learning with <strong>real examples and projects</strong></li>
+            </ul>
+            <h2>After Completing This Course</h2>
+            <ul>
+                <li>✓ Build complete dynamic websites with PHP</li>
+                <li>✓ Design and manage MySQL databases</li>
+                <li>✓ Connect PHP with MySQL securely</li>
+                <li>✓ Have a complete web project for interviews</li>
+                <li>✓ Ready for Junior Web Developer positions</li>
+            </ul>
+        </div>
+
+        <!-- Slide 3: Course Structure -->
+        <div class="slide">
+            <h1>🧩 Course Structure: 15 Sessions</h1>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="box-info">
+                    <h3>🟦 Part 1: PHP Foundation (Sessions 1-3)</h3>
+                    <ul style="margin-left: 15px;">
+                        <li>Introduction to PHP</li>
+                        <li>Programming PHP</li>
+                        <li>Dynamic Websites</li>
+                    </ul>
+                </div>
+                <div class="box-info">
+                    <h3>🟩 Part 2: MySQL & Database (Sessions 4-7)</h3>
+                    <ul style="margin-left: 15px;">
+                        <li>MySQL Introduction</li>
+                        <li>SQL Basics</li>
+                        <li>Database Design</li>
+                        <li>Advanced SQL</li>
+                    </ul>
+                </div>
+                <div class="box-info">
+                    <h3>🟨 Part 3: Integration & Advanced (Sessions 9-12)</h3>
+                    <ul style="margin-left: 15px;">
+                        <li>Error Handling</li>
+                        <li>PHP + MySQL Connection</li>
+                        <li>OOP & MVC Pattern</li>
+                        <li>Web App Development</li>
+                    </ul>
+                </div>
+                <div class="box-info">
+                    <h3>🟧 Part 4: Security & jQuery (Sessions 13-15)</h3>
+                    <ul style="margin-left: 15px;">
+                        <li>Cookies & Sessions</li>
+                        <li>Security Methods</li>
+                        <li>jQuery Introduction</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Tools & Installation -->
+        <div class="slide">
+            <h1>🛠️ Required Tools & Installation</h1>
+            <h2>System Requirements</h2>
+            <table>
+                <tr>
+                    <th>Component</th>
+                    <th>Requirement</th>
+                </tr>
+                <tr>
+                    <td><strong>Operating System</strong></td>
+                    <td>Windows 10/11, macOS, or Linux</td>
+                </tr>
+                <tr>
+                    <td><strong>RAM</strong></td>
+                    <td>4GB minimum (8GB recommended)</td>
+                </tr>
+                <tr>
+                    <td><strong>Disk Space</strong></td>
+                    <td>5GB free space</td>
+                </tr>
+                <tr>
+                    <td><strong>Browser</strong></td>
+                    <td>Chrome or Firefox (latest)</td>
+                </tr>
+            </table>
+
+            <h2>Software to Install</h2>
+            <div class="icon-row">
+                <div class="icon-item">
+                    <div class="icon">🔧</div>
+                    <p><strong>XAMPP</strong><br/>(Apache, PHP, MySQL)</p>
+                </div>
+                <div class="icon-item">
+                    <div class="icon">✏️</div>
+                    <p><strong>VS Code</strong><br/>(Code Editor)</p>
+                </div>
+                <div class="icon-item">
+                    <div class="icon">🌐</div>
+                    <p><strong>Browser</strong><br/>(Chrome/Firefox)</p>
+                </div>
+            </div>
+
+            <p style="text-align: center; color: #667eea; margin-top: 20px;"><strong>Download from: https://www.apachefriends.org/</strong></p>
+        </div>
+
+        <!-- Slide 5: XAMPP Components -->
+        <div class="slide">
+            <h1>📦 What is XAMPP?</h1>
+            <p style="font-size: 1.2em; margin-bottom: 30px;"><strong>XAMPP = X + A + M + P + P</strong></p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="comparison-item">
+                    <h4>🔤 X = Cross-platform</h4>
+                    <p>Works on Windows, macOS, Linux</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>📡 A = Apache</h4>
+                    <p>Web server to run PHP</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>📊 M = MySQL/MariaDB</h4>
+                    <p>Database management system</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>💻 P = PHP</h4>
+                    <p>Programming language</p>
+                </div>
+            </div>
+
+            <div class="box-info" style="margin-top: 30px;">
+                <p><strong>✓ One integrated package</strong> containing everything you need for web development</p>
+                <p><strong>✓ Easy to install</strong> - automated installer handles all components</p>
+                <p><strong>✓ Ready to use</strong> - just start Apache and MySQL, then code!</p>
+            </div>
+        </div>
+
+        <!-- Slide 6: What is PHP? -->
+        <div class="slide">
+            <h1>🔵 What is PHP?</h1>
+            <h2>Definition</h2>
+            <p style="font-size: 1.2em; margin-bottom: 20px;"><strong>PHP = PHP: Hypertext Preprocessor</strong></p>
+            <p>A <strong>server-side scripting language</strong> designed specifically for web development.</p>
+
+            <h2>Real-Life Analogy: Restaurant</h2>
+            <div class="box-info">
+                <p>🗂️ <strong>HTML/CSS</strong> = Menu and table layout (interface)</p>
+                <p>👨‍🍳 <strong>PHP</strong> = Chef in the kitchen (processes logic, cooks)</p>
+                <p>🏪 <strong>MySQL</strong> = Storage room (stores data)</p>
+                <p style="margin-top: 15px; color: #667eea;"><em>The customer (browser) only sees the dish (HTML), not the chef working (PHP).</em></p>
+            </div>
+
+            <h2>Why Learn PHP?</h2>
+            <ul>
+                <li><strong>Popular:</strong> 77% of websites use PHP (WordPress, Facebook)</li>
+                <li><strong>Easy to Learn:</strong> Simple syntax, rich documentation</li>
+                <li><strong>Free:</strong> Open source, no licensing costs</li>
+                <li><strong>Integration:</strong> Works seamlessly with MySQL, HTML, CSS</li>
+                <li><strong>Community:</strong> Large community for support</li>
+            </ul>
+        </div>
+
+        <!-- Slide 7: How PHP Works - Architecture -->
+        <div class="slide">
+            <h1>⚙️ How Does PHP Work?</h1>
+            
+            <svg class="svg-diagram" viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
+                <!-- Browser -->
+                <rect x="20" y="50" width="120" height="80" fill="#667eea" stroke="#333" stroke-width="2" rx="5"/>
+                <text x="80" y="100" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Browser</text>
+                <text x="80" y="120" font-size="12" fill="white" text-anchor="middle">(Client)</text>
+
+                <!-- Arrow 1: Request -->
+                <path d="M 140 90 L 220 90" stroke="#667eea" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+                <text x="180" y="80" font-size="11" fill="#333">Request</text>
+
+                <!-- Web Server -->
+                <rect x="220" y="50" width="120" height="80" fill="#764ba2" stroke="#333" stroke-width="2" rx="5"/>
+                <text x="280" y="100" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Web Server</text>
+                <text x="280" y="120" font-size="12" fill="white" text-anchor="middle">(Apache)</text>
+
+                <!-- Arrow 2: Pass to PHP -->
+                <path d="M 280 130 L 280 180" stroke="#667eea" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+                <text x="310" y="160" font-size="11" fill="#333">Pass to PHP</text>
+
+                <!-- PHP Processor -->
+                <rect x="220" y="180" width="120" height="80" fill="#2ecc71" stroke="#333" stroke-width="2" rx="5"/>
+                <text x="280" y="225" font-size="14" font-weight="bold" fill="white" text-anchor="middle">PHP</text>
+                <text x="280" y="245" font-size="12" fill="white" text-anchor="middle">Processor</text>
+
+                <!-- Arrow 3: Query if needed -->
+                <path d="M 340 220 L 420 220" stroke="#764ba2" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+                <text x="380" y="210" font-size="11" fill="#333">Query</text>
+
+                <!-- MySQL Database -->
+                <rect x="420" y="180" width="120" height="80" fill="#f39c12" stroke="#333" stroke-width="2" rx="5"/>
+                <text x="480" y="225" font-size="14" font-weight="bold" fill="white" text-anchor="middle">MySQL</text>
+                <text x="480" y="245" font-size="12" fill="white" text-anchor="middle">Database</text>
+
+                <!-- Arrow 4: Return HTML -->
+                <path d="M 280 180 L 110 130" stroke="#667eea" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+                <text x="180" y="145" font-size="11" fill="#333">HTML Response</text>
+
+                <!-- Process Steps -->
+                <text x="20" y="320" font-size="13" font-weight="bold" fill="#333">Process:</text>
+                <text x="20" y="345" font-size="12" fill="#333">1. Browser sends request to Web Server</text>
+                <text x="20" y="365" font-size="12" fill="#333">2. Server receives PHP file and passes to PHP Processor</text>
+                <text x="340" y="345" font-size="12" fill="#333">3. PHP processes code, may query Database</text>
+                <text x="340" y="365" font-size="12" fill="#333">4. PHP returns HTML → Server sends to Browser</text>
+
+                <!-- Arrow marker definition -->
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#667eea"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- Slide 8: PHP Basic Syntax -->
+        <div class="slide">
+            <h1>💻 Basic PHP Syntax</h1>
+            
+            <h2>PHP Tags</h2>
+            <p>PHP code is placed between special tags:</p>
+            <div class="code-block">
+&lt;?php
+    // PHP code goes here
+?&gt;
+            </div>
+
+            <div class="box-warning">
+                <p><strong>⚠️ Important Notes:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>PHP file must have <strong>.php</strong> extension</li>
+                    <li>Opening tag: <strong>&lt;?php</strong></li>
+                    <li>Closing tag: <strong>?&gt;</strong> (can be omitted if file contains only PHP)</li>
+                    <li>Each statement ends with <strong>semicolon ;</strong></li>
+                </ul>
+            </div>
+
+            <h2>Output Statements</h2>
+            <div class="code-block">
+&lt;?php
+    echo "Hello World!";           // Most common
+    print "Hello World!";          // Less common
+?&gt;
+            </div>
+        </div>
+
+        <!-- Slide 9: echo vs print -->
+        <div class="slide">
+            <h1>📊 Comparison: echo vs print</h1>
+            
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>echo</th>
+                    <th>print</th>
+                </tr>
+                <tr>
+                    <td><strong>Parameters</strong></td>
+                    <td>Multiple ✓</td>
+                    <td>Only 1</td>
+                </tr>
+                <tr>
+                    <td><strong>Return Value</strong></td>
+                    <td>None</td>
+                    <td>Returns 1</td>
+                </tr>
+                <tr>
+                    <td><strong>Speed</strong></td>
+                    <td>Faster ⚡</td>
+                    <td>Slower</td>
+                </tr>
+                <tr>
+                    <td><strong>Usage</strong></td>
+                    <td>More common 👍</td>
+                    <td>Less used</td>
+                </tr>
+            </table>
+
+            <h2>Examples</h2>
+            <div class="code-block">
+&lt;?php
+    // echo with multiple parameters
+    echo "Hello", " ", "World!";
+    
+    // print with single parameter
+    print "Hello World!";
+    
+    // Recommendation: Use echo in most cases
+?&gt;
+            </div>
+
+            <div class="box-info">
+                <p><strong>✓ Recommendation:</strong> Use <span class="highlight">echo</span> in most cases for faster performance and multiple parameters.</p>
+            </div>
+        </div>
+
+        <!-- Slide 10: Comments in PHP -->
+        <div class="slide">
+            <h1>💬 Comments in PHP</h1>
+            
+            <h2>Single-Line Comments</h2>
+            <div class="code-block">
+&lt;?php
+    // This is a single-line comment
+    # This is also a comment (less common)
+    
+    echo "Hello"; // Comment at end of line
+?&gt;
+            </div>
+
+            <h2>Multi-Line Comments</h2>
+            <div class="code-block">
+&lt;?php
+    /*
+       This is a multi-line comment
+       Use for long explanations
+       or temporarily hide code
+    */
+    
+    /**
+     * PHPDoc comment
+     * Used for functions and classes
+     * @param string $name User name
+     * @return string Greeting message
+     */
+?&gt;
+            </div>
+
+            <div class="box-info">
+                <p><strong>✓ Best Practice:</strong> Write comments for complex code to explain the logic and help other developers understand your code.</p>
+            </div>
+        </div>
+
+        <!-- Slide 11: Embedding PHP in HTML -->
+        <div class="slide">
+            <h1>🔀 Embedding PHP in HTML</h1>
+            
+            <p>PHP can be embedded directly into HTML files:</p>
+            <div class="code-block">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;PHP in HTML&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Hello!&lt;/h1&gt;
+    
+    &lt;!-- Method 1: Using echo --&gt;
+    &lt;p&gt;&lt;?php echo "Date: " . date("Y-m-d"); ?&gt;&lt;/p&gt;
+    
+    &lt;!-- Method 2: Shorthand (if enabled) --&gt;
+    &lt;p&gt;Time: &lt;?= date("H:i:s") ?&gt;&lt;/p&gt;
+    
+    &lt;!-- Method 3: PHP block --&gt;
+    &lt;?php
+        $name = "Student";
+        echo "&lt;p&gt;Hello $name&lt;/p&gt;";
+    ?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+            </div>
+
+            <div class="box-info">
+                <p><strong>Key Points:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>PHP runs on server, client only sees HTML</li>
+                    <li>Mix PHP and HTML freely</li>
+                    <li>Save as .php file (not .html)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 12: Best Practices -->
+        <div class="slide">
+            <h1>✅ Best Practices & Common Errors</h1>
+            
+            <h2>Best Practices</h2>
+            <ul>
+                <li>Always use <span class="highlight">&lt;?php</span> instead of short tag <span class="highlight">&lt;?</span></li>
+                <li>End statements with <span class="highlight">;</span></li>
+                <li>Write comments for complex code</li>
+                <li>Use meaningful file names: <span class="highlight">login.php, products.php</span></li>
+                <li>Indent code for readability</li>
+            </ul>
+
+            <h2>Common Errors</h2>
+            <div class="code-block">
+// ❌ Wrong: Missing semicolon
+echo "Hello"
+
+// ✅ Correct:
+echo "Hello";
+
+// ❌ Wrong: Incorrect quotes
+echo "He said "Hello"";
+
+// ✅ Correct: Escape or use single quotes
+echo "He said \"Hello\"";
+echo 'He said "Hello"';
+            </div>
+        </div>
+
+        <!-- Slide 13: Example 1 - Hello World -->
+        <div class="slide">
+            <h1>📝 Example 1: Hello World</h1>
+            
+            <h2>Scenario</h2>
+            <p>Create a simple webpage displaying "Hello World"</p>
+
+            <h2>Code</h2>
+            <div class="code-block">
+&lt;?php
+    // File: hello.php
+    // First PHP program
+    
+    echo "Hello World!";
+    echo "&lt;br&gt;";  // Line break
+    echo "Welcome to PHP!";
+?&gt;
+            </div>
+
+            <h2>Explanation</h2>
+            <ul>
+                <li>Line 1-2: Comments explaining the file</li>
+                <li>Line 4: Output "Hello World!"</li>
+                <li>Line 5: Output HTML &lt;br&gt; tag for line break</li>
+                <li>Line 6: Output welcome message</li>
+            </ul>
+
+            <h2>Expected Output</h2>
+            <div class="code-block" style="background: #e8f4f8;">
+Hello World!
+Welcome to PHP!
+            </div>
+        </div>
+
+        <!-- Slide 14: Example 2 - PHP + HTML -->
+        <div class="slide">
+            <h1>📝 Example 2: PHP + HTML</h1>
+            
+            <h2>Scenario</h2>
+            <p>Create a webpage with both HTML and PHP displaying server information</p>
+
+            <h2>Code (Part 1)</h2>
+            <div class="code-block">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;My PHP Page&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: Arial; padding: 20px; }
+        .info { background: #f0f0f0; padding: 15px; border-radius: 5px; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Welcome to PHP!&lt;/h1&gt;
+            </div>
+
+            <h2>Code (Part 2)</h2>
+            <div class="code-block">
+    &lt;div class="info"&gt;
+        &lt;?php
+            echo "&lt;p&gt;&lt;strong&gt;PHP Version:&lt;/strong&gt; " . phpversion() . "&lt;/p&gt;";
+            echo "&lt;p&gt;&lt;strong&gt;Date:&lt;/strong&gt; " . date("Y-m-d") . "&lt;/p&gt;";
+            echo "&lt;p&gt;&lt;strong&gt;Time:&lt;/strong&gt; " . date("H:i:s") . "&lt;/p&gt;";
+        ?&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+            </div>
+        </div>
+
+        <!-- Slide 15: Learning Objectives Summary -->
+        <div class="slide">
+            <h1>🎯 Learning Objectives - What You'll Master</h1>
+            
+            <h2>After Session 01, You Will Understand:</h2>
+            <div class="icon-row">
+                <div class="comparison-item">
+                    <h4>💡 What PHP is</h4>
+                    <p>A server-side scripting language for web development</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>⚙️ How it Works</h4>
+                    <p>Request-response cycle between browser and server</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>💻 Basic Syntax</h4>
+                    <p>echo, print, comments, PHP tags</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>🔀 Embedding PHP</h4>
+                    <p>Mix PHP code with HTML seamlessly</p>
+                </div>
+            </div>
+
+            <h2>Practical Skills You'll Have:</h2>
+            <ul>
+                <li>✓ Write basic PHP files</li>
+                <li>✓ Embed PHP in HTML</li>
+                <li>✓ Use echo and print statements</li>
+                <li>✓ Write and use comments</li>
+                <li>✓ Understand client-server architecture</li>
+            </ul>
+        </div>
+
+        <!-- Slide 16: Prerequisites & Next Steps -->
+        <div class="slide">
+            <h1>📚 Prerequisites & Next Steps</h1>
+            
+            <h2>Prerequisites You Need</h2>
+            <div class="box-info">
+                <p>✓ <strong>Basic HTML</strong> - tags, webpage structure</p>
+                <p>✓ <strong>Basic CSS</strong> - styling, layout</p>
+                <p>✓ <strong>Logical Thinking</strong> - basic algorithms</p>
+            </div>
+
+            <h2>Installation Checklist</h2>
+            <ul>
+                <li>☐ Install XAMPP</li>
+                <li>☐ Apache starts successfully</li>
+                <li>☐ MySQL starts successfully</li>
+                <li>☐ Access http://localhost OK</li>
+                <li>☐ Install VS Code</li>
+                <li>☐ Create project folder</li>
+                <li>☐ Hello World runs successfully</li>
+            </ul>
+
+            <h2>What's Next?</h2>
+            <p style="font-size: 1.1em; margin-top: 20px;"><strong>Session 02:</strong> Programming PHP - Variables, Data Types, and Operators</p>
+            <p style="color: #667eea; margin-top: 20px;"><em>You'll learn how to work with data and create dynamic programs!</em></p>
+        </div>
+
+        <!-- Slide 17: Effective Learning Methods -->
+        <div class="slide">
+            <h1>💡 Effective Learning Methods</h1>
+            
+            <h2>How to Learn Effectively</h2>
+            <div class="comparison-table">
+                <div class="comparison-item" style="background: #d4edda; border-left: 4px solid #28a745;">
+                    <h4>✅ DO:</h4>
+                    <ul style="margin-left: 15px;">
+                        <li>Read theory slowly</li>
+                        <li>Type all code (don't copy)</li>
+                        <li>Run code immediately</li>
+                        <li>Do small exercises</li>
+                        <li>Complete worksheets</li>
+                        <li>Ask questions</li>
+                    </ul>
+                </div>
+                <div class="comparison-item" style="background: #f8d7da; border-left: 4px solid #dc3545;">
+                    <h4>❌ DON'T:</h4>
+                    <ul style="margin-left: 15px;">
+                        <li>Skip theory quickly</li>
+                        <li>Copy/paste code</li>
+                        <li>Run code only at end</li>
+                        <li>Skip exercises</li>
+                        <li>Study alone</li>
+                        <li>Ignore error messages</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="box-info" style="margin-top: 30px;">
+                <p><strong>💪 The Secret:</strong> <em>The only way to remember long-term is to TYPE all code yourself, run it, experiment, and fix errors. This builds muscle memory and true understanding!</em></p>
+            </div>
+        </div>
+
+        <!-- Slide 18: Common Installation Errors -->
+        <div class="slide">
+            <h1>🔧 Common Installation Errors & Solutions</h1>
+            
+            <h2>Error 1: Apache Won't Start</h2>
+            <div class="box-warning">
+                <p><strong>Cause:</strong> Port 80 is occupied by another application</p>
+                <p><strong>Solution:</strong> Change Apache port to 8080 in configuration file</p>
+            </div>
+
+            <h2>Error 2: MySQL Won't Start</h2>
+            <div class="box-warning">
+                <p><strong>Cause:</strong> Port 3306 is occupied or MySQL already running</p>
+                <p><strong>Solution:</strong> End mysqld process in Task Manager and restart</p>
+            </div>
+
+            <h2>Error 3: Blank Page or PHP Not Displaying</h2>
+            <div class="box-warning">
+                <p><strong>Cause:</strong> File doesn't have .php extension or syntax error</p>
+                <p><strong>Solution:</strong> Check file extension and enable error display in php.ini</p>
+            </div>
+
+            <h2>Error 4: Cannot Connect to MySQL</h2>
+            <div class="box-warning">
+                <p><strong>Cause:</strong> MySQL not started or wrong connection info</p>
+                <p><strong>Solution:</strong> Check MySQL is running; verify host: localhost, user: root, empty password</p>
+            </div>
+        </div>
+
+        <!-- Slide 19: Course Resources -->
+        <div class="slide">
+            <h1>📚 Course Resources & Support</h1>
+            
+            <h2>Online Resources</h2>
+            <ul>
+                <li><strong>PHP Manual:</strong> https://www.php.net/manual/</li>
+                <li><strong>W3Schools PHP:</strong> https://www.w3schools.com/php/</li>
+                <li><strong>PHP The Right Way:</strong> https://phptherightway.com/</li>
+            </ul>
+
+            <h2>Reference Books</h2>
+            <ul>
+                <li><strong>PHP & MySQL Web Development</strong> - Luke Welling</li>
+                <li><strong>Learning PHP, MySQL & JavaScript</strong> - Robin Nixon</li>
+            </ul>
+
+            <h2>Instructor Contact</h2>
+            <div class="box-info">
+                <p><strong>Name:</strong> M.Sc. Hieu Ta Chi (Tạ Chí Hiếu)</p>
+                <p><strong>Department:</strong> Applied Sciences Department - IS-VNU</p>
+                <p><strong>Email:</strong> hieutc@tlu.edu.vn</p>
+            </div>
+
+            <h2>Get Help</h2>
+            <ul>
+                <li>✓ Google the specific error message</li>
+                <li>✓ Ask on Stack Overflow</li>
+                <li>✓ Contact instructor with specific question</li>
+                <li>✓ Join course discussion forum</li>
+            </ul>
+        </div>
+
+        <!-- Slide 20: Final Summary & Getting Started -->
+        <div class="slide">
+            <h1>🚀 Getting Started Now!</h1>
+            
+            <h2>You're Ready to Begin!</h2>
+            <div class="box-info">
+                <p>✓ Understand what PHP is and why learn it</p>
+                <p>✓ Know the tools you need to install</p>
+                <p>✓ Understand basic PHP syntax</p>
+                <p>✓ See how HTML and PHP work together</p>
+                <p>✓ Know effective learning strategies</p>
+            </div>
+
+            <h2>Your Next Action Items</h2>
+            <ol>
+                <li><strong>Install XAMPP</strong> from https://www.apachefriends.org/</li>
+                <li><strong>Install VS Code</strong> with PHP extensions</li>
+                <li><strong>Create project folder:</strong> C:\xampp\htdocs\ins3064\session_01\</li>
+                <li><strong>Create file hello.php</strong> with your first code</li>
+                <li><strong>Visit</strong> http://localhost/ins3064/session_01/hello.php</li>
+                <li><strong>See your Hello World</strong> in the browser!</li>
+            </ol>
+
+            <div style="text-align: center; margin-top: 50px; padding: 30px; background: #667eea; color: white; border-radius: 10px;">
+                <h2 style="color: white; margin-top: 0;">Ready to Code?</h2>
+                <p style="color: white; font-size: 1.1em;">Let's build amazing websites together! 💪</p>
+                <p style="color: #fff; margin-top: 20px;">👉 Start with Session 01 exercises and have fun!</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">20</span></span>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            }
+            if (n < 1) {
+                currentSlide = 1;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        // Initialize
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>
