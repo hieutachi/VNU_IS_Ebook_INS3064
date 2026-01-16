@@ -1,64 +1,216 @@
 # 📝 SESSION 08
-# **REVIEW & MIDTERM EXAM**
+# **REVIEW & MIDTERM - MIDTERM REVIEW**
 
-This session is dedicated to reviewing the material covered in Sessions 1-7 and taking the midterm exam.
+This session we will review all knowledge from Sessions 1-7 and prepare for the midterm exam.
 
 ---
 
 ## 📌 SESSION INFORMATION
 
 ```
-📅 Time: 3 hours (Review: 1.5 hours, Exam: 1.5 hours)
-📚 Review Topics: Sessions 1-7
-🎯 Session Objectives:
-   - Review PHP fundamentals
-   - Review MySQL and SQL basics
+📅 Time: 3 hours
+🎯 Objectives:
+   - Review basic PHP
+   - Review MySQL & SQL
+   - Complete comprehensive exercises
    - Prepare for midterm exam
-   - Take midterm practical exam
 ```
 
 ---
 
-## 🎯 REVIEW TOPICS
+# 📚 KNOWLEDGE SUMMARY
 
-### Part 1: PHP Foundation (Sessions 1-3)
+## PART 1: BASIC PHP (Sessions 1-3)
 
-- PHP syntax and basics
-- Variables, data types, operators
-- Control structures (if, switch, loops)
-- Functions and arrays
-- Form handling (GET/POST)
+### 1.1 PHP Syntax
 
-### Part 2: MySQL & Database (Sessions 4-7)
+```php
+<?php
+// Variables
+$name = "John";
+$age = 20;
+$gpa = 3.5;
+$isStudent = true;
 
-- MySQL installation and configuration
-- Basic SQL commands (SELECT, INSERT, UPDATE, DELETE)
-- Database design principles
-- Relationships and normalization
-- Advanced SQL (JOINs, subqueries)
+// Arrays
+$fruits = ["Apple", "Banana", "Orange"];
+$student = ["name" => "John", "age" => 20];
+
+// Conditionals
+if ($age >= 18) {
+    echo "Adult";
+} else {
+    echo "Minor";
+}
+
+// Loops
+for ($i = 0; $i < 10; $i++) {
+    echo $i;
+}
+
+foreach ($fruits as $fruit) {
+    echo $fruit;
+}
+
+// Functions
+function greet($name) {
+    return "Hello, $name!";
+}
+?>
+```
+
+### 1.2 Form Handling
+
+```php
+<?php
+// Process POST form
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = trim($_POST['name'] ?? '');
+    $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+    
+    if (empty($name)) {
+        $errors[] = "Name is required";
+    }
+}
+?>
+
+<form method="POST">
+    <input type="text" name="name">
+    <input type="email" name="email">
+    <button type="submit">Submit</button>
+</form>
+```
 
 ---
 
-## 📝 MIDTERM EXAM FORMAT
+## PART 2: MySQL & SQL (Sessions 4-7)
 
-- **Duration**: 90 minutes
-- **Type**: Practical exam
-- **Format**: Hands-on coding and database tasks
-- **Topics**: All material from Sessions 1-7
+### 2.1 CRUD Operations
+
+```sql
+-- CREATE
+INSERT INTO students (name, email, age) 
+VALUES ('John', 'john@email.com', 20);
+
+-- READ
+SELECT * FROM students WHERE age > 18 ORDER BY name;
+
+-- UPDATE
+UPDATE students SET age = 21 WHERE id = 1;
+
+-- DELETE
+DELETE FROM students WHERE id = 1;
+```
+
+### 2.2 JOIN
+
+```sql
+-- INNER JOIN
+SELECT p.name, c.name AS category
+FROM products p
+INNER JOIN categories c ON p.category_id = c.id;
+
+-- LEFT JOIN
+SELECT p.name, c.name AS category
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id;
+```
+
+### 2.3 GROUP BY
+
+```sql
+SELECT category_id, COUNT(*) AS total, AVG(price) AS avg_price
+FROM products
+GROUP BY category_id
+HAVING total > 5;
+```
 
 ---
 
-## ✅ PREPARATION CHECKLIST
+# 📋 REVIEW OUTLINE
 
-Before the exam, make sure you can:
+## Theory Section (40%)
 
-- [ ] Write basic PHP code
-- [ ] Handle forms with GET/POST
-- [ ] Create and query MySQL databases
-- [ ] Write SELECT, INSERT, UPDATE, DELETE queries
-- [ ] Design simple database schemas
-- [ ] Use JOINs in SQL queries
+1. **PHP Basics**
+   - Variables, data types
+   - Operators
+   - Control structures
+   - Functions
+
+2. **Form Handling**
+   - GET vs POST
+   - Validation
+   - Sanitization
+
+3. **MySQL**
+   - Data types
+   - Constraints
+   - Relationships
+
+4. **SQL**
+   - SELECT, INSERT, UPDATE, DELETE
+   - WHERE, ORDER BY, LIMIT
+   - JOIN, GROUP BY
+
+## Practice Section (60%)
+
+1. Write PHP code to process forms
+2. Write SQL queries
+3. Design database
 
 ---
 
-**Good luck with your midterm exam! 🍀**
+# 📝 REVIEW EXERCISES
+
+## Exercise 1: PHP Form
+
+Create registration form with:
+- Full name (required, 2-50 characters)
+- Email (required, valid email)
+- Age (required, 18-100)
+- Validate and display errors
+
+## Exercise 2: SQL Queries
+
+Given database with tables: `users`, `orders`, `order_items`, `products`
+
+1. Get list of users who have placed orders
+2. Calculate total revenue by month
+3. Top 5 best-selling products
+
+## Exercise 3: Database Design
+
+Design database for online course management system:
+- Users (students, instructors)
+- Courses
+- Enrollments
+- Lessons
+- Reviews
+
+---
+
+# 🎯 EXAM FORMAT
+
+| Section | Content | Points |
+|---------|---------|--------|
+| Multiple Choice | 20 questions | 40% |
+| Essay | 2-3 questions | 30% |
+| Practical | PHP Code + SQL | 30% |
+
+**Time:** 90 minutes
+
+**Allowed:** No materials
+
+---
+
+# 💡 EXAM TIPS
+
+1. Read questions carefully before answering
+2. Do easy questions first
+3. Check SQL syntax
+4. Pay attention to semicolon `;` in PHP
+5. Validate input when processing forms
+
+---
+
+**Next Chapter: [Session 09 - Error Handling →](./part_3_integration_advanced/session_09_error_handling.md)**
