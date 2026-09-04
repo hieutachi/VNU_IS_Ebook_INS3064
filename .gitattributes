@@ -1,0 +1,15 @@
+# Keep text files stable across Windows, macOS, and Linux.
+* text=auto eol=lf
+
+# Binary teaching assets.
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.docx binary
+*.pptx binary
+*.xlsx binary
+*.zip binary

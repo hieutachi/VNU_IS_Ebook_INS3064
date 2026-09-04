@@ -1,16 +1,39 @@
-# IDE
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
 .vscode/
 .idea/
+.claude/
 *.swp
 *.swo
 
-# OS
-.DS_Store
-Thumbs.db
+# Local archives and rollback snapshots
+_archive/
+_tools/backups/
 
-# Cursor
+# Generated audit output (recreate with the scripts in _tools/)
+_tools/*.txt
+
+# One-off audit probes and bootstrap scripts.
+# The re-runnable QA scripts have no tmp- prefix.
+_tools/tmp-*.js
+
+# Authoring prompts kept out of the published package
 Cursor_Prompt_Tao_Ebook.md
 
-# Temp
-*.tmp
+# Common generated dependencies and build output
+node_modules/
+dist/
+build/
+site/
+coverage/
 *.log
+*.tmp
+*.temp
+
+# Student-side artefacts that must never be committed with the course package
+examples/**/uploads/*
+!examples/**/uploads/.gitkeep
+**/config.local.php
+.env

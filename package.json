@@ -1,0 +1,19 @@
+{
+  "name": "ins3064-student-learning-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static student portal for INS3064 Multimedia Design and Web Development.",
+  "scripts": {
+    "build": "npm run build:site",
+    "build:site": "node _tools/build-site.mjs",
+    "qa": "npm run qa:site",
+    "qa:site": "node _tools/qa-site.mjs",
+    "verify": "npm run build:site && npm run qa:site"
+  },
+  "dependencies": {
+    "marked": "18.0.11"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
