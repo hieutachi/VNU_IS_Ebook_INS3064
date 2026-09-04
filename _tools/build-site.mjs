@@ -89,9 +89,15 @@ function makeRenderer(headings=[]){
   };
   return renderer;
 }
+function preparePublicMarkdown(markdown){
+  return markdown
+    .replace(/^##\s+📎\s+SUBMISSION GUIDELINES\s*$[\s\S]*?(?=^#{1,6}\s+)/gim,
+      "## 💾 SAVE YOUR PRACTICE WORK\n\nThis portal does not collect or grade files. Save the completed work in your local project and follow instructions announced by your lecturer.\n\n")
+    .replace(/\bFile to Submit\b/gi,"File to Save");
+}
 function renderMarkdown(markdown){
   const headings=[];
-  const html=marked.parse(stripOpeningTitle(markdown),{renderer:makeRenderer(headings),gfm:true,breaks:false});
+  const html=marked.parse(stripOpeningTitle(preparePublicMarkdown(markdown)),{renderer:makeRenderer(headings),gfm:true,breaks:false});
   return {html,headings};
 }
 function checksum(text){
@@ -167,7 +173,7 @@ function sessionPage(s){
 }
 
 function deckGroups(raw){
-  const tokens=marked.lexer(stripOpeningTitle(raw),{gfm:true});
+  const tokens=marked.lexer(stripOpeningTitle(preparePublicMarkdown(raw)),{gfm:true});
   const groups=[];let current=[];
   for(const token of tokens){
     if(token.type==="heading"&&token.depth<=2&&current.some((item)=>item.type!=="space"&&item.type!=="hr")){

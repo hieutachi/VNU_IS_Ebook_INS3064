@@ -92,6 +92,7 @@ const forbidden=[
   [/(?:href|src)="[^"]*(?:exams|solutions?|rubrics?|answers?|Worksheet|Vietnamese|canvases|_tools|node_modules)[\\/]/i,"link to excluded material"],
   [/\bINS2053\b/i,"wrong course code INS2053"],
   [/PLACEHOLDER\s+[—-]\s+(?:ebook|homework|exercise|spec|rubric|canvas|Marp)/i,"scaffold placeholder"],
+  [/\[Submission date and time\]|Submit via LMS|File to Submit|SUBMISSION GUIDELINES/i,"inactive submission instruction"],
   [/(?:BEGIN (?:RSA|OPENSSH|EC) PRIVATE KEY|gh[pousr]_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16})/,"secret credential"],
   [/[\uFFFD]/,"replacement character"],
   [/(?:â€|Ä‘|Ã¡|ðŸ)/,"mojibake"],
