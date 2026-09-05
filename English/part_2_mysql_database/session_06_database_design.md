@@ -63,6 +63,9 @@ Table: orders (NOT NORMALIZED)
 - Each cell contains only **one value**
 - No repeated columns (no column arrays like `phone1`, `phone2`, `phone3`)
 
+Read this comparison, do not run it: it declares `students` twice on purpose, so
+MySQL would stop at the second `CREATE TABLE`.
+
 ```sql
 -- ❌ Violates 1NF
 CREATE TABLE students (
@@ -99,19 +102,30 @@ CREATE TABLE student_phones (
 
 ## 2. RELATIONSHIPS
 
+### 📋 Where to run the examples in this section
+
+Sections 2 and 3 are small standalone sketches, and some of them use the same
+table names as the shop schema in Section 4. Put them in their own scratch
+database so nothing collides:
+
+```sql
+CREATE DATABASE IF NOT EXISTS design_practice;
+USE design_practice;
+```
+
 ### 2.1 One-to-One (1:1)
 
 Each record in Table A is linked to **one** record in Table B.
 
 ```sql
 -- Example: User and Profile
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE profiles (
+CREATE TABLE IF NOT EXISTS profiles (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT UNIQUE NOT NULL,  -- UNIQUE = 1:1
     full_name VARCHAR(100),
@@ -127,12 +141,12 @@ One record in Table A is linked to **many** records in Table B.
 
 ```sql
 -- Example: Category and Products
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     price DECIMAL(10,2),
@@ -149,18 +163,18 @@ We use a **junction table** (bridge table).
 
 ```sql
 -- Example: Students and Courses
-CREATE TABLE students (
+CREATE TABLE IF NOT EXISTS students (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE courses (
+CREATE TABLE IF NOT EXISTS courses (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL
 );
 
 -- Junction table (enrollments)
-CREATE TABLE enrollments (
+CREATE TABLE IF NOT EXISTS enrollments (
     id INT PRIMARY KEY AUTO_INCREMENT,
     student_id INT NOT NULL,
     course_id INT NOT NULL,
@@ -179,7 +193,13 @@ CREATE TABLE enrollments (
 ### 3.1 Syntax
 
 ```sql
-CREATE TABLE orders (
+-- customers must exist before orders can point at it
+CREATE TABLE IF NOT EXISTS customers (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS orders (
     id INT PRIMARY KEY AUTO_INCREMENT,
     customer_id INT NOT NULL,
     total DECIMAL(10,2),
@@ -198,6 +218,9 @@ CREATE TABLE orders (
 | `RESTRICT` | Prevent delete/update if children exist |
 | `NO ACTION` | Same as RESTRICT in MySQL |
 
+This next block is a **fragment**, not a complete statement — it is the line you
+put inside a `CREATE TABLE`. Running it on its own is a syntax error.
+
 ```sql
 -- When deleting a category, set product.category_id = NULL
 FOREIGN KEY (category_id) REFERENCES categories(id)
@@ -209,13 +232,16 @@ FOREIGN KEY (category_id) REFERENCES categories(id)
 
 ## 4. DESIGN EXAMPLE: E-COMMERCE DATABASE
 
+This is the `shop_db` schema that Session 07 queries. Run the whole block in
+order: each `FOREIGN KEY` needs the table it points at to exist already.
+
 ```sql
 -- Database for online shop
-CREATE DATABASE shop_db;
+CREATE DATABASE IF NOT EXISTS shop_db;
 USE shop_db;
 
 -- 1. Users
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -224,7 +250,7 @@ CREATE TABLE users (
 );
 
 -- 2. Categories
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     slug VARCHAR(100) UNIQUE NOT NULL,
@@ -233,7 +259,7 @@ CREATE TABLE categories (
 );
 
 -- 3. Products
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     slug VARCHAR(255) UNIQUE NOT NULL,
@@ -247,7 +273,7 @@ CREATE TABLE products (
 );
 
 -- 4. Orders
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
     total DECIMAL(10,2) NOT NULL,
@@ -258,7 +284,7 @@ CREATE TABLE orders (
 );
 
 -- 5. Order Items (N:N between Orders and Products)
-CREATE TABLE order_items (
+CREATE TABLE IF NOT EXISTS order_items (
     id INT PRIMARY KEY AUTO_INCREMENT,
     order_id INT NOT NULL,
     product_id INT NOT NULL,
@@ -269,7 +295,7 @@ CREATE TABLE order_items (
 );
 
 -- 6. Product Images (1:N)
-CREATE TABLE product_images (
+CREATE TABLE IF NOT EXISTS product_images (
     id INT PRIMARY KEY AUTO_INCREMENT,
     product_id INT NOT NULL,
     image_url VARCHAR(255) NOT NULL,
@@ -277,6 +303,9 @@ CREATE TABLE product_images (
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 ```
+
+**Expected result:** `SHOW TABLES;` lists six tables. Keep this database — Session
+07 uses it for every JOIN.
 
 ---
 

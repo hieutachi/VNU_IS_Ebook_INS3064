@@ -349,6 +349,12 @@ function validatePassword($password) {
 
 ## Example 1: Complete Registration Form
 
+This example is long because a real form does three separate jobs. Build it in
+three passes and test after each one.
+
+**Part 1 — the logic.** Create `register.php` with only this. It checks the input
+and does nothing else yet.
+
 ```php
 <?php
 // register.php
@@ -400,62 +406,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+```
 
+✅ **Expected result:** a blank page. That is correct — there is no HTML yet. A
+parse error instead means a missing `;` or `}` somewhere above.
+
+**Part 2 — the form.** Add this below the PHP. Now the page shows something,
+remembers what was typed, and prints the messages your logic produced.
+
+```php
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Register Account</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { 
-            font-family: Arial, sans-serif; 
-            background: #f5f5f5;
-            padding: 20px;
-        }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 { text-align: center; color: #333; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        input:focus { border-color: #4CAF50; outline: none; }
-        input.error { border-color: #f44336; }
-        .error-message { color: #f44336; font-size: 14px; margin-top: 5px; }
-        .success-message {
-            background: #4CAF50;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        button {
-            width: 100%;
-            padding: 15px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        button:hover { background: #45a049; }
-        .checkbox-group { display: flex; align-items: center; gap: 10px; }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -524,6 +488,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </body>
 </html>
 ```
+
+✅ **Expected result:** an unstyled but working form. Submit it empty and five
+messages appear. Type a name, submit again, and the name stays in its box — that
+is `value="<?= htmlspecialchars($name) ?>"` doing its job.
+
+**Part 3 — the styling.** Add this `<style>` block inside `<head>`. It only changes
+how the page looks; none of it affects the checks.
+
+```css
+* { box-sizing: border-box; }
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    padding: 20px;
+}
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+h1 { text-align: center; color: #333; }
+.form-group { margin-bottom: 20px; }
+label { display: block; margin-bottom: 5px; font-weight: bold; }
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+input:focus { border-color: #4CAF50; outline: none; }
+input.error { border-color: #f44336; }
+.error-message { color: #f44336; font-size: 14px; margin-top: 5px; }
+.success-message {
+    background: #4CAF50;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+button {
+    width: 100%;
+    padding: 15px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+button:hover { background: #45a049; }
+.checkbox-group { display: flex; align-items: center; gap: 10px; }
+```
+
+✅ **Expected result:** a white card on a grey background, a green button, and red
+borders on the fields that failed.
 
 ---
 

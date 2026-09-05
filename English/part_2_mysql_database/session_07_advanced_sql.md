@@ -35,6 +35,90 @@ After this session, you will be able to:
 
 # THEORY
 
+## 📋 BEFORE YOU START: THE SHOP DATABASE
+
+Every query in this chapter uses the `shop_db` tables from Session 06: `users`,
+`categories`, `products`, `orders`, and `order_items`. Run this block first, in
+this order — the foreign keys mean a table cannot be created before the table it
+points at.
+
+```sql
+-- Setup for Session 07. Safe to run more than once.
+CREATE DATABASE IF NOT EXISTS shop_db
+CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE shop_db;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'customer') DEFAULT 'customer',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS categories (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    slug VARCHAR(100) UNIQUE NOT NULL,
+    parent_id INT,
+    FOREIGN KEY (parent_id) REFERENCES categories(id)
+);
+
+CREATE TABLE IF NOT EXISTS products (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    stock INT DEFAULT 0,
+    category_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    total DECIMAL(10,2) NOT NULL,
+    status ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS order_items (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+INSERT IGNORE INTO users (id, email, password) VALUES
+(1, 'anna@example.com', 'hash1'), (2, 'ben@example.com', 'hash2');
+
+INSERT IGNORE INTO categories (id, name, slug) VALUES
+(1, 'Laptops', 'laptops'), (2, 'Phones', 'phones'), (3, 'Empty category', 'empty');
+
+INSERT IGNORE INTO products (id, name, slug, price, stock, category_id) VALUES
+(1, 'Notebook 14', 'notebook-14', 750.00, 5, 1),
+(2, 'Notebook 16', 'notebook-16', 1250.00, 2, 1),
+(3, 'Phone A', 'phone-a', 320.00, 10, 2),
+(4, 'Unsorted gadget', 'unsorted-gadget', 90.00, 7, NULL);
+
+INSERT IGNORE INTO orders (id, user_id, total, status) VALUES
+(1, 1, 1070.00, 'delivered'), (2, 2, 320.00, 'pending');
+
+INSERT IGNORE INTO order_items (id, order_id, product_id, quantity, price) VALUES
+(1, 1, 1, 1, 750.00), (2, 1, 3, 1, 320.00), (3, 2, 3, 1, 320.00);
+```
+
+**Expected result:** `SHOW TABLES;` lists five tables. The sample rows are chosen
+so the JOINs below actually show a difference: product 4 has no category, and
+category 3 has no products.
+
+---
+
 ## 1. JOIN – COMBINING TABLES
 
 ### 1.1 INNER JOIN

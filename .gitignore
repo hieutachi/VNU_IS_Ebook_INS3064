@@ -32,6 +32,21 @@ coverage/
 *.tmp
 *.temp
 
+# Lecturer binaries. Large, opaque to diff, and permanent once in git history.
+# They stay in OneDrive; the repository keeps only the text sources.
+Slide/*.pdf
+Slide/*.pptx
+Worksheet/**/*.pdf
+English/worksheet/*.zip
+English/worksheet/**/.screenshots/
+
+# Legacy Python slide generators, superseded by the Node pipeline in _tools/.
+# Kept on disk for reference; the tracked generator is create_slides_from_vietnamese.py.
+create_all_slides.py
+create_remaining_slides.py
+create_slides_from_markdown.py
+generate_slides_auto.py
+
 # Student-side artefacts that must never be committed with the course package
 examples/**/uploads/*
 !examples/**/uploads/.gitkeep

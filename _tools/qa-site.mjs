@@ -142,7 +142,18 @@ const deckPages=[...pages].filter(([file])=>/^slides\/\d{2}-/.test(file));
 for(const [file,source] of deckPages){
   if(!source.includes("data-deck-select")||!source.includes("data-deck-prev")||!source.includes("data-deck-next"))bad(`${file}: incomplete slide controls`);
 }
-ok("15 decks expose select, previous, next, and keyboard controls");
+/* Slide labels are how a student navigates a deck, so the list must not repeat
+   an entry: two "Exercise 1" rows give no way to tell which is which. */
+for(const [file,source] of deckPages){
+  const labels=[...source.matchAll(/<option value="\d+">\d+\.\s([^<]+)<\/option>/g)].map((match)=>match[1]);
+  const tally=new Map();
+  for(const label of labels)tally.set(label,(tally.get(label)||0)+1);
+  const repeats=[...tally].filter((entry)=>entry[1]>1);
+  if(repeats.length)bad(`${file}: repeated slide labels: ${repeats.map((entry)=>`${entry[0]} x${entry[1]}`).join("; ")}`);
+  const slides=count(source,/data-slide(?:\s|>)/g);
+  if(labels.length!==slides)bad(`${file}: ${labels.length} slide-list entries for ${slides} slides`);
+}
+ok(`${deckPages.length} decks expose select, previous, next, keyboard controls, and unique slide labels`);
 
 /* Every class the builder emits must be styled, and every custom property used. */
 const classesInHtml=new Set();
@@ -159,6 +170,67 @@ const referenced=new Set([...css.matchAll(/var\((--[\w-]+)/g)].map((match)=>matc
 const undefinedVars=[...referenced].filter((name)=>!declared.has(name));
 undefinedVars.length?bad(`undefined custom properties: ${undefinedVars.join(", ")}`):ok(`${declared.size} design tokens defined before use`);
 
+console.log("== stylesheet scope ==============================================");
+/* A theme block that forgets its closing brace stays balanced overall but traps
+   the whole base layer inside one theme, so the other theme renders as bare
+   HTML. Walk the braces and check what actually sits at the top level. */
+function topLevelRules(text){
+  const clean=text.replace(/\/\*[\s\S]*?\*\//g,(comment)=>" ".repeat(comment.length));
+  const rules=[];
+  let depth=0;
+  let selectorStart=0;
+  let bodyStart=0;
+  for(let index=0;index<clean.length;index+=1){
+    const char=clean[index];
+    if(char==="{"){
+      depth+=1;
+      if(depth===1){rules.push({selector:clean.slice(selectorStart,index).trim()});bodyStart=index+1;}
+      continue;
+    }
+    if(char==="}"){
+      depth-=1;
+      if(depth<0)return null;
+      if(depth===0){rules[rules.length-1].body=clean.slice(bodyStart,index);selectorStart=index+1;}
+    }
+  }
+  return depth===0?rules:null;
+}
+const rules=topLevelRules(css);
+if(!rules){bad("site.css: unbalanced braces");}
+else{
+  ok(`${rules.length} top-level stylesheet rules parsed`);
+  const selectorsAtRoot=new Set();
+  for(const rule of rules){
+    if(rule.selector.startsWith("@"))continue;
+    for(const part of rule.selector.split(","))selectorsAtRoot.add(part.trim());
+  }
+  /* These rules build the page itself. If any of them is nested inside a theme
+     or a media query, one theme or one viewport loses its whole design. */
+  const MUST_BE_UNSCOPED=["body","a","button","main",".topbar",".topbar-inner",".brand",".primary-nav",".theme-toggle",".footer",".doc",".reading-layout",".toc",".resource-grid",".session-grid",".code-block",".deck-slide",".slide-inner",".callout",".chip",".pager"];
+  const trapped=MUST_BE_UNSCOPED.filter((selector)=>!selectorsAtRoot.has(selector));
+  trapped.length
+    ? bad(`base rules not at the top level (nested in a theme or media query?): ${trapped.join(", ")}`)
+    : ok(`${MUST_BE_UNSCOPED.length} base rules apply to both themes`);
+
+  /* The token block may only re-point design tokens. Anything else in there is a
+     rule that light mode will never see. */
+  const themeRules=rules.filter((rule)=>/^:root\[data-theme="[a-z]+"\]$/.test(rule.selector));
+  if(themeRules.length!==1)bad(`expected exactly one :root[data-theme] token block, found ${themeRules.length}`);
+  for(const rule of themeRules){
+    const strays=rule.body.split(";").map((line)=>line.trim()).filter(Boolean)
+      .filter((line)=>!/^--[\w-]+\s*:/.test(line)&&!/^color-scheme\s*:/.test(line));
+    strays.length
+      ? bad(`${rule.selector} contains non-token declarations: ${strays.slice(0,2).join(" | ").slice(0,90)}`)
+      : ok(`${rule.selector} only re-points design tokens`);
+    const lightTokens=new Set([...(rules.find((item)=>item.selector===":root")?.body??"").matchAll(/(--[\w-]+)\s*:/g)].map((match)=>match[1]));
+    const darkTokens=[...rule.body.matchAll(/(--[\w-]+)\s*:/g)].map((match)=>match[1]);
+    const orphans=darkTokens.filter((name)=>!lightTokens.has(name));
+    orphans.length
+      ? bad(`tokens themed for dark but missing from the light default: ${orphans.join(", ")}`)
+      : ok(`${darkTokens.length} dark tokens all have a light default`);
+  }
+}
+
 console.log("== presentation ===================================================");
 let presentationProblems=0;
 const flag=(message)=>{presentationProblems+=1;bad(message);};
@@ -172,6 +244,11 @@ for(const [file,source] of pages){
     if(!source.includes('class="toc"'))flag(`${file}: missing on-this-page navigation`);
     if(count(source,/<figure class="code-block/g)!==count(source,/class="code-language"/g))flag(`${file}: code figure without a language caption`);
     if(/<pre(?![^>]*tabindex)/.test(source))flag(`${file}: scrollable code without keyboard focus`);
+    /* A listing that would delete a student's work must say so in its caption. */
+    for(const figure of source.match(/<figure class="code-block[\s\S]*?<\/figure>/g)??[]){
+      const destructive=/\b(?:DROP\s+(?:TABLE|DATABASE)|TRUNCATE\s+TABLE)\b/i.test(figure.replace(/<[^>]*>/g," "));
+      if(destructive&&!figure.includes("is-read-only"))flag(`${file}: destructive listing without a read-only flag`);
+    }
   }
   if(/^slides\/\d{2}-/.test(file)){
     for(const marker of ['class="deck-rail"',"data-deck-progress",'class="deck-slide is-title"','class="slide-foot"']){

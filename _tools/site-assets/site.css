@@ -75,6 +75,8 @@
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 30%), 0 4px 14px rgb(0 0 0 / 26%);
   --shadow: 0 14px 36px rgb(0 0 0 / 38%);
   --shadow-lg: 0 26px 64px rgb(0 0 0 / 48%);
+}
+
 /* ---------- 2. base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 5.5rem; }
@@ -157,7 +159,6 @@ kbd {
 }
 .footer p { max-width: 58ch; margin: .2rem 0; }
 
-}
 /* ---------- 4. page heads and buttons ---------- */
 main { width: min(calc(100% - 2rem), var(--shell)); margin: auto; padding: 2.75rem 0 5rem; }
 .page-head { max-width: 900px; padding: 1rem 0 2rem; }
@@ -293,6 +294,10 @@ h1 { margin: 0; font-size: clamp(2.05rem, 5vw, 3.9rem); line-height: 1.03; lette
 }
 .toc summary { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; cursor: pointer; list-style: none; }
 .toc summary::-webkit-details-marker { display: none; }
+/* The count doubles as the open/closed affordance, so a collapsed list still
+   reads as something you can tap. Escapes keep the file ASCII-safe. */
+.toc-count::after { content: " \25BE"; }
+.toc:not([open]) .toc-count::after { content: " \25B8"; }
 .toc-title { color: var(--ink); font-size: .76rem; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
 .toc-count { color: var(--muted); font-size: .72rem; }
 .toc ol { max-height: min(60vh, 34rem); margin: .8rem 0 0; padding: 0 0 0 .2rem; overflow: auto; list-style: none; }
@@ -389,6 +394,13 @@ h1 { margin: 0; font-size: clamp(2.05rem, 5vw, 3.9rem); line-height: 1.03; lette
 .code-copy.is-done { border-color: var(--good); color: var(--good); }
 .code-block.is-tall pre { max-height: 30rem; }
 .code-block.is-compact pre { padding: .9rem 1rem; font-size: .8rem; }
+/* Listings you should read, not run: broken on purpose, or destructive. */
+.code-flag {
+  padding: .1rem .45rem; border: 1px solid currentcolor; border-radius: 999px;
+  color: var(--warn); font-size: .68rem; font-weight: 700; letter-spacing: .04em; white-space: nowrap;
+}
+.code-block.is-read-only { border-color: color-mix(in srgb, var(--warn) 55%, var(--code-line)); }
+.code-block.is-read-only figcaption { background: color-mix(in srgb, var(--warn) 16%, var(--code-bg)); }
 .code-block pre code { color: inherit; font: inherit; }
 .doc :not(pre) > code, .deck-slide :not(pre) > code {
   padding: .14em .38em; border: 1px solid var(--line-soft); border-radius: 6px;
@@ -449,6 +461,15 @@ h1 { margin: 0; font-size: clamp(2.05rem, 5vw, 3.9rem); line-height: 1.03; lette
 .callout.is-info .callout-title, .callout.is-compare .callout-title,
 .callout.is-check .callout-title, .callout.is-rules .callout-title { color: var(--info); }
 .callout.is-challenge { border-left-color: var(--php); background: var(--surface-3); }
+.callout.is-goal { border-left-color: var(--brand); background: var(--brand-tint); }
+.callout.is-goal .callout-title { color: var(--brand-strong); }
+
+/* The shortest route through a chapter, for a reader who is short on time. */
+.minimum-path { margin-top: 0; }
+.path-list { margin: .8rem 0 0; padding-left: 1.4rem; }
+.path-list li { max-width: none; margin: .35rem 0; }
+.path-list a { font-weight: 650; }
+.path-target { display: block; color: var(--muted); font-size: .82rem; }
 
 .brief {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .8rem;
@@ -633,7 +654,9 @@ html.js .deck-slide.is-active { display: flex; }
 @media (max-width: 1080px) {
   .reading-layout { grid-template-columns: minmax(0, 1fr); }
   .toc { position: static; order: 0; max-width: none; }
-  .toc ol { max-height: none; columns: 2; column-gap: 1.5rem; }
+  /* Above the chapter the list scrolls inside itself: a 49-section outline must
+     never push the reading two screens down. */
+  .toc ol { max-height: 50vh; columns: 2; column-gap: 1.5rem; }
   .doc { max-width: none; }
   .deck-shell { grid-template-columns: minmax(0, 1fr); }
   .deck-rail { display: none; }

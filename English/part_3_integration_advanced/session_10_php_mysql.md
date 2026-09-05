@@ -35,6 +35,40 @@ After this session, you will be able to:
 
 # THEORY
 
+## 📋 BEFORE YOU START: THE TEST DATABASE
+
+Every example in this chapter connects to `test_db` and reads or writes a `users`
+table. Run this block in phpMyAdmin first, or every PHP file below will stop at
+`Base table or view not found`.
+
+```sql
+-- Setup for Session 10. Safe to run more than once.
+CREATE DATABASE IF NOT EXISTS test_db
+CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE test_db;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255),
+    role VARCHAR(20) DEFAULT 'user',
+    status VARCHAR(20) DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT IGNORE INTO users (id, name, email, password, role, status) VALUES
+(1, 'Anna Tran', 'anna@example.com', 'not-a-real-hash', 'admin', 'active'),
+(2, 'Ben Le',    'ben@example.com',  'not-a-real-hash', 'user',  'active'),
+(3, 'Chi Pham',  'chi@example.com',  'not-a-real-hash', 'user',  'inactive');
+```
+
+**Expected result:** three rows in `test_db.users`. Passwords here are
+placeholders — Section 2.1 shows how real ones are hashed with
+`password_hash()`.
+
+---
+
 ## 1. DATABASE CONNECTION
 
 ### 1.1 Using PDO (Recommended)

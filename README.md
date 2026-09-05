@@ -2,6 +2,20 @@
 
 English and Vietnamese learning materials for the 15-session PHP, MySQL, security, and jQuery course at VNU International School.
 
+## Assessment
+
+Weights are defined in `schedule.md` and repeated here because these are the two files
+people read first:
+
+| Component | Weight |
+|---|---|
+| Attendance, Participation & Homework | 10% |
+| Midterm Exam (practical) | 30% |
+| Final Exam (practical) | 20% |
+| Capstone Project (Campus Club Hub) | 40% |
+
+`node _tools/check-weights.js` fails if this table and `schedule.md` disagree.
+
 ## Student website
 
 Published portal: <https://hieutachi.github.io/INS3064-Student-Site/>

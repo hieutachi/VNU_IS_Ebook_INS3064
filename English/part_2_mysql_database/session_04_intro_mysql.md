@@ -128,7 +128,7 @@ MySQL is already installed in XAMPP:
 
 ```sql
 -- Create database
-CREATE DATABASE ins3064_db
+CREATE DATABASE IF NOT EXISTS ins3064_db
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
@@ -137,8 +137,15 @@ USE ins3064_db;
 
 -- View list of databases
 SHOW DATABASES;
+```
 
--- Delete database
+### ⚠️ DROP DATABASE removes everything inside it
+
+Keep `ins3064_db` — Section 4 creates a table in it. Only run this when you
+genuinely want the database and all its tables gone.
+
+```sql
+-- Destructive: deletes the database and every table in it
 DROP DATABASE ins3064_db;
 ```
 
@@ -155,25 +162,31 @@ DROP DATABASE ins3064_db;
 ### 4.1 Table Structure
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│ Table: students                                          │
-├─────┬──────────┬─────────┬──────────┬──────────────────┤
-│ id  │ name     │ email   │ age      │ created_at       │
-├─────┼──────────┼─────────┼──────────┼──────────────────┤
-│ 1   │ John Doe │ j@e.com │ 20       │ 2024-01-01 10:00 │
-│ 2   │ Jane S.  │ j@e.com │ 21       │ 2024-01-02 11:00 │
-│ 3   │ Bob J.   │ b@e.com │ 19       │ 2024-01-03 12:00 │
-└─────┴──────────┴─────────┴──────────┴──────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│ Table: students (6 of its 10 columns)                               │
+├─────┬──────────────┬──────────┬─────────┬───────┬───────────────────┤
+│ id  │ student_code │ name     │ email   │ class │ created_at        │
+├─────┼──────────────┼──────────┼─────────┼───────┼───────────────────┤
+│ 1   │ ST001        │ John Doe │ j@e.com │ ICT1  │ 2024-01-01 10:00  │
+│ 2   │ ST002        │ Jane S.  │ s@e.com │ ICT1  │ 2024-01-02 11:00  │
+│ 3   │ ST003        │ Bob J.   │ b@e.com │ ICT2  │ 2024-01-03 12:00  │
+└─────┴──────────────┴──────────┴─────────┴───────┴───────────────────┘
 ```
 
 ### 4.2 Create Table with SQL
+
+This is the `students` table used by Session 05 as well, so create it with every
+column those queries need. Run it inside `ins3064_db` from Section 3.
 
 ```sql
 -- Create table students
 CREATE TABLE students (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    student_code VARCHAR(20) UNIQUE NOT NULL,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    class VARCHAR(20),
     age INT,
     gpa DECIMAL(3,2),
     is_active BOOLEAN DEFAULT TRUE,
@@ -185,8 +198,15 @@ DESCRIBE students;
 
 -- View list of tables
 SHOW TABLES;
+```
 
--- Delete table
+### ⚠️ DROP TABLE deletes the table and every row in it
+
+Do not run this next line yet. Session 05 queries the `students` table you just
+created. Come back to it only when you want to start over from an empty database.
+
+```sql
+-- Destructive: deletes the table and all its data
 DROP TABLE students;
 ```
 
@@ -195,7 +215,7 @@ DROP TABLE students;
 1. Select database
 2. Click **New** (Create table)
 3. Enter table name: `students`
-4. Number of columns: 7
+4. Number of columns: 10
 5. Fill information for each column
 6. Click **Save**
 
@@ -245,28 +265,41 @@ DROP TABLE students;
 
 ### 6.1 Types of Constraints
 
+A `FOREIGN KEY` can only point at a table that already exists, so `categories`
+has to be created before `products`.
+
 ```sql
-CREATE TABLE products (
+-- The table the foreign key points at must exist first
+CREATE TABLE IF NOT EXISTS categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS products (
     -- PRIMARY KEY: Primary key, unique, not null
     id INT AUTO_INCREMENT PRIMARY KEY,
-    
+
     -- NOT NULL: Must have value
     name VARCHAR(100) NOT NULL,
-    
+
     -- UNIQUE: Unique value
     sku VARCHAR(50) UNIQUE,
-    
+
     -- DEFAULT: Default value
     status VARCHAR(20) DEFAULT 'active',
-    
+
     -- CHECK: Check condition (MySQL 8.0+)
     price DECIMAL(10,2) CHECK (price > 0),
-    
+
     -- FOREIGN KEY: Foreign key
     category_id INT,
     FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 ```
+
+**Expected result:** both tables created. If you run the `products` block on its
+own you get `errno: 150 "Foreign key constraint is incorrectly formed"` — that is
+MySQL saying it cannot find `categories`.
 
 ### 6.2 AUTO_INCREMENT
 

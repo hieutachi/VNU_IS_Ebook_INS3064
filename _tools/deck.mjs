@@ -47,6 +47,9 @@ function partLabel(text) {
 }
 
 const cleanTitle = (text) => smartTitle(plain(text).replace(/^[^\p{L}\p{N}]+/u, "").trim());
+/* Exercise and worksheet-part headings are boundaries a student navigates by, so
+   they always start their own slide instead of sharing one with the previous task. */
+const BOUNDARY_TITLE = /^(?:practical\s+)?(?:exercise|part)\s+(?:\d|[A-D]\b)/i;
 
 /* Split the token stream into slide-sized chunks that respect headings. */
 export function planSlides(tokens) {
@@ -90,13 +93,17 @@ export function planSlides(tokens) {
     if (token.type === "heading" && token.depth >= 3) {
       const title = cleanTitle(token.text);
       if (current && weight > 0) {
-        if (weight > BUDGET * 0.45) {
+        if (weight > BUDGET * 0.45 || BOUNDARY_TITLE.test(title)) {
           flush();
           sub = title;
           open();
         } else {
           current.tokens.push(token);
           weight += 2;
+          /* The slide keeps the sub-heading it opened under, but everything that
+             follows belongs to this one. Without this, later slides in the same
+             section are labelled with the previous exercise's name. */
+          sub = title;
         }
         continue;
       }
@@ -145,6 +152,28 @@ export function planSlides(tokens) {
   /* A trailing heading with nothing under it would render as an empty promise. */
   if (current) takeTrailingHeadings(current);
   flush();
+  return numberRuns(slides);
+}
+
+/* Consecutive slides that share a label are one long section split across
+   screens. Number them so the slide list reads "2 of 3" instead of repeating
+   the same title, which is what makes a deck feel lost. */
+function numberRuns(slides) {
+  const labelOf = (slide) => (slide.kind === "content" ? slide.sub || slide.title || "" : "");
+  let start = 0;
+  for (let index = 0; index <= slides.length; index += 1) {
+    const same = index < slides.length && labelOf(slides[index]) && labelOf(slides[index]) === labelOf(slides[start]);
+    if (same) continue;
+    const total = index - start;
+    if (total > 1) {
+      for (let step = 0; step < total; step += 1) {
+        slides[start + step].step = step + 1;
+        slides[start + step].steps = total;
+        if (step > 0) slides[start + step].continued = true;
+      }
+    }
+    start = index;
+  }
   return slides;
 }
 

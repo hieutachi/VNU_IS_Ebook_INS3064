@@ -113,6 +113,21 @@ function inlineHtml(text) {
 const BLANKS = /_{4,}/g;
 const blanksToRules = (html) => html.replace(BLANKS, '<span class="blank"></span>');
 
+/* Some listings are meant to be read, not run: deliberately broken code, or a
+   statement that would delete a student's practice data. Label those in the
+   caption so nobody pastes them into a terminal to find out. */
+const READ_ONLY = [
+  [/\bDROP\s+(?:TABLE|DATABASE)\b|\bTRUNCATE\s+TABLE\b/i, "Destructive — read only"],
+  [/(?:^|\n)\s*(?:--|\/\/|#)\s*\u274C\s*DANGEROUS/i, "Destructive — read only"],
+  [/(?:^|\n)\s*(?:--|\/\/|#)\s*Destructive:/i, "Destructive — read only"],
+  [/\u274C\s*(?:Wrong|Violates|Incorrect)/i, "Broken on purpose"],
+];
+
+function readOnlyLabel(code) {
+  for (const [pattern, label] of READ_ONLY) if (pattern.test(code)) return label;
+  return "";
+}
+
 function codeFigure(token, { compact = false } = {}) {
   const language = detectLanguage(token.text, token.lang);
   const label = languageLabel(language);
@@ -123,11 +138,14 @@ function codeFigure(token, { compact = false } = {}) {
   const classes = ["code-block", `is-${kind}`];
   if (compact) classes.push("is-compact");
   if (lines.length > 24) classes.push("is-tall");
+  const warning = kind === "code" ? readOnlyLabel(token.text) : "";
+  if (warning) classes.push("is-read-only");
   const copy = kind === "code"
     ? '<button class="code-copy" type="button" data-code-copy>Copy</button>'
     : "";
+  const flag = warning ? `<span class="code-flag">${esc(warning)}</span>` : "";
   return `<figure class="${classes.join(" ")}" data-language="${esc(language)}" data-lines="${lines.length}">`
-    + `<figcaption><span class="code-language">${esc(label)}</span>`
+    + `<figcaption><span class="code-language">${esc(label)}</span>${flag}`
     + `<span class="code-meta"><span class="code-lines">${lines.length} line${lines.length === 1 ? "" : "s"}</span>${copy}</span></figcaption>`
     + `<pre tabindex="0"><code>${body}</code></pre></figure>`;
 }

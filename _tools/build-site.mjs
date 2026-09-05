@@ -103,7 +103,34 @@ function renderChapter(markdown) {
 function tocHtml(headings) {
   if (!headings.length) return "";
   const items = headings.map((h) => `<li class="depth-${h.depth}"><a href="#${h.id}">${esc(h.label)}</a></li>`).join("");
-  return `<details class="toc" open><summary><span class="toc-title">On this page</span><span class="toc-count">${headings.length} sections</span></summary><ol>${items}</ol></details>`;
+  /* Open by default so the outline works without JavaScript. On phones site.js
+     collapses it, because a 49-entry list would otherwise bury the chapter. */
+  return `<details class="toc" data-toc open><summary><span class="toc-title">On this page</span><span class="toc-count">${headings.length} sections</span></summary><ol>${items}</ol></details>`;
+}
+
+/* The shortest honest route through a chapter, for a student who is short on time
+   or losing confidence: one theory section, one worked example, one exercise, and
+   the error table to check the result against. Built from the real headings so
+   every step is a working link. */
+function minimumPath(headings) {
+  const find = (pattern) => headings.find((h) => pattern.test(h.label));
+  /* Source headings often start with an emoji; the badge is decoration here. */
+  const clean = (label) => label.replace(/^(?:\p{Extended_Pictographic}|\uFE0F|\u200D)+\s*/u, "");
+  const steps = [
+    [find(/before you start/i), "Set up the database first"],
+    [find(/^\d+\.\s/), "Read one theory section"],
+    [find(/^Example 1\b/i), "Type the first worked example"],
+    [find(/^(?:Exercise|Practical exercise) 1\b/i) || find(/^\d+\.\d+ Main Practice/i), "Build the first exercise yourself"],
+    [find(/common error/i), "Check your errors against the table"],
+    [find(/self-check|knowledge to achieve|key takeaways|theory summary/i), "Test yourself"],
+  ].filter(([heading]) => heading);
+  if (steps.length < 3) return "";
+  const items = steps.map(([heading, copy]) =>
+    `<li><a href="#${heading.id}">${esc(copy)}</a><span class="path-target">${esc(clean(heading.label))}</span></li>`).join("");
+  return `<aside class="callout is-goal minimum-path" aria-labelledby="minimum-path-h">`
+    + `<p class="callout-title" id="minimum-path-h">Minimum path</p>`
+    + `<div class="callout-body"><p>Short on time, or stuck? These ${steps.length} steps are enough to keep up. Come back for the rest.</p>`
+    + `<ol class="path-list">${items}</ol></div></aside>`;
 }
 
 function page({ title, heading, lead, body, depth = 0, section = "", eyebrow = "INS3064 student learning portal", extraHead = "", pageClass = "", meta = "", head = true }) {
@@ -161,7 +188,7 @@ function chapterPage(session, raw) {
     pageClass: "reading-page",
     extraHead: sourceHead(session.source, raw),
     meta,
-    body: `<div class="reading-layout">${tocHtml(rendered.headings)}<article class="doc" data-source="${esc(session.source)}">${rendered.html}</article></div>${pager(session, "chapters")}`,
+    body: `<div class="reading-layout">${tocHtml(rendered.headings)}<article class="doc" data-source="${esc(session.source)}">${minimumPath(rendered.headings)}${rendered.html}</article></div>${pager(session, "chapters")}`,
   });
 }
 
@@ -182,8 +209,23 @@ function guidePage(guide, raw) {
 
 function deckPage(session, raw) {
   const slides = buildDeck({ session, tokens: lex(raw), localTarget });
-  /* The rail and the select show the most specific label available. */
-  const labelOf = (slide) => `${slide.sub || slide.title || "Slide"}${slide.continued ? " (cont.)" : ""}`;
+  /* The rail and the select show the most specific label available, plus the
+     step number when one section spans several slides. */
+  const baseLabel = (slide) => (slide.kind === "part"
+    /* Dividers are signposts, not content: say so, or a divider and the first
+       slide under it end up with the same name in the list. */
+    ? `Section: ${slide.title || "Next part"}`
+    : `${slide.sub || slide.title || "Slide"}${slide.steps ? ` (${slide.step}/${slide.steps})` : ""}`);
+  /* Two identical entries in the slide list are a navigation dead end, so
+     qualify any remaining repeats with the section they belong to. */
+  const seenLabels = new Map();
+  for (const slide of slides) seenLabels.set(baseLabel(slide), (seenLabels.get(baseLabel(slide)) || 0) + 1);
+  const labelOf = (slide) => {
+    const label = baseLabel(slide);
+    if (seenLabels.get(label) === 1) return label;
+    const parent = slide.title && slide.title !== slide.sub ? slide.title : slide.part;
+    return parent ? `${label} — ${parent}` : label;
+  };
   const rail = slides.map((slide) => `<li><button type="button" data-deck-jump="${slide.index}"><span class="rail-index">${pad(slide.index + 1)}</span><span class="rail-title">${esc(labelOf(slide))}</span></button></li>`).join("");
   const options = slides.map((slide) => `<option value="${slide.index}">${slide.index + 1}. ${esc(labelOf(slide))}</option>`).join("");
   const sections = slides.map((slide) => {
@@ -192,7 +234,7 @@ function deckPage(session, raw) {
       ? `<p class="slide-eyebrow"><span class="slide-part">${esc(slide.part)}</span>${slide.sub ? `<span class="slide-sub">${esc(slide.sub)}</span>` : ""}</p>`
       : "";
     const heading = slide.kind === "content" && slide.title
-      ? `<h2 class="slide-title">${decorateHeading(esc(slide.title))}${slide.continued ? '<span class="slide-cont">continued</span>' : ""}</h2>`
+      ? `<h2 class="slide-title">${decorateHeading(esc(slide.title))}${slide.steps ? `<span class="slide-cont">${slide.step} of ${slide.steps}</span>` : ""}</h2>`
       : "";
     return `<section class="${kind}" id="${slide.id}" tabindex="-1" data-slide data-slide-title="${esc(slide.title || "")}" aria-label="Slide ${slide.index + 1} of ${slides.length}">`
       + `<div class="slide-inner">${eyebrow}${heading}<div class="slide-body">${slide.html}</div></div>`

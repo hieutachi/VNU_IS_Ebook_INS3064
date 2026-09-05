@@ -423,82 +423,58 @@ Welcome to INS3064!
 
 🔧 **Instructions:**
 
-**Step 1:** Create file `profile.php`
+Build this in three steps. Each step is a page that already runs, so you always
+know whether you broke something in the step you just did.
+
+**Step 1:** Create `profile.php` with the data and the text only. No styling yet.
+
 ```php
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Profile - <?php echo "Your Name"; ?></title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .card {
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-        }
-        .avatar {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            color: white;
-        }
-        h1 { color: #333; margin-bottom: 5px; }
-        .subtitle { color: #666; margin-bottom: 20px; }
-        .info { text-align: left; }
-        .info-item {
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-        }
-        .info-item:last-child { border-bottom: none; }
-        .label { color: #888; }
-        .value { color: #333; font-weight: 500; }
-        .datetime {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #666;
-        }
-    </style>
+    <title>Profile</title>
 </head>
+<body>
+    <?php
+    // Declare personal information
+    $fullName  = "John Doe";
+    $studentId = "123456789";
+    $class     = "INS3064-01";
+    $email     = "johndoe@email.com";
+    ?>
+
+    <h1><?php echo $fullName; ?></h1>
+    <p>Student <?php echo $class; ?></p>
+    <p>Student ID: <?php echo $studentId; ?></p>
+    <p>Email: <?php echo $email; ?></p>
+</body>
+</html>
+```
+
+✅ **Expected Result:** Visit `http://localhost/ins3064/session_01/profile.php`
+and you see your name as a heading and three lines of information. Unstyled, but
+working. If you see the PHP code itself instead of your name, you opened the file
+directly rather than through `localhost`.
+
+**Step 2:** Add the date and time, and group the information into rows. Replace
+the `<body>` with this:
+
+```php
 <body>
     <div class="card">
         <div class="avatar">👤</div>
-        
+
         <?php
-        // Declare personal information
-        $fullName = "John Doe";
+        $fullName  = "John Doe";
         $studentId = "123456789";
-        $class = "INS3064-01";
-        $email = "johndoe@email.com";
+        $class     = "INS3064-01";
+        $email     = "johndoe@email.com";
         ?>
-        
+
         <h1><?php echo $fullName; ?></h1>
         <p class="subtitle">Student <?php echo $class; ?></p>
-        
+
         <div class="info">
             <div class="info-item">
                 <span class="label">📋 Student ID:</span>
@@ -513,7 +489,7 @@ Welcome to INS3064!
                 <span class="value"><?php echo $email; ?></span>
             </div>
         </div>
-        
+
         <div class="datetime">
             <?php
             echo "🗓️ " . date("Y-m-d") . " | ";
@@ -522,12 +498,73 @@ Welcome to INS3064!
         </div>
     </div>
 </body>
-</html>
 ```
 
-**Step 2:** Visit: `http://localhost/ins3064/session_01/profile.php`
+✅ **Expected Result:** The same information, plus today's date and the current
+time. The `class` attributes do nothing yet — that is Step 3.
 
-✅ **Expected Result:** Beautiful profile page with personal information
+**Step 3:** Now style it. Add this `<style>` block inside `<head>`, and change the
+title to `<title>Profile - <?php echo "Your Name"; ?></title>`.
+
+```php
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+    .card {
+        background: white;
+        border-radius: 15px;
+        padding: 40px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+    }
+    .avatar {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        color: white;
+    }
+    h1 { color: #333; margin-bottom: 5px; }
+    .subtitle { color: #666; margin-bottom: 20px; }
+    .info { text-align: left; }
+    .info-item {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+    }
+    .info-item:last-child { border-bottom: none; }
+    .label { color: #888; }
+    .value { color: #333; font-weight: 500; }
+    .datetime {
+        margin-top: 20px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #666;
+    }
+</style>
+```
+
+✅ **Expected Result:** A card centred on a purple gradient, with your name, three
+rows of information, and the date and time at the bottom. Refresh the page and the
+seconds change — that is the PHP running again on every request.
 
 💾 **File to Save:** `profile.php`
 
@@ -667,6 +704,7 @@ Find and fix errors in the following code:
 
 ```php
 <?php
+// ❌ Wrong on purpose: this file has two errors to find
 echo "Hello World"
 echo "Welcome to PHP!";
 print "This is", "PHP";

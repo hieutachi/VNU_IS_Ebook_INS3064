@@ -35,6 +35,45 @@ After this session, you will be able to:
 
 # THEORY
 
+## 📋 BEFORE YOU START: THE PRACTICE DATABASE
+
+Every query in this chapter runs against one table: `students`. Run this block
+once in phpMyAdmin (tab **SQL**) or the MySQL console before you read on. It is
+the same table as Session 04, with sample rows added.
+
+```sql
+-- Setup for Session 05. Safe to run more than once.
+CREATE DATABASE IF NOT EXISTS university
+CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE university;
+
+CREATE TABLE IF NOT EXISTS students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_code VARCHAR(20) UNIQUE NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    class VARCHAR(20),
+    age INT,
+    gpa DECIMAL(3,2),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT IGNORE INTO students (student_code, name, email, phone, class, age, gpa) VALUES
+('ST001', 'John Nguyen',  'john@example.com',    '0901234567', 'ICT1', 20, 3.5),
+('ST002', 'Anna Tran',    'anna@example.com',    '0901234568', 'ICT1', 21, 3.8),
+('ST003', 'Michael Le',   'michael@example.com', NULL,         'ICT2', 19, 3.2),
+('ST004', 'Linh Pham',    'linh@example.com',    '0901234570', 'ICT2', 22, 2.8),
+('ST005', 'David Hoang',  'david@example.com',   '0901234571', 'ICT3', 20, 3.9);
+```
+
+**Expected result:** `SELECT COUNT(*) FROM students;` returns `5`. If you get
+`Unknown database 'university'` or `Table 'students' doesn't exist`, this block
+did not run — go back and run it before trying anything below.
+
+---
+
 ## 1. WHAT IS SQL?
 
 **SQL** = Structured Query Language
@@ -171,23 +210,32 @@ SELECT COUNT(DISTINCT class) FROM students;
 
 ```sql
 -- Insert with all columns
-INSERT INTO students (name, email, age, class, gpa)
-VALUES ('John Nguyen', 'john@example.com', 20, 'ICT1', 3.5);
+INSERT INTO students (student_code, name, email, age, class, gpa)
+VALUES ('ST010', 'John Nguyen', 'john.new@example.com', 20, 'ICT1', 3.5);
 
 -- Insert with NULL values
-INSERT INTO students (name, email, age, class, gpa)
-VALUES ('Anna Tran', 'anna@example.com', NULL, 'ICT1', NULL);
+INSERT INTO students (student_code, name, email, age, class, gpa)
+VALUES ('ST011', 'Anna Tran', 'anna.new@example.com', NULL, 'ICT1', NULL);
 ```
+
+**Expected result:** `Query OK, 1 row affected` twice. Leave out `student_code`
+and MySQL answers `Field 'student_code' doesn't have a default value`, because
+the column is `NOT NULL` with no default. Both `student_code` and `email` are
+`UNIQUE`, so re-running this block reports a duplicate-entry error — that is
+correct behaviour, not a broken example.
 
 ### 3.2 Insert Multiple Records
 
 ```sql
-INSERT INTO students (name, email, age, class, gpa)
+INSERT INTO students (student_code, name, email, age, class, gpa)
 VALUES 
-    ('John Nguyen', 'john@example.com', 20, 'ICT1', 3.5),
-    ('Anna Tran', 'anna@example.com', 21, 'ICT2', 3.8),
-    ('Michael Le', 'michael@example.com', 19, 'ICT1', 3.2);
+    ('ST020', 'Hoa Vu',   'hoa@example.com',   20, 'ICT1', 3.5),
+    ('ST021', 'Nam Do',   'nam@example.com',   21, 'ICT2', 3.8),
+    ('ST022', 'Mai Bui',  'mai@example.com',   19, 'ICT1', 3.2);
 ```
+
+**Expected result:** `Query OK, 3 rows affected`. One statement, three rows — much
+faster than three separate `INSERT`s.
 
 ---
 
@@ -211,6 +259,9 @@ WHERE gpa < 2.0 AND age > 25;
 ```
 
 ### ⚠️ WARNING
+
+Read this pair; do not run the first line. `UPDATE` without `WHERE` rewrites
+every row in the table, and there is no undo.
 
 ```sql
 -- ❌ DANGEROUS: Update ALL records!
@@ -236,6 +287,10 @@ DELETE FROM students WHERE class = 'ICT1' AND gpa < 2.0;
 
 ### ⚠️ WARNING
 
+Do not run the first or the last line here. Both empty the table you set up at
+the start of the chapter, and the rest of this session needs those five rows.
+If you do lose them, re-run the setup block from the top of the chapter.
+
 ```sql
 -- ❌ DANGEROUS: Delete ALL records!
 DELETE FROM students;
@@ -243,7 +298,7 @@ DELETE FROM students;
 -- ✅ SAFE: Always use WHERE
 DELETE FROM students WHERE id = 1;
 
--- Delete all and reset AUTO_INCREMENT
+-- ❌ DANGEROUS: deletes all rows and resets AUTO_INCREMENT
 TRUNCATE TABLE students;
 ```
 
@@ -282,7 +337,7 @@ FROM students;
 
 ```sql
 -- CONCAT - Concatenate strings
-SELECT CONCAT(first_name, ' ', last_name) AS full_name FROM users;
+SELECT CONCAT(class, ' - ', name) AS label FROM students;
 
 -- UPPER / LOWER
 SELECT UPPER(name) FROM students;
@@ -355,30 +410,35 @@ SELECT NULLIF(gpa, 0) FROM students;  -- Returns NULL if gpa = 0
 
 ## Example: Student Management
 
+This is the whole chapter in one script. The table and the sample rows are the
+same ones you created at the start, so if the database is already set up you can
+skip straight to query 1.
+
 ```sql
 -- Create database and table
 CREATE DATABASE IF NOT EXISTS university;
 USE university;
 
-CREATE TABLE students (
+CREATE TABLE IF NOT EXISTS students (
     id INT AUTO_INCREMENT PRIMARY KEY,
     student_code VARCHAR(20) UNIQUE NOT NULL,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE,
     phone VARCHAR(20),
     class VARCHAR(20),
+    age INT,
     gpa DECIMAL(3,2),
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Insert sample data
-INSERT INTO students (student_code, name, email, phone, class, gpa) VALUES
-('ST001', 'John Nguyen', 'john@example.com', '0901234567', 'ICT1', 3.5),
-('ST002', 'Anna Tran', 'anna@example.com', '0901234568', 'ICT1', 3.8),
-('ST003', 'Michael Le', 'michael@example.com', NULL, 'ICT2', 3.2),
-('ST004', 'Linh Pham', 'linh@example.com', '0901234570', 'ICT2', 2.8),
-('ST005', 'David Hoang', 'david@example.com', '0901234571', 'ICT3', 3.9);
+INSERT IGNORE INTO students (student_code, name, email, phone, class, age, gpa) VALUES
+('ST001', 'John Nguyen', 'john@example.com', '0901234567', 'ICT1', 20, 3.5),
+('ST002', 'Anna Tran', 'anna@example.com', '0901234568', 'ICT1', 21, 3.8),
+('ST003', 'Michael Le', 'michael@example.com', NULL, 'ICT2', 19, 3.2),
+('ST004', 'Linh Pham', 'linh@example.com', '0901234570', 'ICT2', 22, 2.8),
+('ST005', 'David Hoang', 'david@example.com', '0901234571', 'ICT3', 20, 3.9);
 
 -- 1. Get all students
 SELECT * FROM students;

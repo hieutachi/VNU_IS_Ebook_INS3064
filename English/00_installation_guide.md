@@ -60,9 +60,39 @@ This is an integrated software package that gives you a complete web development
 - XAMPP Dashboard page displays
 - Apache and MySQL show "Running" status (green)
 
+### 🔍 Check that the installation is complete, not just present
+
+A half-finished or interrupted install leaves the `C:\xampp` folder behind without
+the programs inside it. Confirm both engines are actually there before going on.
+In PowerShell:
+
+```powershell
+Test-Path C:\xampp\php\php.exe
+Test-Path C:\xampp\mysql\bin\mysqld.exe
+```
+
+**Expected result:** `True` twice. A `False` means that part did not install —
+the Control Panel will show `Start` doing nothing, or MySQL turning green and
+immediately red again. Re-run the XAMPP installer and choose **Repair**, or
+uninstall and install again; installing a second copy alongside the first is what
+usually causes the port conflicts in Section 7.
+
 ---
 
 # 2️⃣ TESTING PHP
+
+## ⚠️ PHP only runs through `localhost`
+
+Two rules that cause most "my code does not work" reports in the first weeks, plus
+one extension that quietly breaks them:
+
+- The file must live under `C:\xampp\htdocs` (or the macOS equivalent). PHP files
+  anywhere else are invisible to Apache.
+- Open it as `http://localhost/...`, never by double-clicking the file. A path like
+  `file:///C:/xampp/htdocs/info.php` shows the source code, not the result.
+- **VS Code's Live Server extension does not run PHP.** It serves files on port
+  5500 as plain text, so `<?php ... ?>` either disappears or shows up raw. Use it
+  for HTML and CSS only; for PHP, always go through `localhost`.
 
 ## 📝 Create test file
 
@@ -125,7 +155,7 @@ Open VS Code → Extensions (Ctrl+Shift+X) → Search and install:
 | **PHP Intelephense** | Autocomplete, syntax |
 | **PHP Debug** | Debug PHP |
 | **MySQL** | Connect to MySQL |
-| **Live Server** | Auto reload |
+| **Live Server** | Auto reload — **HTML and CSS only, it cannot run PHP** |
 | **Prettier** | Format code |
 
 ---
@@ -265,6 +295,20 @@ C:\xampp\htdocs\
 
 ---
 
+## ❌ Error 3b: The browser shows the PHP code instead of running it
+
+**Cause:** the page was not served by Apache. Either the file was opened directly
+(`file:///...`), or it was opened through VS Code's Live Server on port 5500,
+which serves files as-is and does not run PHP.
+
+**Solution:**
+1. Look at the address bar. It must start with `http://localhost/`, not `file:///`
+   and not `http://127.0.0.1:5500/`.
+2. Move the file into `C:\xampp\htdocs\...` and open the `localhost` address.
+3. Keep Live Server for HTML and CSS work only.
+
+---
+
 ## ❌ Error 4: Cannot connect to MySQL
 
 **Cause:** MySQL not started or wrong connection info
@@ -275,6 +319,21 @@ C:\xampp\htdocs\
    - Host: `localhost`
    - User: `root`
    - Password: (empty)
+3. Confirm PHP can actually talk to MySQL. Create `pdo-check.php` in `htdocs`:
+   ```php
+   <?php
+   var_dump(extension_loaded('pdo_mysql'));
+   try {
+       new PDO('mysql:host=localhost;dbname=test_db;charset=utf8mb4', 'root', '');
+       echo 'PDO connection OK';
+   } catch (PDOException $e) {
+       echo 'PDO failed: ' . $e->getMessage();
+   }
+   ```
+   **Expected result:** `bool(true)` then `PDO connection OK`. `bool(false)` means
+   the driver is switched off — remove the `;` in front of
+   `extension=pdo_mysql` in `php.ini` and restart Apache. `Unknown database`
+   means MySQL is fine but `test_db` has not been created yet.
 
 ---
 
@@ -283,11 +342,14 @@ C:\xampp\htdocs\
 Check ✅ when completed:
 
 - [ ] Install XAMPP
+- [ ] `php\php.exe` and `mysql\bin\mysqld.exe` both exist
 - [ ] Apache starts successfully
 - [ ] MySQL starts successfully
 - [ ] Access `http://localhost` OK
 - [ ] Access phpMyAdmin OK
 - [ ] Create PHP test file OK
+- [ ] A `.php` page opened via `localhost` shows output, not source code
+- [ ] `pdo_mysql` loaded and a PDO connection succeeds
 - [ ] Install VS Code
 - [ ] Install PHP Extensions
 - [ ] Create project folder

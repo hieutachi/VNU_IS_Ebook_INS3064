@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INS3064 Active Learning Worksheet - Session 02</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 26px;
+            margin-bottom: 5px;
+        }
+
+        .header h2 {
+            color: #764ba2;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .student-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-field {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .info-field label {
+            font-weight: bold;
+            width: 110px;
+            color: #667eea;
+        }
+
+        .info-field input {
+            flex: 1;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            padding: 5px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            background: #667eea;
+            color: white;
+            padding: 12px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-radius: 3px;
+        }
+
+        .section h3 {
+            color: #667eea;
+            font-size: 15px;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .section h4 {
+            color: #764ba2;
+            font-size: 13px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .section p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .key-concept {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 3px;
+        }
+
+        .key-concept strong {
+            color: #667eea;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        table td {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            font-size: 13px;
+        }
+
+        table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .procedure {
+            background: #f9f9f9;
+            padding: 15px;
+            border-left: 3px solid #764ba2;
+            margin: 15px 0;
+            border-radius: 3px;
+        }
+
+        .procedure ol {
+            margin-left: 20px;
+        }
+
+        .procedure li {
+            margin-bottom: 8px;
+        }
+
+        .starter-code {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .answer-space {
+            min-height: 50px;
+            border-bottom: 1px dotted #ddd;
+            margin: 12px 0;
+            padding: 5px 0;
+        }
+
+        .checkbox {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 1px solid #333;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .evidence-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 3px;
+        }
+
+        .evidence-box strong {
+            color: #856404;
+        }
+
+        .learning-outcome {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 3px;
+        }
+
+        .learning-outcome strong {
+            color: #155724;
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .page-break {
+            page-break-after: always;
+            margin-bottom: 30px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                max-width: 100%;
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+
+        .rubric-table td {
+            padding: 8px;
+            font-size: 12px;
+        }
+
+        .score-cell {
+            text-align: center;
+            width: 60px;
+        }
+
+        .code-output {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 12px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin: 10px 0;
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>ACTIVE LEARNING WORKSHEET</h1>
+            <h2>Session 02: PHP Variables, Data Types & Operators</h2>
+            <p>INS3064: Multimedia Design & Web Development</p>
+        </div>
+
+        <!-- STUDENT INFORMATION -->
+        <div class="student-info">
+            <div class="info-field">
+                <label>Student Name:</label>
+                <input type="text" placeholder="________________________">
+            </div>
+            <div class="info-field">
+                <label>Student ID:</label>
+                <input type="text" placeholder="_______________">
+            </div>
+            <div class="info-field">
+                <label>Date:</label>
+                <input type="text" placeholder="________________________">
+            </div>
+            <div class="info-field">
+                <label>Class:</label>
+                <input type="text" placeholder="_______________">
+            </div>
+        </div>
+
+        <!-- SECTION 1: CORE THEORY -->
+        <div class="section">
+            <div class="section-header">SECTION 1: CORE THEORY (KEY CONCEPTS)</div>
+
+            <h3>1.1 What Are Variables?</h3>
+            <p>Variables are named storage locations that hold data values in your PHP programs. A variable must start with a dollar sign ($) followed by a name that follows specific rules. Variables allow you to store, retrieve, and manipulate data efficiently throughout your scripts.</p>
+
+            <div class="key-concept">
+                <strong>Key Point:</strong> All variables in PHP start with $ symbol. Variable names are case-sensitive: $name ≠ $Name. Use meaningful names like $studentName instead of $s.
+            </div>
+
+            <h3>1.2 Variable Naming Rules & Best Practices</h3>
+            <table>
+                <tr>
+                    <th>Rule</th>
+                    <th>Valid Examples</th>
+                    <th>Invalid Examples</th>
+                </tr>
+                <tr>
+                    <td>Must start with $ symbol</td>
+                    <td>$name, $age, $total</td>
+                    <td>name, age (no $)</td>
+                </tr>
+                <tr>
+                    <td>Can contain letters, numbers, underscores</td>
+                    <td>$var123, $my_var, $myVar</td>
+                    <td>$my-var, $my var, $123var</td>
+                </tr>
+                <tr>
+                    <td>Cannot start with number (after $)</td>
+                    <td>$var1, $number2</td>
+                    <td>$1var, $2number</td>
+                </tr>
+                <tr>
+                    <td>Case-sensitive (important!)</td>
+                    <td>$var, $Var, $VAR (3 different variables)</td>
+                    <td>Treating $name same as $Name causes errors</td>
+                </tr>
+            </table>
+
+            <div class="key-concept">
+                <strong>Best Practice:</strong> Use camelCase for variable names ($studentName, $totalPrice, $isActive). This improves readability and follows PHP conventions.
+            </div>
+
+            <h3>1.3 Introduction to Data Types</h3>
+            <p>PHP is a <strong>dynamically typed</strong> language, meaning you don't need to declare a variable's type beforehand. PHP automatically determines the type based on the value assigned to it. Understanding data types is essential for writing correct programs.</p>
+
+            <p>PHP supports 8 data types grouped into three categories:</p>
+            <div class="procedure">
+                <ol>
+                    <li><strong>Scalar (Primitive) Types:</strong> String, Integer, Float, Boolean - each holds a single value</li>
+                    <li><strong>Compound Types:</strong> Array, Object - each holds multiple values</li>
+                    <li><strong>Special Types:</strong> NULL, Resource - special purpose types</li>
+                </ol>
+            </div>
+
+            <h3>1.4 String Data Type</h3>
+            <p>A string is a sequence of characters enclosed in quotes. PHP supports both single quotes (' ') and double quotes (" ").</p>
+
+            <div class="key-concept">
+                <strong>Key Difference:</strong>
+                <ul>
+                    <li><strong>Double Quotes:</strong> Support variable interpolation (embedding variables). "$name is here" displays actual value.</li>
+                    <li><strong>Single Quotes:</strong> Treat everything literally. '$name is here' displays literal "$name is here".</li>
+                </ul>
+            </div>
+
+            <div class="starter-code">
+&lt;?php
+// Double quotes - interpolation
+$name = "Alice";
+echo "Hello, $name";  // Output: Hello, Alice
+
+// Single quotes - no interpolation
+echo 'Hello, $name';  // Output: Hello, $name
+
+// Concatenation with dot operator
+$greeting = "Hello" . " " . "World";  // "Hello World"
+?&gt;
+            </div>
+
+            <h3>1.5 Integer Data Type</h3>
+            <p>An integer is a whole number (no decimal point) that can be positive, negative, or zero. PHP integers have a range from approximately -2.1 billion to +2.1 billion.</p>
+
+            <div class="key-concept">
+                <strong>Rules for Integers:</strong>
+                <ul>
+                    <li>Must have at least one digit</li>
+                    <li>Must NOT have a decimal point</li>
+                    <li>Can be either positive or negative</li>
+                    <li>Can be specified in decimal (base 10), hexadecimal (base 16), or octal (base 8) notation</li>
+                </ul>
+            </div>
+
+            <h3>1.6 Float Data Type</h3>
+            <p>A float (also called "double") is a number with a decimal point or in exponential form. Floats are used for calculations requiring decimal precision.</p>
+
+            <div class="starter-code">
+&lt;?php
+$price = 19.99;      // Float
+$pi = 3.14159;       // Float
+$scientific = 1.2e5; // Exponential: 120000
+$tiny = 0.0001;      // Very small float
+?&gt;
+            </div>
+
+            <h3>1.7 Boolean Data Type</h3>
+            <p>A boolean represents one of two states: <strong>true</strong> or <strong>false</strong>. Booleans are primarily used in conditional statements and comparisons. When displayed with echo, true shows as "1" and false shows as nothing (blank).</p>
+
+            <div class="key-concept">
+                <strong>Falsy Values (evaluate to false):</strong> false, 0, 0.0, "" (empty string), "0", null, and empty arrays. All other values are truthy.
+            </div>
+
+            <h3>1.8 NULL Data Type</h3>
+            <p>NULL represents a variable with no value. A variable is NULL if it has been unset or never assigned a value. It's different from empty string "" or zero 0.</p>
+
+            <h3>1.9 Array Data Type (Introduction)</h3>
+            <p>An array stores multiple values in a single variable. PHP supports both indexed arrays (numeric keys) and associative arrays (named keys). Arrays are essential for storing collections of related data.</p>
+
+            <h3>1.10 Understanding Type Juggling</h3>
+            <p>PHP performs automatic type conversion (type juggling) when needed. For example, when you add a string number to an integer, PHP converts the string to an integer.</p>
+
+            <div class="starter-code">
+&lt;?php
+$result = "5" + 3;      // Result: 8 (integer)
+// PHP converts "5" to 5
+
+$calculation = "10.5" * 2;  // Result: 21 (float)
+// PHP converts "10.5" to float
+?&gt;
+            </div>
+
+            <div class="key-concept">
+                <strong>Important:</strong> While type juggling is convenient, it can cause bugs. Always use explicit type casting for clarity: (int)"5" or (float)"10.5"
+            </div>
+
+        </div>
+
+        <!-- PAGE BREAK -->
+        <div class="page-break"></div>
+
+        <!-- SECTION 2: PRACTICAL TASK -->
+        <div class="section">
+            <div class="section-header">SECTION 2: PRACTICAL TASK (MANDATORY)</div>
+
+            <h3>2.1 Task Overview and Scenario</h3>
+            <p><strong>Scenario:</strong> You are developing a student management system for the university. Create a PHP program that stores student information using various data types, demonstrates type operations, and performs calculations on grades. Your task is to create a professional grade analysis page that showcases your understanding of variables, data types, and operators.</p>
+
+            <div class="learning-outcome">
+                <strong>Learning Outcome:</strong> Upon completion, you will be able to declare variables with appropriate data types, perform calculations using operators, apply type casting when necessary, and create a functional PHP program that combines variables and data types effectively.
+            </div>
+
+            <h3>2.2 Starter Material</h3>
+            <p>Use the following starter HTML/PHP structure as your foundation:</p>
+
+            <div class="starter-code">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;INS3064 Grade Analysis System&lt;/title&gt;
+    &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        h1 { color: #667eea; margin-bottom: 30px; }
+        .section { background: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0; }
+        .result { font-weight: bold; color: #667eea; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;h1&gt;Student Grade Analysis System&lt;/h1&gt;
+        
+        &lt;?php
+            // TODO: Add your PHP code here (Section 2.3 tasks)
+            
+        ?&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+            </div>
+
+            <h3>2.3 Step-by-Step Task Instructions</h3>
+
+            <h4>Step 1: Create the PHP File</h4>
+            <div class="procedure">
+                <ol>
+                    <li>Open VS Code</li>
+                    <li>Create a new file</li>
+                    <li>Save it as <code>grade_analysis.php</code> in folder: <code>C:\xampp\htdocs\ins3064\session_02\</code></li>
+                    <li>Copy the starter material above into your file</li>
+                </ol>
+            </div>
+
+            <h4>Step 2: Declare Variables with Different Data Types</h4>
+            <p>Inside the TODO section, declare the following variables with appropriate types:</p>
+            <div class="procedure">
+                <ol>
+                    <li><strong>String Variables:</strong>
+                        <ul>
+                            <li>$studentName (your full name)</li>
+                            <li>$studentID (your student ID)</li>
+                            <li>$semester (e.g., "Fall 2025")</li>
+                        </ul>
+                    </li>
+                    <li><strong>Integer Variables:</strong>
+                        <ul>
+                            <li>$assignment1 (grade 0-100)</li>
+                            <li>$assignment2 (grade 0-100)</li>
+                            <li>$midterm (grade 0-100)</li>
+                            <li>$classParticipation (grade 0-100)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Float Variables:</strong>
+                        <ul>
+                            <li>$finalExam (grade 0-100, may include decimals)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Boolean Variable:</strong>
+                        <ul>
+                            <li>$isGradingComplete (true or false)</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <h4>Step 3: Calculate Grade Statistics Using Operators</h4>
+            <p>Using arithmetic and other operators, calculate:</p>
+            <div class="procedure">
+                <ol>
+                    <li><strong>Assignment Average:</strong> ($assignment1 + $assignment2) / 2</li>
+                    <li><strong>Weighted Grade:</strong> Use formula: (Assignment Avg * 0.20) + (Midterm * 0.30) + (Class Participation * 0.10) + (Final Exam * 0.40)</li>
+                    <li><strong>Grade Category:</strong> Use comparison operators to determine if grade is:
+                        <ul>
+                            <li>90-100: "A (Excellent)"</li>
+                            <li>80-89: "B (Good)"</li>
+                            <li>70-79: "C (Satisfactory)"</li>
+                            <li>60-69: "D (Passing)"</li>
+                            <li>Below 60: "F (Failing)"</li>
+                        </ul>
+                    </li>
+                    <li><strong>Pass/Fail Status:</strong> Use logical operators: ($weightedGrade >= 60) AND $isGradingComplete</li>
+                </ol>
+            </div>
+
+            <h4>Step 4: Display Results Using echo and String Concatenation</h4>
+            <p>Display your results in the HTML sections. Each result should be displayed using echo with string concatenation or interpolation:</p>
+
+            <div class="starter-code">
+&lt;div class="section"&gt;
+    &lt;h2&gt;Student Information&lt;/h2&gt;
+    &lt;?php
+        echo "Name: " . $studentName . "&lt;br&gt;";
+        echo "ID: " . $studentID . "&lt;br&gt;";
+        echo "Semester: " . $semester;
+    ?&gt;
+&lt;/div&gt;
+
+&lt;div class="section"&gt;
+    &lt;h2&gt;Grade Breakdown&lt;/h2&gt;
+    &lt;?php
+        // Display individual grades and calculations
+        echo "Assignment Average: &lt;span class='result'&gt;" . $assignmentAvg . "&lt;/span&gt;&lt;br&gt;";
+        // Continue with other calculations...
+    ?&gt;
+&lt;/div&gt;
+
+&lt;div class="section"&gt;
+    &lt;h2&gt;Final Result&lt;/h2&gt;
+    &lt;?php
+        // Display weighted grade, letter grade, and status
+        echo "Weighted Grade: &lt;span class='result'&gt;" . round($weightedGrade, 2) . "&lt;/span&gt;&lt;br&gt;";
+        echo "Letter Grade: &lt;span class='result'&gt;" . $letterGrade . "&lt;/span&gt;&lt;br&gt;";
+        echo "Status: &lt;span class='result'&gt;" . ($passed ? "PASSED" : "FAILED") . "&lt;/span&gt;";
+    ?&gt;
+&lt;/div&gt;
+            </div>
+
+            <h4>Step 5: Use var_dump() for Debugging</h4>
+            <p>Add var_dump() calls to inspect variable types:</p>
+
+            <div class="starter-code">
+&lt;?php
+// Add this at the end for debugging
+echo "&lt;hr&gt;";
+echo "&lt;h3&gt;Debug Information:&lt;/h3&gt;";
+var_dump($studentName);
+var_dump($weightedGrade);
+var_dump($passed);
+?&gt;
+            </div>
+
+            <h4>Step 6: Test Your File</h4>
+            <div class="procedure">
+                <ol>
+                    <li>Save your grade_analysis.php file</li>
+                    <li>Open web browser</li>
+                    <li>Navigate to: <code>http://localhost/ins3064/session_02/grade_analysis.php</code></li>
+                    <li>Verify all calculations are correct</li>
+                    <li>Check that letter grades match score thresholds</li>
+                    <li>Verify var_dump() output shows correct types</li>
+                    <li>No PHP errors should appear</li>
+                </ol>
+            </div>
+
+            <h3>2.4 Expected Output Requirements</h3>
+            <p>Your program MUST display:</p>
+            <ul>
+                <li>Student name, ID, and semester in first section</li>
+                <li>Individual assignment grades and assignment average</li>
+                <li>Midterm and final exam grades</li>
+                <li>Calculated weighted grade (to 2 decimal places)</li>
+                <li>Letter grade based on weighted score</li>
+                <li>Pass/Fail status (using logical operators)</li>
+                <li>var_dump() output for 3+ variables for debugging</li>
+                <li>Professional formatting with clear labels</li>
+            </ul>
+
+        </div>
+
+        <!-- PAGE BREAK -->
+        <div class="page-break"></div>
+
+        <!-- SECTION 3: PROOF OF WORK -->
+        <div class="section">
+            <div class="section-header">SECTION 3: PROOF OF WORK</div>
+
+            <h3>3.1 Required Submission Evidence</h3>
+
+            <h4>Evidence Item 1: Screenshot of Running PHP File</h4>
+            <div class="evidence-box">
+                <strong>What to Submit:</strong><br>
+                A screenshot showing:<br>
+                • Browser URL: <code>http://localhost/ins3064/session_02/grade_analysis.php</code><br>
+                • Complete grade analysis page with all calculations<br>
+                • Student information properly displayed<br>
+                • All grade breakdowns visible and correct<br>
+                • Weighted grade and letter grade clearly shown<br>
+                • var_dump() debug information visible<br>
+                • No PHP errors or warnings<br>
+                <br>
+                <strong>File Name:</strong> <code>01_Grade_Analysis_Screenshot.png</code>
+            </div>
+
+            <h4>Evidence Item 2: PHP Source Code File</h4>
+            <div class="evidence-box">
+                <strong>What to Submit:</strong><br>
+                The actual <code>grade_analysis.php</code> file containing:<br>
+                • Complete HTML structure with proper styling<br>
+                • Variable declarations (string, integer, float, boolean)<br>
+                • Arithmetic calculations (average, weighted grade)<br>
+                • Comparison operators (for letter grade determination)<br>
+                • Logical operators (for pass/fail logic)<br>
+                • String concatenation in echo statements<br>
+                • var_dump() calls for type inspection<br>
+                • Comments explaining calculations<br>
+                • Proper closing tags and formatting<br>
+                <br>
+                <strong>File Name for Submission:</strong> <code>02_grade_analysis.php</code>
+            </div>
+
+            <h4>Evidence Item 3: Code Review Checklist</h4>
+            <p>Complete this checklist to verify your code meets all requirements:</p>
+            <table class="rubric-table">
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>File has .php extension and correct location</td>
+                    <td class="score-cell">___/2</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>String variables declared ($studentName, $studentID, $semester)</td>
+                    <td class="score-cell">___/3</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>Integer variables declared for grades (5+ variables)</td>
+                    <td class="score-cell">___/3</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>Float variable declared ($finalExam)</td>
+                    <td class="score-cell">___/2</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>Boolean variable declared ($isGradingComplete)</td>
+                    <td class="score-cell">___/2</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>Arithmetic operators used correctly (addition, division, multiplication)</td>
+                    <td class="score-cell">___/3</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>Comparison operators used for letter grade determination</td>
+                    <td class="score-cell">___/3</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>Logical operators (AND/&&, OR/||) used correctly</td>
+                    <td class="score-cell">___/3</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>String concatenation working properly</td>
+                    <td class="score-cell">___/2</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>var_dump() calls demonstrating type inspection</td>
+                    <td class="score-cell">___/2</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>Weighted grade calculation correct (40% formula applied)</td>
+                    <td class="score-cell">___/3</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>Output displays professional appearance</td>
+                    <td class="score-cell">___/2</td>
+                </tr>
+                <tr style="background: #e8f4f8; font-weight: bold;">
+                    <td></td>
+                    <td>TOTAL SCORE</td>
+                    <td class="score-cell">___/32</td>
+                </tr>
+            </table>
+
+            <h3>3.2 Submission Package</h3>
+            <p>Prepare a folder named <code>Active_Learning_Session_02_[YourName]_[StudentID]</code> containing:</p>
+            <div class="procedure">
+                <ol>
+                    <li><code>01_Grade_Analysis_Screenshot.png</code> - Screenshot of running PHP</li>
+                    <li><code>02_grade_analysis.php</code> - Your PHP source code file</li>
+                    <li><code>03_Code_Review_Checklist.txt</code> - Completed checklist with scores</li>
+                </ol>
+            </div>
+
+            <p><strong>Submission Method:</strong> Compress folder into ZIP file and submit via LMS or instructor email.</p>
+
+        </div>
+
+        <!-- PAGE BREAK -->
+        <div class="page-break"></div>
+
+        <!-- SECTION 4: CRITICAL THINKING -->
+        <div class="section">
+            <div class="section-header">SECTION 4: CRITICAL THINKING QUESTION</div>
+
+            <h3>4.1 Reflective Analysis Question</h3>
+
+            <p><strong>Question:</strong> Imagine you are building a university grade management system. A programmer stored all grades as strings (e.g., "85", "92", "78") instead of integers. Later, the system needs to calculate the average grade across all students. Identify and explain three specific problems that would occur with this approach, and describe how using the correct data type (integer) or proper type casting would solve each problem. Additionally, explain when type juggling might help in this scenario and when explicit type casting is necessary.</p>
+
+            <div class="answer-space"></div>
+            <div class="answer-space"></div>
+            <div class="answer-space"></div>
+            <div class="answer-space"></div>
+            <div class="answer-space"></div>
+
+            <h3>4.2 Analysis Guidance</h3>
+            <p>Consider the following in your response:</p>
+            <div class="procedure">
+                <ol>
+                    <li>How would string-based grades affect mathematical calculations?</li>
+                    <li>What happens when comparing grades (e.g., "85" > "92")?</li>
+                    <li>How would type juggling behave in arithmetic operations?</li>
+                    <li>When is explicit type casting necessary for reliability?</li>
+                    <li>How does choosing the correct data type prevent bugs?</li>
+                </ol>
+            </div>
+
+        </div>
+
+        <!-- PAGE BREAK -->
+        <div class="page-break"></div>
+
+        <!-- SECTION 5: ASSESSMENT CONNECTION -->
+        <div class="section">
+            <div class="section-header">SECTION 5: CONNECTION TO ASSESSMENT</div>
+
+            <h3>5.1 Learning Outcomes Alignment</h3>
+
+            <table>
+                <tr>
+                    <th>Learning Outcome</th>
+                    <th>Addressed By</th>
+                </tr>
+                <tr>
+                    <td>Declare and use PHP variables correctly</td>
+                    <td>Section 1.1-1.2, Task 2.2</td>
+                </tr>
+                <tr>
+                    <td>Understand and apply PHP data types</td>
+                    <td>Section 1.3-1.9, Task 2.2-2.3</td>
+                </tr>
+                <tr>
+                    <td>Perform calculations using arithmetic operators</td>
+                    <td>Section 1.10, Task 2.3</td>
+                </tr>
+                <tr>
+                    <td>Apply comparison and logical operators</td>
+                    <td>Task 2.3, Question 4.1</td>
+                </tr>
+                <tr>
+                    <td>Debug using type inspection tools</td>
+                    <td>Section 1.4-1.9, Task 2.4</td>
+                </tr>
+            </table>
+
+            <h3>5.2 Grading Rubric</h3>
+            <p>Your work will be evaluated using the following rubric (Total: 100 points):</p>
+
+            <table>
+                <tr>
+                    <th>Component</th>
+                    <th>Criteria</th>
+                    <th>Points</th>
+                </tr>
+                <tr>
+                    <td><strong>Section 1: Theory</strong></td>
+                    <td>Understanding of key concepts in worksheet</td>
+                    <td>15</td>
+                </tr>
+                <tr>
+                    <td><strong>Section 2: Practical Task</strong></td>
+                    <td>PHP file created, all variables declared, calculations correct</td>
+                    <td>35</td>
+                </tr>
+                <tr>
+                    <td><strong>Section 3: Proof of Work</strong></td>
+                    <td>Code review checklist completed; evidence submitted correctly</td>
+                    <td>32</td>
+                </tr>
+                <tr>
+                    <td><strong>Section 4: Critical Thinking</strong></td>
+                    <td>Question answered with specific examples and deep analysis</td>
+                    <td>18</td>
+                </tr>
+                <tr style="background: #e8f4f8; font-weight: bold;">
+                    <td colspan="2">TOTAL POINTS</td>
+                    <td>100</td>
+                </tr>
+            </table>
+
+            <h3>5.3 Self-Assessment Checklist</h3>
+
+            <table>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>Read and understood all theory content in Section 1</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>Completed practical task with all requirements met</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>Collected and organized all evidence for Section 3</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>Answered critical thinking question thoroughly</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>All calculations in PHP are accurate</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>PHP file runs without errors when accessed</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>Code review checklist scored 25/32 or higher</td>
+                </tr>
+                <tr>
+                    <td><span class="checkbox"></span></td>
+                    <td>Submission package is organized and ready</td>
+                </tr>
+            </table>
+
+            <h3>5.4 Preparation for Session 03</h3>
+            <p>Upon successful completion of this worksheet, you will be prepared for Session 03: Control Structures. You will learn:</p>
+
+            <div class="procedure">
+                <ol>
+                    <li><strong>Conditional Statements:</strong> if, else if, else, switch</li>
+                    <li><strong>Loops:</strong> while, do-while, for, foreach</li>
+                    <li><strong>Advanced Operator Usage:</strong> Ternary operator, null coalescing</li>
+                    <li><strong>Decision-Making:</strong> Building programs that respond to conditions</li>
+                </ol>
+            </div>
+
+            <h3>5.5 Next Steps</h3>
+
+            <p><strong>After Receiving Feedback:</strong></p>
+            <div class="procedure">
+                <ol>
+                    <li>Review instructor feedback on your code</li>
+                    <li>Identify any misconceptions about data types or operators</li>
+                    <li>Practice additional variable and type exercises</li>
+                    <li>Prepare questions for Session 03 on control structures</li>
+                    <li>Review critical thinking feedback and improve analysis skills</li>
+                </ol>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p><strong>Instructor:</strong> M.Sc. Hieu Ta Chi (Tạ Chí Hiếu)</p>
+            <p><strong>Department:</strong> Applied Sciences Department - International School - VNU (IS-VNU)</p>
+            <p><strong>Course:</strong> INS3064 - Multimedia Design & Web Development</p>
+            <p>Active Learning Worksheet - Session 02</p>
+            <p>Version 1.0 | Last Updated: January 16, 2026</p>
+        </div>
+
+    </div>
+</body>
+</html>

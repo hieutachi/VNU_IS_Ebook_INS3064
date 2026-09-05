@@ -72,6 +72,22 @@
     filterItems();
   });
 
+  /* Contents list: open beside the text on wide screens, collapsed once it moves
+     above the chapter, so a long outline never buries the reading itself. */
+  var toc = document.querySelector("[data-toc]");
+  if (toc) {
+    var wide = window.matchMedia("(min-width: 1081px)");
+    function applyTocState(query) { toc.open = query.matches; }
+    applyTocState(wide);
+    if (wide.addEventListener) wide.addEventListener("change", applyTocState);
+    else if (wide.addListener) wide.addListener(applyTocState);
+    /* Tapping a section on a phone should reveal that section, not the list. */
+    toc.addEventListener("click", function (event) {
+      var link = event.target.closest && event.target.closest("a[href^='#']");
+      if (link && !wide.matches) toc.open = false;
+    });
+  }
+
   /* Highlight the table-of-contents entry for the section in view. */
   var tocLinks = Array.prototype.slice.call(document.querySelectorAll(".toc a[href^='#']"));
   if (tocLinks.length && "IntersectionObserver" in window) {
@@ -97,20 +113,43 @@
     targets.forEach(function (target) { observer.observe(target); });
   }
   /* Copy a code listing to the clipboard. */
+  function selectListing(code) {
+    /* Clipboard access can be blocked (insecure context, permission policy).
+       Selecting the listing lets the student finish the copy with Ctrl+C. */
+    try {
+      var range = document.createRange();
+      range.selectNodeContents(code);
+      var selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      return true;
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  function flashButton(button, message) {
+    button.textContent = message;
+    button.classList.add("is-done");
+    window.setTimeout(function () {
+      button.textContent = "Copy";
+      button.classList.remove("is-done");
+    }, 2400);
+  }
+
   document.addEventListener("click", function (event) {
     var button = event.target.closest && event.target.closest("[data-code-copy]");
     if (!button) return;
     var figure = button.closest(".code-block");
     var code = figure && figure.querySelector("pre code");
-    if (!code || !navigator.clipboard) return;
-    navigator.clipboard.writeText(code.textContent).then(function () {
-      button.textContent = "Copied";
-      button.classList.add("is-done");
-      window.setTimeout(function () {
-        button.textContent = "Copy";
-        button.classList.remove("is-done");
-      }, 1600);
-    }).catch(function () { button.textContent = "Press Ctrl+C"; });
+    if (!code) return;
+    function fallback() {
+      flashButton(button, selectListing(code) ? "Selected \u2014 press Ctrl+C" : "Select the code, then Ctrl+C");
+    }
+    if (!navigator.clipboard) { fallback(); return; }
+    navigator.clipboard.writeText(code.textContent)
+      .then(function () { flashButton(button, "Copied"); })
+      .catch(fallback);
   });
 
   /* Slide deck: one slide at a time, plus a grid overview. */
