@@ -22,7 +22,12 @@ Exam papers, solutions, rubrics, unfinished scaffold folders, authoring scripts,
 | `Vietnamese/` | Vietnamese edition |
 | `Slide/` | Legacy HTML slide sources retained for course history |
 | `_tools/build-site.mjs` | Deterministic static-site builder |
-| `_tools/qa-site.mjs` | Output, link, content-policy, and responsive QA |
+| `_tools/render.mjs` | Markdown-to-HTML renderer: headings, callouts, tables, code figures |
+| `_tools/highlight.mjs` | Language detection and syntax highlighting for fenced blocks |
+| `_tools/deck.mjs` | Slide planner that splits a chapter into height-budgeted slides |
+| `_tools/smart-title.mjs` | Heading case normaliser that preserves keywords and acronyms |
+| `_tools/qa-render.mjs` | Unit QA for highlighting, heading case, and slide planning |
+| `_tools/qa-site.mjs` | Output, link, content-policy, presentation, and responsive QA |
 | `_tools/site-assets/` | Shared portal CSS and JavaScript |
 | `site/` | Generated output; ignored in this source repository |
 

@@ -6,9 +6,10 @@
   "scripts": {
     "build": "npm run build:site",
     "build:site": "node _tools/build-site.mjs",
-    "qa": "npm run qa:site",
+    "qa": "npm run qa:render && npm run qa:site",
+    "qa:render": "node _tools/qa-render.mjs",
     "qa:site": "node _tools/qa-site.mjs",
-    "verify": "npm run build:site && npm run qa:site"
+    "verify": "npm run build:site && npm run qa"
   },
   "dependencies": {
     "marked": "18.0.11"

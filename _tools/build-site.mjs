@@ -5,6 +5,8 @@ import { createHash } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { marked } from "marked";
+import { decorateHeading, esc, foldCallouts, makeRenderer, renderStream } from "./render.mjs";
+import { buildDeck } from "./deck.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "..");
@@ -12,103 +14,103 @@ const OUT = path.join(ROOT, "site");
 const ASSETS = path.join(HERE, "site-assets");
 const COURSE = "INS3064 · Multimedia Design and Web Development";
 const SCHOOL = "International School, Vietnam National University, Hanoi";
-const RAW_SESSIONS = [
-  [1,"introduction-to-php","Introduction to PHP","part_1_php_foundation/session_01_intro_php.md","PHP foundations"],
-  [2,"programming-with-php","Programming with PHP","part_1_php_foundation/session_02_programming_php.md","Variables, types, control flow"],
-  [3,"dynamic-websites-and-forms","Dynamic Websites and Forms","part_1_php_foundation/session_03_dynamic_websites.md","Forms and validation"],
-  [4,"introduction-to-mysql","Introduction to MySQL","part_2_mysql_database/session_04_intro_mysql.md","Databases and phpMyAdmin"],
-  [5,"introduction-to-sql","Introduction to SQL","part_2_mysql_database/session_05_intro_sql.md","SQL and CRUD"],
-  [6,"database-design","Database Design","part_2_mysql_database/session_06_database_design.md","Normalisation and relationships"],
-  [7,"advanced-sql","Advanced SQL","part_2_mysql_database/session_07_advanced_sql.md","Joins, subqueries, aggregation"],
-  [8,"review-and-midterm","Review and Midterm","part_3_integration_advanced/session_08_review_midterm.md","PHP and SQL review"],
-  [9,"error-handling-and-debugging","Error Handling and Debugging","part_3_integration_advanced/session_09_error_handling.md","Exceptions, logs, debugging"],
-  [10,"php-with-mysql","PHP with MySQL","part_3_integration_advanced/session_10_php_mysql.md","PDO and database integration"],
-  [11,"programming-techniques","Programming Techniques","part_3_integration_advanced/session_11_programming_techniques.md","OOP and MVC"],
-  [12,"web-application-development","Web Application Development","part_3_integration_advanced/session_12_web_app_development.md","Application structure and CRUD"],
-  [13,"cookies-and-sessions","Cookies and Sessions","part_4_security_jquery/session_13_cookies_sessions.md","State and authentication"],
-  [14,"security-methods","Security Methods","part_4_security_jquery/session_14_security_methods.md","SQL injection, XSS, CSRF"],
-  [15,"jquery-and-ajax","jQuery and AJAX","part_4_security_jquery/session_15_jquery_intro.md","DOM, events, AJAX"],
+
+const PARTS = [
+  { id: 1, name: "PHP foundation", range: "Sessions 1–3", blurb: "Syntax, output, variables, control flow, and your first dynamic pages." },
+  { id: 2, name: "MySQL and databases", range: "Sessions 4–7", blurb: "Design tables, write SQL, and query data with confidence." },
+  { id: 3, name: "Integration and advanced", range: "Sessions 8–12", blurb: "Connect PHP to MySQL, handle errors, and structure a real application." },
+  { id: 4, name: "Security and jQuery", range: "Sessions 13–15", blurb: "Sessions, authentication, defensive coding, and interactive front ends." },
 ];
-const SESSIONS = RAW_SESSIONS.map(([n,slug,title,file,summary]) => ({n,slug,title,source:`English/${file}`,summary}));
+
+const RAW_SESSIONS = [
+  [1, "introduction-to-php", "Introduction to PHP", "part_1_php_foundation/session_01_intro_php.md", "PHP foundations", 1, ["PHP tags", "echo", "XAMPP"]],
+  [2, "programming-with-php", "Programming with PHP", "part_1_php_foundation/session_02_programming_php.md", "Variables, types, control flow", 1, ["Variables", "Loops", "Functions"]],
+  [3, "dynamic-websites-and-forms", "Dynamic Websites and Forms", "part_1_php_foundation/session_03_dynamic_websites.md", "Forms and validation", 1, ["Forms", "GET/POST", "Validation"]],
+  [4, "introduction-to-mysql", "Introduction to MySQL", "part_2_mysql_database/session_04_intro_mysql.md", "Databases and phpMyAdmin", 2, ["MySQL", "phpMyAdmin", "Tables"]],
+  [5, "introduction-to-sql", "Introduction to SQL", "part_2_mysql_database/session_05_intro_sql.md", "SQL and CRUD", 2, ["SELECT", "CRUD", "Functions"]],
+  [6, "database-design", "Database Design", "part_2_mysql_database/session_06_database_design.md", "Normalisation and relationships", 2, ["Normalisation", "Keys", "Relationships"]],
+  [7, "advanced-sql", "Advanced SQL", "part_2_mysql_database/session_07_advanced_sql.md", "Joins, subqueries, aggregation", 2, ["JOIN", "Subquery", "GROUP BY"]],
+  [8, "review-and-midterm", "Review and Midterm", "part_3_integration_advanced/session_08_review_midterm.md", "PHP and SQL review", 3, ["Review", "Practice", "Checklists"]],
+  [9, "error-handling-and-debugging", "Error Handling and Debugging", "part_3_integration_advanced/session_09_error_handling.md", "Exceptions, logs, debugging", 3, ["try/catch", "Logs", "Debugging"]],
+  [10, "php-with-mysql", "PHP with MySQL", "part_3_integration_advanced/session_10_php_mysql.md", "PDO and database integration", 3, ["PDO", "Prepared", "CRUD"]],
+  [11, "programming-techniques", "Programming Techniques", "part_3_integration_advanced/session_11_programming_techniques.md", "OOP and MVC", 3, ["OOP", "MVC", "Includes"]],
+  [12, "web-application-development", "Web Application Development", "part_3_integration_advanced/session_12_web_app_development.md", "Application structure and CRUD", 3, ["Structure", "Routing", "Mini project"]],
+  [13, "cookies-and-sessions", "Cookies and Sessions", "part_4_security_jquery/session_13_cookies_sessions.md", "State and authentication", 4, ["Cookies", "Sessions", "Login"]],
+  [14, "security-methods", "Security Methods", "part_4_security_jquery/session_14_security_methods.md", "SQL injection, XSS, CSRF", 4, ["SQL injection", "XSS", "CSRF"]],
+  [15, "jquery-and-ajax", "jQuery and AJAX", "part_4_security_jquery/session_15_jquery_intro.md", "DOM, events, AJAX", 4, ["jQuery", "Events", "AJAX"]],
+];
+const SESSIONS = RAW_SESSIONS.map(([n, slug, title, file, summary, part, tags]) => ({
+  n, slug, title, summary, part, tags, source: `English/${file}`,
+}));
 const GUIDES = [
-  ["course-overview","Course Overview","English/00_course_overview.md","Outcomes, structure, and the learning path."],
-  ["installation","Installation Guide","English/00_installation_guide.md","Set up XAMPP, PHP, MySQL, and VS Code."],
-  ["php-mysql-cheat-sheet","PHP & MySQL Cheat Sheet","English/appendix/cheat_sheet.md","Quick syntax reference for practical work."],
-].map(([slug,title,source,summary]) => ({slug,title,source,summary}));
+  ["course-overview", "Course Overview", "English/00_course_overview.md", "Outcomes, structure, and the learning path.", "Start here"],
+  ["installation", "Installation Guide", "English/00_installation_guide.md", "Set up XAMPP, PHP, MySQL, and VS Code.", "Setup"],
+  ["php-mysql-cheat-sheet", "PHP & MySQL Cheat Sheet", "English/appendix/cheat_sheet.md", "Quick syntax reference for practical work.", "Reference"],
+].map(([slug, title, source, summary, kicker]) => ({ slug, title, source, summary, kicker }));
 
-const ESC={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"};
-const esc=(v)=>String(v??"").replace(/[&<>"']/g,(c)=>ESC[c]);
-const pad=(n)=>String(n).padStart(2,"0");
-const plain=(v)=>String(v??"").replace(/<[^>]*>/g,"").replace(/[`*_~]/g,"").replace(/&amp;/g,"&").trim();
-const slugify=(v)=>plain(v).toLowerCase().replace(/[^\p{L}\p{N}\s-]/gu,"").trim().replace(/\s+/g,"-").replace(/-+/g,"-");
+const pad = (n) => String(n).padStart(2, "0");
+const partOf = (session) => PARTS.find((part) => part.id === session.part);
+const checksum = (text) => createHash("sha256").update(text, "utf8").digest("hex");
 
-function stripOpeningTitle(markdown){
-  let removed=0;
-  return markdown.split(/\r?\n/).filter((line)=>{
-    if(removed<2&&/^#\s+/.test(line)){removed+=1;return false;}
+function stripOpeningTitle(markdown) {
+  let removed = 0;
+  return markdown.split(/\r?\n/).filter((line) => {
+    if (removed < 2 && /^#\s+/.test(line)) { removed += 1; return false; }
     return true;
   }).join("\n");
 }
-function localTarget(href){
-  const clean=decodeURIComponent(href).split("#")[0];
-  const hash=href.includes("#")?`#${href.split("#").slice(1).join("#")}`:"";
-  const name=path.posix.basename(clean.replace(/\\/g,"/"));
-  const match=/^session_(\d{2})_.*\.md$/i.exec(name);
-  if(match){const s=SESSIONS.find((item)=>pad(item.n)===match[1]);return s?`../ebook/${match[1]}-${s.slug}.html${hash}`:null;}
-  if(name==="00_course_overview.md")return `../guides/course-overview.html${hash}`;
-  if(name==="00_installation_guide.md")return `../guides/installation.html${hash}`;
-  if(name==="cheat_sheet.md")return `../guides/php-mysql-cheat-sheet.html${hash}`;
-  if(/^readme\.md$/i.test(name))return `../index.html${hash}`;
+
+function localTarget(href) {
+  const clean = decodeURIComponent(href).split("#")[0];
+  const hash = href.includes("#") ? `#${href.split("#").slice(1).join("#")}` : "";
+  const name = path.posix.basename(clean.replace(/\\/g, "/"));
+  const match = /^session_(\d{2})_.*\.md$/i.exec(name);
+  if (match) {
+    const session = SESSIONS.find((item) => pad(item.n) === match[1]);
+    return session ? `../ebook/${match[1]}-${session.slug}.html${hash}` : null;
+  }
+  if (name === "00_course_overview.md") return `../guides/course-overview.html${hash}`;
+  if (name === "00_installation_guide.md") return `../guides/installation.html${hash}`;
+  if (name === "cheat_sheet.md") return `../guides/php-mysql-cheat-sheet.html${hash}`;
+  if (/^readme\.md$/i.test(name)) return `../index.html${hash}`;
   return null;
 }
 
-function makeRenderer(headings=[]){
-  const renderer=new marked.Renderer();
-  const seen=new Map();
-  renderer.heading=function({tokens,depth}){
-    const content=this.parser.parseInline(tokens);
-    const label=plain(content);
-    let id=slugify(label)||`section-${headings.length+1}`;
-    const count=(seen.get(id)||0)+1;seen.set(id,count);if(count>1)id+=`-${count}`;
-    if(depth<=3)headings.push({id,label,depth});
-    const level=Math.min(6,depth+1);
-    return `<h${level} id="${id}">${content}<a class="anchor" href="#${id}" aria-label="Link to ${esc(label)}">#</a></h${level}>\n`;
-  };
-  renderer.link=function({href,title,tokens}){
-    const label=this.parser.parseInline(tokens);
-    if(/^(https?:|mailto:)/i.test(href)){
-      const rel=/^https?:/i.test(href)?' rel="noopener noreferrer"':"";
-      return `<a href="${esc(href)}"${title?` title="${esc(title)}"`:""}${rel}>${label}</a>`;
-    }
-    const target=localTarget(href);
-    return target?`<a href="${esc(target)}">${label}</a>`:`<span class="source-reference" title="Available from the lecturer">${label}</span>`;
-  };
-  renderer.html=function(token){
-    const literal=esc(token.text);
-    return token.block?`<pre class="literal-html"><code>${literal}</code></pre>`:`<code>${literal}</code>`;
-  };
-  return renderer;
-}
-function preparePublicMarkdown(markdown){
+/* The public site never carries submission instructions that are not in force,
+   and the portal's own pager replaces the chapters' hand-written back links. */
+function preparePublicMarkdown(markdown) {
   return markdown
     .replace(/^##\s+📎\s+SUBMISSION GUIDELINES\s*$[\s\S]*?(?=^#{1,6}\s+)/gim,
       "## 💾 SAVE YOUR PRACTICE WORK\n\nThis portal does not collect or grade files. Save the completed work in your local project and follow instructions announced by your lecturer.\n\n")
-    .replace(/\bFile to Submit\b/gi,"File to Save");
+    .replace(/\bFile to Submit\b/gi, "File to Save")
+    .replace(/^\s*\*\*Previous:\s*\[[^\]]*\]\([^)]*\)\*\*\s*$/gim, "")
+    /* Collapse the rules left behind, and any the sources already doubled up. */
+    .replace(/(?:^[ \t]*---[ \t]*$\s*){2,}/gm, "---\n\n");
 }
-function renderMarkdown(markdown){
-  const headings=[];
-  const html=marked.parse(stripOpeningTitle(preparePublicMarkdown(markdown)),{renderer:makeRenderer(headings),gfm:true,breaks:false});
-  return {html,headings};
+
+function lex(markdown) {
+  return marked.lexer(stripOpeningTitle(preparePublicMarkdown(markdown)), { gfm: true });
 }
-function checksum(text){
-  return createHash("sha256").update(text,"utf8").digest("hex");
+
+/* Render a chapter, promoting the leading briefing block into a summary card. */
+function renderChapter(markdown) {
+  const headings = [];
+  const renderer = makeRenderer({ headings, localTarget, mode: "doc" });
+  const tokens = foldCallouts(lex(markdown));
+  return { html: renderStream(tokens, renderer), headings };
 }
-function tocHtml(headings){
-  if(!headings.length)return "";
-  return `<nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ol>${headings.map((h)=>`<li class="depth-${h.depth}"><a href="#${h.id}">${esc(h.label)}</a></li>`).join("")}</ol></nav>`;
+
+function tocHtml(headings) {
+  if (!headings.length) return "";
+  const items = headings.map((h) => `<li class="depth-${h.depth}"><a href="#${h.id}">${esc(h.label)}</a></li>`).join("");
+  return `<details class="toc" open><summary><span class="toc-title">On this page</span><span class="toc-count">${headings.length} sections</span></summary><ol>${items}</ol></details>`;
 }
-function page({title,heading,lead,body,depth=0,section="",eyebrow="INS3064 student learning portal",extraHead="",pageClass=""}){
-  const base=depth?"..":".";
+
+function page({ title, heading, lead, body, depth = 0, section = "", eyebrow = "INS3064 student learning portal", extraHead = "", pageClass = "", meta = "", head = true }) {
+  const base = depth ? ".." : ".";
+  const pageHead = head
+    ? `<header class="page-head"><p class="eyebrow">${esc(eyebrow)}</p><h1>${esc(heading)}</h1><p class="lead">${esc(lead)}</p>${meta}</header>`
+    : `<h1 class="visually-hidden">${esc(heading)}</h1>`;
   return `<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -117,6 +119,7 @@ function page({title,heading,lead,body,depth=0,section="",eyebrow="INS3064 stude
 <title>${esc(title)} — ${esc(COURSE)}</title>
 <meta name="description" content="${esc(lead)}">
 <meta name="generator" content="INS3064 static-site builder">
+<meta name="color-scheme" content="light dark">
 ${extraHead}<link rel="stylesheet" href="${base}/assets/site.css">
 <script>(function(){try{var t=localStorage.getItem("ins3064.theme");if(!t&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";document.documentElement.setAttribute("data-theme",t==="dark"?"dark":"light");}catch(e){}})();</script>
 </head>
@@ -128,116 +131,252 @@ ${extraHead}<link rel="stylesheet" href="${base}/assets/site.css">
 <nav class="primary-nav" aria-label="Learning resources"><a data-nav="sessions" href="${base}/sessions/index.html">Sessions</a><a data-nav="ebook" href="${base}/ebook/index.html">Ebook</a><a data-nav="slides" href="${base}/slides/index.html">Slides</a><a data-nav="guides" href="${base}/guides/index.html">Guides</a></nav>
 <button class="theme-toggle" type="button" data-theme-toggle><span class="theme-dot" aria-hidden="true"></span><span data-theme-label>Dark</span></button>
 </div></header>
-${depth?`<nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Home</a><span>${esc(section)}</span></nav>`:""}
-<main id="main"><header class="page-head"><p class="eyebrow">${esc(eyebrow)}</p><h1>${esc(heading)}</h1><p class="lead">${esc(lead)}</p></header>${body}</main>
+${depth ? `<nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Home</a><span>${esc(section)}</span></nav>` : ""}
+<main id="main">${pageHead}${body}</main>
 <footer class="footer"><div><strong>INS3064</strong><p>${esc(SCHOOL)}</p></div><p>Student learning materials. Assessment files, solutions, rubrics, and lecturer-only resources are not published here.</p></footer>
 <script src="${base}/assets/site.js" defer></script>
 </body></html>`;
 }
 
-function sourceHead(source,raw){
+function sourceHead(source, raw) {
   return `<meta name="source-file" content="${esc(source)}">\n<meta name="source-sha256" content="${checksum(raw)}">\n`;
 }
-function pager(session,folder){
-  const previous=SESSIONS.find((item)=>item.n===session.n-1);
-  const next=SESSIONS.find((item)=>item.n===session.n+1);
-  const link=(item,label)=>item?`<a href="${pad(item.n)}-${item.slug}.html">${label}: Session ${item.n}</a>`:"<span></span>";
-  return `<nav class="pager" aria-label="Adjacent sessions">${link(previous,"Previous")}${link(next,"Next")}</nav>`;
+
+function chip(text) {
+  return `<span class="chip">${esc(text)}</span>`;
 }
-function documentPage(item,raw,{kind,number=null}){
-  const rendered=renderMarkdown(raw);
-  const label=number?`Session ${number}`:kind;
+
+function chapterPage(session, raw) {
+  const rendered = renderChapter(raw);
+  const part = partOf(session);
+  const meta = `<div class="head-meta">${chip(`Part ${part.id} · ${part.name}`)}${session.tags.map(chip).join("")}</div>`
+    + `<div class="head-actions"><a class="button-link primary" href="../slides/${pad(session.n)}-${session.slug}.html">Open the slide deck</a><a class="button-link" href="../sessions/session-${pad(session.n)}.html">Session hub</a></div>`;
   return page({
-    title:item.title,heading:item.title,lead:item.summary,depth:1,section:kind,
-    eyebrow:`${label} · INS3064`,pageClass:"reading-page",extraHead:sourceHead(item.source,raw),
-    body:`${tocHtml(rendered.headings)}<article class="doc" data-source="${esc(item.source)}">${rendered.html}</article>${number?pager(item,kind.toLowerCase()):""}`,
+    title: `Chapter ${session.n}: ${session.title}`,
+    heading: session.title,
+    lead: session.summary,
+    depth: 1,
+    section: "Ebook",
+    eyebrow: `Chapter ${pad(session.n)} · Ebook`,
+    pageClass: "reading-page",
+    extraHead: sourceHead(session.source, raw),
+    meta,
+    body: `<div class="reading-layout">${tocHtml(rendered.headings)}<article class="doc" data-source="${esc(session.source)}">${rendered.html}</article></div>${pager(session, "chapters")}`,
   });
 }
-function listPage({kind,heading,lead,items,href}){
-  const cards=items.map((item)=>`<li class="resource-card"><span class="badge">${esc(kind)}</span><a href="${href(item)}"><strong>${esc(item.title)}</strong></a><p>${esc(item.summary)}</p></li>`).join("\n");
-  return page({title:heading,heading,lead,depth:1,section:kind,eyebrow:`${items.length} resources`,body:`<ul class="resource-grid">${cards}</ul>`});
-}
-function sessionCards(prefix=""){
-  return SESSIONS.map((s)=>`<li class="session-card" data-session-card><span class="session-number">SESSION ${pad(s.n)}</span><a href="${prefix}sessions/session-${pad(s.n)}.html"><h2>${esc(s.title)}</h2><p>${esc(s.summary)}</p></a><div class="links"><a href="${prefix}ebook/${pad(s.n)}-${s.slug}.html">Read</a><a href="${prefix}slides/${pad(s.n)}-${s.slug}.html">Slides</a></div></li>`).join("\n");
-}
-function sessionsIndex(){
-  return page({title:"Sessions",heading:"Your 15-session learning path",lead:"Read the chapter, review the lecture deck, then practise locally.",depth:1,section:"Sessions",eyebrow:"INS3064 course map",body:`<div class="filter-box"><label for="session-filter">Filter sessions</label><input id="session-filter" type="search" placeholder="Filter by topic: PHP, SQL, security…" data-filter="[data-session-card]"><span class="filter-status" data-filter-status></span></div><ul class="session-grid">${sessionCards("../")}</ul>`});
-}
-function sessionPage(s){
-  const nn=pad(s.n);
-  const previous=SESSIONS.find((item)=>item.n===s.n-1);
-  const next=SESSIONS.find((item)=>item.n===s.n+1);
-  const adjacent=(item,label)=>item?`<a href="session-${pad(item.n)}.html">${label}: Session ${item.n}</a>`:"<span></span>";
-  const body=`<div class="session-flow"><section class="flow-card"><span class="step">01 · Before class</span><h2>Read the chapter</h2><p>Study the explanation and type the examples yourself.</p><a class="button-link primary" href="../ebook/${nn}-${s.slug}.html">Open chapter ${s.n}</a></section><section class="flow-card"><span class="step">02 · In class and review</span><h2>Use the lecture deck</h2><p>Move with arrow keys, Page Up/Page Down, J/K, Home, or End.</p><a class="button-link" href="../slides/${nn}-${s.slug}.html">Open slides</a></section></div><aside class="notice"><p><strong>Practice:</strong> complete tasks in your local XAMPP project. Submission, grading, exam material, and answer keys are intentionally not hosted here.</p></aside><nav class="pager" aria-label="Adjacent sessions">${adjacent(previous,"Previous")}${adjacent(next,"Next")}</nav>`;
-  return page({title:`Session ${s.n}: ${s.title}`,heading:s.title,lead:s.summary,depth:1,section:"Sessions",eyebrow:`Session ${nn} · 15`,body});
+
+function guidePage(guide, raw) {
+  const rendered = renderChapter(raw);
+  return page({
+    title: guide.title,
+    heading: guide.title,
+    lead: guide.summary,
+    depth: 1,
+    section: "Guides",
+    eyebrow: `${guide.kicker} · Guides`,
+    pageClass: "reading-page",
+    extraHead: sourceHead(guide.source, raw),
+    body: `<div class="reading-layout">${tocHtml(rendered.headings)}<article class="doc" data-source="${esc(guide.source)}">${rendered.html}</article></div>`,
+  });
 }
 
-function deckGroups(raw){
-  const tokens=marked.lexer(stripOpeningTitle(preparePublicMarkdown(raw)),{gfm:true});
-  const groups=[];let current=[];
-  for(const token of tokens){
-    if(token.type==="heading"&&token.depth<=2&&current.some((item)=>item.type!=="space"&&item.type!=="hr")){
-      groups.push(current);current=[];
-    }
-    current.push(token);
-  }
-  if(current.some((item)=>item.type!=="space"&&item.type!=="hr"))groups.push(current);
-  return groups;
-}
-function deckPage(session,raw){
-  const groups=deckGroups(raw);
-  const titleSlide=`<section class="deck-slide deck-title" id="slide-1" tabindex="-1" data-slide><p class="deck-kicker">INS3064 · Session ${pad(session.n)}</p><h2>${esc(session.title)}</h2><p>${esc(session.summary)}</p></section>`;
-  const optionLabels=[session.title];
-  const deckRenderer=makeRenderer([]);
-  const content=groups.map((tokens,index)=>{
-    const heading=tokens.find((token)=>token.type==="heading");
-    optionLabels.push(heading?plain(heading.text):"Session overview");
-    const html=marked.parser(tokens,{renderer:deckRenderer,gfm:true});
-    return `<section class="deck-slide" id="slide-${index+2}" tabindex="-1" data-slide>${html}</section>`;
+function deckPage(session, raw) {
+  const slides = buildDeck({ session, tokens: lex(raw), localTarget });
+  /* The rail and the select show the most specific label available. */
+  const labelOf = (slide) => `${slide.sub || slide.title || "Slide"}${slide.continued ? " (cont.)" : ""}`;
+  const rail = slides.map((slide) => `<li><button type="button" data-deck-jump="${slide.index}"><span class="rail-index">${pad(slide.index + 1)}</span><span class="rail-title">${esc(labelOf(slide))}</span></button></li>`).join("");
+  const options = slides.map((slide) => `<option value="${slide.index}">${slide.index + 1}. ${esc(labelOf(slide))}</option>`).join("");
+  const sections = slides.map((slide) => {
+    const kind = `deck-slide is-${slide.kind}${slide.listing ? " has-listing" : ""}`;
+    const eyebrow = slide.kind === "content"
+      ? `<p class="slide-eyebrow"><span class="slide-part">${esc(slide.part)}</span>${slide.sub ? `<span class="slide-sub">${esc(slide.sub)}</span>` : ""}</p>`
+      : "";
+    const heading = slide.kind === "content" && slide.title
+      ? `<h2 class="slide-title">${decorateHeading(esc(slide.title))}${slide.continued ? '<span class="slide-cont">continued</span>' : ""}</h2>`
+      : "";
+    return `<section class="${kind}" id="${slide.id}" tabindex="-1" data-slide data-slide-title="${esc(slide.title || "")}" aria-label="Slide ${slide.index + 1} of ${slides.length}">`
+      + `<div class="slide-inner">${eyebrow}${heading}<div class="slide-body">${slide.html}</div></div>`
+      + `<p class="slide-foot"><span>INS3064 · Session ${pad(session.n)}</span><span>${slide.index + 1} / ${slides.length}</span></p>`
+      + `</section>`;
   }).join("\n");
-  const options=optionLabels.map((label,index)=>`<option value="${index}">${index+1}. ${esc(label)}</option>`).join("");
-  const body=`<nav class="deck-toolbar" aria-label="Slide controls"><button type="button" data-deck-prev aria-label="Previous slide">←</button><select data-deck-select aria-label="Choose a slide">${options}</select><span class="deck-counter" data-deck-counter>1 / ${groups.length+1}</span><button type="button" data-deck-next aria-label="Next slide">→</button></nav><div class="deck" data-deck>${titleSlide}${content}</div><p class="keyboard-help">Keyboard: ←/→, Page Up/Page Down, J/K, Home, End. Each slide scrolls when its content is taller than the screen.</p>`;
-  return page({title:`Slides: ${session.title}`,heading:`Session ${session.n} slides`,lead:session.title,depth:1,section:"Slides",eyebrow:`${groups.length+1} responsive slides`,pageClass:"deck-page",extraHead:sourceHead(session.source,raw),body});
-}
-function homePage(){
-  const resources=[
-    ["Sessions","A guided route through all 15 weeks.","sessions/index.html","Course map"],
-    ["Ebook","Complete English PHP and MySQL chapters.","ebook/index.html","Read"],
-    ["Lecture slides","Responsive decks generated from the chapters.","slides/index.html","Review"],
-    ["Setup & reference","Installation, overview, and cheat sheet.","guides/index.html","Guides"],
-  ].map(([title,summary,href,label])=>`<li class="resource-card"><span class="badge">${label}</span><a href="${href}"><strong>${title}</strong></a><p>${summary}</p></li>`).join("");
-  const body=`<div class="hero-actions"><a class="button-link primary" href="sessions/session-01.html">Start Session 1</a><a class="button-link" href="#course">Explore the course</a></div><div class="stat-row"><div class="stat"><strong>15</strong><span>guided sessions</span></div><div class="stat"><strong>PHP 8+</strong><span>server-side foundation</span></div><div class="stat"><strong>MySQL</strong><span>data and application skills</span></div></div><section><div class="section-head"><div><p class="eyebrow">Everything in one place</p><h2>Choose a resource</h2></div><p>Student-safe materials for reading and review. Work through programming tasks in your local XAMPP project.</p></div><ul class="resource-grid">${resources}</ul></section><section id="course"><div class="section-head"><div><p class="eyebrow">15-session path</p><h2>Learn from syntax to AJAX</h2></div><p>Start with PHP, build a database-backed application, then add authentication, security, and interactivity.</p></div><ul class="session-grid">${sessionCards()}</ul></section>`;
-  return page({title:"Student Learning Portal",heading:"Build dynamic web applications.",lead:"INS3064 learning materials for PHP, MySQL, web security, jQuery, and AJAX — organised into one clear path.",eyebrow:"INS3064 · Student learning portal",pageClass:"home-page",body});
-}
-async function write(rel,content){const target=path.join(OUT,rel);await mkdir(path.dirname(target),{recursive:true});await writeFile(target,content,"utf8");}
 
-async function build(){
-  for(const item of [...SESSIONS,...GUIDES]){
-    if(!existsSync(path.join(ROOT,item.source)))throw new Error(`Missing allowlisted source: ${item.source}`);
-  }
-  await rm(OUT,{recursive:true,force:true});
-  for(const dir of ["assets","ebook","slides","sessions","guides"])await mkdir(path.join(OUT,dir),{recursive:true});
-  await cp(path.join(ASSETS,"site.css"),path.join(OUT,"assets","site.css"));
-  await cp(path.join(ASSETS,"site.js"),path.join(OUT,"assets","site.js"));
-  await write(".nojekyll","");
-  const sourceBytes=[];
-  for(const session of SESSIONS){
-    const raw=await readFile(path.join(ROOT,session.source),"utf8");
-    sourceBytes.push(Buffer.byteLength(raw));
-    await write(`ebook/${pad(session.n)}-${session.slug}.html`,documentPage(session,raw,{kind:"Ebook",number:session.n}));
-    await write(`slides/${pad(session.n)}-${session.slug}.html`,deckPage(session,raw));
-    await write(`sessions/session-${pad(session.n)}.html`,sessionPage(session));
-  }
-  for(const guide of GUIDES){
-    const raw=await readFile(path.join(ROOT,guide.source),"utf8");
-    sourceBytes.push(Buffer.byteLength(raw));
-    await write(`guides/${guide.slug}.html`,documentPage(guide,raw,{kind:"Guides"}));
-  }
-  await write("index.html",homePage());
-  await write("sessions/index.html",sessionsIndex());
-  await write("ebook/index.html",listPage({kind:"Ebook",heading:"The INS3064 ebook",lead:"Fifteen chapters in teaching order, from PHP syntax to secure AJAX applications.",items:SESSIONS,href:(s)=>`${pad(s.n)}-${s.slug}.html`}));
-  await write("slides/index.html",listPage({kind:"Slides",heading:"Lecture slides",lead:"Responsive review decks generated from the complete English chapters.",items:SESSIONS,href:(s)=>`${pad(s.n)}-${s.slug}.html`}));
-  await write("guides/index.html",listPage({kind:"Guides",heading:"Setup and quick reference",lead:"Prepare your environment and keep essential syntax nearby.",items:GUIDES,href:(g)=>`${g.slug}.html`}));
-  console.log(`Built site/: 15 chapters, 15 decks, 15 session hubs, 3 guides (${sourceBytes.reduce((a,b)=>a+b,0).toLocaleString()} source bytes).`);
+  const body = `<div class="deck-shell">
+<aside class="deck-rail" aria-label="Slide list"><p class="rail-head">Slides</p><ol>${rail}</ol></aside>
+<div class="deck-main">
+<nav class="deck-toolbar" aria-label="Slide controls">
+<button class="deck-arrow" type="button" data-deck-prev aria-label="Previous slide">‹</button>
+<label class="deck-select"><span class="visually-hidden">Choose a slide</span><select data-deck-select>${options}</select></label>
+<span class="deck-counter" data-deck-counter>1 / ${slides.length}</span>
+<button class="deck-arrow" type="button" data-deck-next aria-label="Next slide">›</button>
+<button class="deck-mode" type="button" data-deck-mode aria-pressed="false">Overview</button>
+</nav>
+<div class="deck-progress" aria-hidden="true"><span data-deck-progress></span></div>
+<div class="deck" data-deck>${sections}</div>
+<p class="keyboard-help">Keyboard: ← → move, <kbd>O</kbd> overview, <kbd>Home</kbd>/<kbd>End</kbd> jump. Long slides scroll on their own.</p>
+</div></div>`;
+
+  return page({
+    title: `Slides: ${session.title}`,
+    heading: `Session ${session.n} slides`,
+    lead: session.title,
+    depth: 1,
+    section: "Slides",
+    eyebrow: `${slides.length} slides`,
+    pageClass: "deck-page",
+    extraHead: sourceHead(session.source, raw),
+    head: false,
+    body,
+  });
 }
-build().catch((error)=>{console.error(error.stack||error);process.exitCode=1;});
+
+/* ---------- index and hub pages ---------- */
+
+function sessionCard(session, prefix) {
+  const part = partOf(session);
+  return `<li class="session-card" data-session-card data-part="${part.id}">
+<div class="card-top"><span class="session-number">Session ${pad(session.n)}</span><span class="card-part">Part ${part.id}</span></div>
+<a class="card-link" href="${prefix}sessions/session-${pad(session.n)}.html"><h3>${esc(session.title)}</h3></a>
+<p>${esc(session.summary)}</p>
+<div class="card-tags">${session.tags.map(chip).join("")}</div>
+<div class="card-links"><a href="${prefix}ebook/${pad(session.n)}-${session.slug}.html">Read chapter</a><a href="${prefix}slides/${pad(session.n)}-${session.slug}.html">Slides</a></div>
+</li>`;
+}
+
+function partSections(prefix) {
+  return PARTS.map((part) => {
+    const cards = SESSIONS.filter((session) => session.part === part.id).map((session) => sessionCard(session, prefix)).join("\n");
+    return `<section class="part-block" data-part-block="${part.id}">
+<div class="part-head"><div><p class="eyebrow">Part ${part.id} · ${esc(part.range)}</p><h2>${esc(part.name)}</h2></div><p>${esc(part.blurb)}</p></div>
+<ul class="session-grid">${cards}</ul></section>`;
+  }).join("\n");
+}
+
+function sessionsIndex() {
+  const body = `<div class="filter-box">
+<label for="session-filter">Filter sessions</label>
+<input id="session-filter" type="search" placeholder="Search a topic: forms, JOIN, sessions, AJAX…" data-filter="[data-session-card]" autocomplete="off">
+<span class="filter-status" data-filter-status></span>
+</div>${partSections("../")}`;
+  return page({
+    title: "Sessions", heading: "Your 15-session learning path",
+    lead: "Read the chapter, review the deck, then build the practice files on your own machine.",
+    depth: 1, section: "Sessions", eyebrow: "Course map", body,
+  });
+}
+
+function sessionPage(session) {
+  const nn = pad(session.n);
+  const part = partOf(session);
+  const previous = SESSIONS.find((item) => item.n === session.n - 1);
+  const next = SESSIONS.find((item) => item.n === session.n + 1);
+  const adjacent = (item, label, direction) => (item
+    ? `<a class="pager-link is-${direction}" href="session-${pad(item.n)}.html"><span class="pager-label">${label}</span><span class="pager-title">${esc(item.title)}</span></a>`
+    : '<span class="pager-link is-empty"></span>');
+  const steps = [
+    ["01", "Before class", "Read the chapter", "Work through the explanation and type every example yourself.", `../ebook/${nn}-${session.slug}.html`, "Open chapter", true],
+    ["02", "In class", "Follow the deck", "One idea per slide, with the code you need beside it.", `../slides/${nn}-${session.slug}.html`, "Open slides", false],
+    ["03", "After class", "Practise locally", "Rebuild the exercises in your XAMPP htdocs folder until they run.", "../guides/installation.html", "Setup guide", false],
+  ];
+  const cards = steps.map(([number, when, title, copy, href, cta, primary]) =>
+    `<li class="flow-card"><span class="step"><span class="step-number">${number}</span>${esc(when)}</span><h2>${esc(title)}</h2><p>${esc(copy)}</p><a class="button-link${primary ? " primary" : ""}" href="${href}">${esc(cta)}</a></li>`).join("");
+  const body = `<div class="head-meta">${chip(`Part ${part.id} · ${part.name}`)}${session.tags.map(chip).join("")}</div>
+<ol class="session-flow">${cards}</ol>
+<aside class="notice"><p><strong>Practice only.</strong> Complete the tasks in your local project. Submission, grading, exam material, and answer keys are intentionally not hosted here.</p></aside>
+<nav class="pager" aria-label="Adjacent sessions">${adjacent(previous, "Previous", "prev")}${adjacent(next, "Next", "next")}</nav>`;
+  return page({
+    title: `Session ${session.n}: ${session.title}`, heading: session.title, lead: session.summary,
+    depth: 1, section: "Sessions", eyebrow: `Session ${nn} of 15`, body,
+  });
+}
+
+function listPage({ kind, heading, lead, items, href, meta }) {
+  const cards = items.map((item) => `<li class="resource-card">
+<div class="card-top"><span class="badge">${esc(meta(item))}</span></div>
+<a class="card-link" href="${href(item)}"><h2>${esc(item.title)}</h2></a>
+<p>${esc(item.summary)}</p>
+${item.tags ? `<div class="card-tags">${item.tags.map(chip).join("")}</div>` : ""}
+</li>`).join("\n");
+  return page({
+    title: heading, heading, lead, depth: 1, section: kind,
+    eyebrow: `${items.length} resources`, body: `<ul class="resource-grid">${cards}</ul>`,
+  });
+}
+
+function pager(session, folder) {
+  const previous = SESSIONS.find((item) => item.n === session.n - 1);
+  const next = SESSIONS.find((item) => item.n === session.n + 1);
+  const link = (item, label, direction) => (item
+    ? `<a class="pager-link is-${direction}" href="${pad(item.n)}-${item.slug}.html"><span class="pager-label">${label}</span><span class="pager-title">${esc(item.title)}</span></a>`
+    : '<span class="pager-link is-empty"></span>');
+  return `<nav class="pager" aria-label="Adjacent ${folder}">${link(previous, "Previous", "prev")}${link(next, "Next", "next")}</nav>`;
+}
+function homePage() {
+  const resources = [
+    ["Sessions", "A guided route through all 15 weeks, grouped into four parts.", "sessions/index.html", "Course map"],
+    ["Ebook", "Fifteen complete chapters with highlighted PHP, SQL, and HTML.", "ebook/index.html", "Read"],
+    ["Slides", "Focused decks with one idea per slide for review and revision.", "slides/index.html", "Review"],
+    ["Guides", "Install XAMPP, check your setup, and keep syntax within reach.", "guides/index.html", "Setup"],
+  ].map(([title, summary, href, badge]) => `<li class="resource-card"><div class="card-top"><span class="badge">${esc(badge)}</span></div><a class="card-link" href="${href}"><h3>${esc(title)}</h3></a><p>${esc(summary)}</p></li>`).join("");
+
+  const body = `<div class="hero-actions"><a class="button-link primary" href="sessions/session-01.html">Start with Session 1</a><a class="button-link" href="guides/installation.html">Set up your environment</a></div>
+<ul class="stat-row"><li class="stat"><strong>15</strong><span>guided sessions</span></li><li class="stat"><strong>4</strong><span>learning parts</span></li><li class="stat"><strong>PHP 8 · MySQL</strong><span>server-side stack</span></li></ul>
+<section><div class="section-head"><div><p class="eyebrow">Everything in one place</p><h2>Choose a resource</h2></div><p>Student-safe material for reading and review. Build the programming tasks in your local XAMPP project.</p></div><ul class="resource-grid home-grid">${resources}</ul></section>
+<section id="course"><div class="section-head"><div><p class="eyebrow">The learning path</p><h2>From first echo to secure AJAX</h2></div><p>Each part builds on the previous one. Follow them in order for the smoothest ride.</p></div>${partSections("")}</section>`;
+
+  return page({
+    title: "Student Learning Portal", heading: "Build dynamic web applications.",
+    lead: "INS3064 learning materials for PHP, MySQL, web security, jQuery, and AJAX — organised into one clear path.",
+    eyebrow: "INS3064 · Student learning portal", pageClass: "home-page", body,
+  });
+}
+
+async function write(rel, content) {
+  const target = path.join(OUT, rel);
+  await mkdir(path.dirname(target), { recursive: true });
+  await writeFile(target, content, "utf8");
+}
+
+async function build() {
+  for (const item of [...SESSIONS, ...GUIDES]) {
+    if (!existsSync(path.join(ROOT, item.source))) throw new Error(`Missing allowlisted source: ${item.source}`);
+  }
+  await rm(OUT, { recursive: true, force: true });
+  for (const dir of ["assets", "ebook", "slides", "sessions", "guides"]) await mkdir(path.join(OUT, dir), { recursive: true });
+  await cp(path.join(ASSETS, "site.css"), path.join(OUT, "assets", "site.css"));
+  await cp(path.join(ASSETS, "site.js"), path.join(OUT, "assets", "site.js"));
+  await write(".nojekyll", "");
+
+  let slideTotal = 0;
+  for (const session of SESSIONS) {
+    const raw = await readFile(path.join(ROOT, session.source), "utf8");
+    await write(`ebook/${pad(session.n)}-${session.slug}.html`, chapterPage(session, raw));
+    const deck = deckPage(session, raw);
+    slideTotal += (deck.match(/data-slide(?:\s|>)/g) || []).length;
+    await write(`slides/${pad(session.n)}-${session.slug}.html`, deck);
+    await write(`sessions/session-${pad(session.n)}.html`, sessionPage(session));
+  }
+  for (const guide of GUIDES) {
+    const raw = await readFile(path.join(ROOT, guide.source), "utf8");
+    await write(`guides/${guide.slug}.html`, guidePage(guide, raw));
+  }
+  await write("index.html", homePage());
+  await write("sessions/index.html", sessionsIndex());
+  await write("ebook/index.html", listPage({
+    kind: "Ebook", heading: "The INS3064 ebook",
+    lead: "Fifteen chapters in teaching order, from PHP syntax to secure AJAX applications.",
+    items: SESSIONS, href: (s) => `${pad(s.n)}-${s.slug}.html`, meta: (s) => `Chapter ${pad(s.n)}`,
+  }));
+  await write("slides/index.html", listPage({
+    kind: "Slides", heading: "Lecture slides",
+    lead: "Focused review decks generated from the complete English chapters.",
+    items: SESSIONS, href: (s) => `${pad(s.n)}-${s.slug}.html`, meta: (s) => `Session ${pad(s.n)}`,
+  }));
+  await write("guides/index.html", listPage({
+    kind: "Guides", heading: "Setup and quick reference",
+    lead: "Prepare your environment and keep the essential syntax nearby.",
+    items: GUIDES, href: (g) => `${g.slug}.html`, meta: (g) => g.kicker,
+  }));
+  console.log(`Built site/: 15 chapters, 15 decks (${slideTotal} slides), 15 session hubs, 3 guides.`);
+}
+
+build().catch((error) => { console.error(error.stack || error); process.exitCode = 1; });

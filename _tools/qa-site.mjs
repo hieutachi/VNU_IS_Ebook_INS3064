@@ -29,6 +29,20 @@ for(const file of files)if(!allowed.test(file))bad(`unexpected public file: ${fi
 if(files.length===56)ok("only 53 HTML pages, two shared assets, and .nojekyll");else bad(`expected 56 public files, found ${files.length}`);
 
 console.log("== document structure ============================================");
+const VOID_ELEMENTS=new Set(["area","base","br","col","embed","hr","img","input","link","meta","param","source","track","wbr"]);
+function nestingProblem(html){
+  const body=html.replace(/<!--[\s\S]*?-->/g,"").replace(/<script[\s\S]*?<\/script>/g,"");
+  const stack=[];
+  for(const match of body.matchAll(/<(\/?)([a-zA-Z][\w-]*)([^>]*)>/g)){
+    const [raw,closing,name]=match;
+    const tag=name.toLowerCase();
+    if(VOID_ELEMENTS.has(tag)||raw.endsWith("/>"))continue;
+    if(!closing){stack.push(tag);continue;}
+    if(stack[stack.length-1]===tag){stack.pop();continue;}
+    return `</${tag}> closes out of order (open: ${stack.slice(-3).join(" > ")})`;
+  }
+  return stack.length?`unclosed ${stack.join(" > ")}`:null;
+}
 for(const [file,source] of pages){
   const problems=[];
   if(!/^<!DOCTYPE html>/.test(source))problems.push("doctype");
@@ -40,9 +54,11 @@ for(const [file,source] of pages){
   const ids=[...source.matchAll(/\sid="([^"]+)"/g)].map((m)=>m[1]);
   const duplicate=ids.find((id,index)=>ids.indexOf(id)!==index);
   if(duplicate)problems.push(`duplicate id ${duplicate}`);
+  const nesting=nestingProblem(source);
+  if(nesting)problems.push(nesting);
   if(problems.length)bad(`${file}: ${problems.join(", ")}`);
 }
-if(!failures)ok("doctype, language, metadata, one h1, and unique ids on every page");
+if(!failures)ok("doctype, language, metadata, one h1, unique ids, and balanced elements");
 
 console.log("== links and anchors =============================================");
 let checkedLinks=0;
@@ -80,7 +96,13 @@ for(const [file,source] of pages){
     const expected=createHash("sha256").update(raw,"utf8").digest("hex");
     if(sourceHash!==expected)bad(`${file}: source checksum mismatch`);
     if(!source.includes(`data-source="${esc(sourceFile)}"`)&&!file.startsWith("slides/"))bad(`${file}: source attribution missing`);
-    if(file.startsWith("ebook/")&&count(source,/<pre\b/g)<Math.floor(count(raw,/^```/gm)/2))bad(`${file}: fenced code appears incomplete`);
+    if(file.startsWith("ebook/")||file.startsWith("guides/")){
+      /* Every fenced block becomes either a code figure or a session brief card. */
+      const fenced=Math.floor(count(raw,/^```/gm)/2);
+      const rendered=count(source,/<figure class="code-block/g)+count(source,/<div class="brief"/g);
+      if(rendered<fenced)bad(`${file}: ${rendered} of ${fenced} fenced blocks rendered`);
+      if(count(source,/<pre\b/g)<count(source,/<figure class="code-block/g))bad(`${file}: code figure without a pre element`);
+    }
     if(file.startsWith("slides/")&&count(source,/data-slide(?:\s|>)/g)<5)bad(`${file}: fewer than five generated slides`);
   }
 }
@@ -102,8 +124,9 @@ for(const [file,source] of pages){
   const article=/<article class="doc"[^>]*>([\s\S]*?)<\/article>/.exec(source)?.[1];
   if(article){
     const prose=article.replace(/<pre[\s\S]*?<\/pre>/g,"").replace(/<code[\s\S]*?<\/code>/g,"");
-    const withoutDisabledChecks=prose.replace(/<input\b(?=[^>]*\bdisabled\b)(?=[^>]*\btype="checkbox")[^>]*>/gi,"");
-    if(/<(?:form|input|button|script|iframe|object|embed)\b/i.test(withoutDisabledChecks))bad(`${file}: executable teaching markup escaped incorrectly`);
+    /* The builder emits exactly one interactive control: the copy-code button. */
+    const withoutOwnControls=prose.replace(/<button class="code-copy" type="button" data-code-copy>Copy<\/button>/g,"");
+    if(/<(?:form|input|button|script|iframe|object|embed)\b/i.test(withoutOwnControls))bad(`${file}: executable teaching markup escaped incorrectly`);
   }
 }
 if(!forbidden.some(([pattern])=>pattern.test(combined)))ok("no wrong-course text, excluded links, scaffold markers, secrets, or mojibake");
@@ -111,8 +134,8 @@ if(!forbidden.some(([pattern])=>pattern.test(combined)))ok("no wrong-course text
 console.log("== responsive and interactive assets =============================");
 const css=await readFile(path.join(SITE,"assets","site.css"),"utf8");
 const js=await readFile(path.join(SITE,"assets","site.js"),"utf8");
-for(const breakpoint of ["900px","680px","390px"])css.includes(`max-width: ${breakpoint}`)?ok(`responsive breakpoint ${breakpoint}`):bad(`missing responsive breakpoint ${breakpoint}`);
-for(const feature of ["prefers-reduced-motion","overflow-x: auto","@media print","data-theme","data-filter","data-deck"]){
+for(const breakpoint of ["1080px","900px","680px","420px"])css.includes(`max-width: ${breakpoint}`)?ok(`responsive breakpoint ${breakpoint}`):bad(`missing responsive breakpoint ${breakpoint}`);
+for(const feature of ["prefers-reduced-motion","overflow-x: auto","@media print","data-theme","data-filter","data-deck","data-deck-mode","IntersectionObserver","code-block","callout"]){
   (css+js).includes(feature)?ok(feature):bad(`missing ${feature}`);
 }
 const deckPages=[...pages].filter(([file])=>/^slides\/\d{2}-/.test(file));
@@ -120,6 +143,57 @@ for(const [file,source] of deckPages){
   if(!source.includes("data-deck-select")||!source.includes("data-deck-prev")||!source.includes("data-deck-next"))bad(`${file}: incomplete slide controls`);
 }
 ok("15 decks expose select, previous, next, and keyboard controls");
+
+/* Every class the builder emits must be styled, and every custom property used. */
+const classesInHtml=new Set();
+for(const source of pages.values()){
+  for(const match of source.matchAll(/\sclass="([^"]+)"/g)){
+    for(const name of match[1].split(/\s+/))if(name)classesInHtml.add(name);
+  }
+}
+const classesInCss=new Set([...css.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)].map((match)=>match[1]));
+const unstyled=[...classesInHtml].filter((name)=>!classesInCss.has(name));
+unstyled.length?bad(`classes without styles: ${unstyled.join(", ")}`):ok(`${classesInHtml.size} generated classes all have styles`);
+const declared=new Set([...css.matchAll(/(--[\w-]+):/g)].map((match)=>match[1]));
+const referenced=new Set([...css.matchAll(/var\((--[\w-]+)/g)].map((match)=>match[1]));
+const undefinedVars=[...referenced].filter((name)=>!declared.has(name));
+undefinedVars.length?bad(`undefined custom properties: ${undefinedVars.join(", ")}`):ok(`${declared.size} design tokens defined before use`);
+
+console.log("== presentation ===================================================");
+let presentationProblems=0;
+const flag=(message)=>{presentationProblems+=1;bad(message);};
+for(const [file,source] of pages){
+  /* Heading levels must not skip: assistive technology relies on the outline. */
+  const levels=[...source.matchAll(/<h([1-6])[^>]*>/g)].map((match)=>Number(match[1]));
+  for(let index=1;index<levels.length;index+=1){
+    if(levels[index]>levels[index-1]+1){flag(`${file}: heading level jumps h${levels[index-1]} to h${levels[index]}`);break;}
+  }
+  if(/^(?:ebook|guides)\/[a-z0-9-]+\.html$/.test(file)&&!file.endsWith("index.html")){
+    if(!source.includes('class="toc"'))flag(`${file}: missing on-this-page navigation`);
+    if(count(source,/<figure class="code-block/g)!==count(source,/class="code-language"/g))flag(`${file}: code figure without a language caption`);
+    if(/<pre(?![^>]*tabindex)/.test(source))flag(`${file}: scrollable code without keyboard focus`);
+  }
+  if(/^slides\/\d{2}-/.test(file)){
+    for(const marker of ['class="deck-rail"',"data-deck-progress",'class="deck-slide is-title"','class="slide-foot"']){
+      if(!source.includes(marker))flag(`${file}: missing ${marker}`);
+    }
+    const slides=count(source,/data-slide(?:\s|>)/g);
+    const headed=count(source,/<h2 class="slide-title"/g)+count(source,/class="deck-slide is-(?:title|part|agenda)[^"]*"/g);
+    if(headed<slides-1)flag(`${file}: ${slides-headed} slides without a visible heading`);
+  }
+}
+/* Shouty ALL-CAPS headings are eased into sentence case by the builder.
+   SQL and acronym words legitimately stay uppercase, so ignore those. */
+const TECHNICAL=/^(?:SELECT|INSERT|UPDATE|DELETE|WHERE|ORDER|GROUP|HAVING|LIMIT|JOIN|INNER|OUTER|UNION|DISTINCT|TRUNCATE|CREATE|ALTER|DROP|TABLE|INDEX|PRIMARY|FOREIGN|NULL|AUTO_INCREMENT|PHP|SQL|HTML|CSS|AJAX|JSON|CRUD|HTTP|HTTPS|XAMPP|MYSQL|JQUERY|PDO|OOP|MVC|CSRF)$/;
+for(const [file,source] of pages){
+  for(const match of source.matchAll(/<h[2-4][^>]*>([\s\S]*?)<\/h[2-4]>/g)){
+    const text=match[1].replace(/<[^>]*>/g,"").replace(/[^\p{L} ]/gu," ").trim();
+    const words=text.split(/\s+/).filter((word)=>word.length>3);
+    const shouted=words.filter((word)=>word===word.toUpperCase()&&!TECHNICAL.test(word));
+    if(words.length>=3&&shouted.length>=3)flag(`${file}: heading still shouting: ${text.slice(0,42)}`);
+  }
+}
+if(!presentationProblems)ok("reading pages carry navigation, captioned code, and titled slides");
 
 console.log("");
 console.log(failures?`SITE QA FAIL: ${failures} problem(s)`:"SITE QA PASS");
