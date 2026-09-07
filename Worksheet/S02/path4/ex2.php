@@ -24,8 +24,8 @@ $students = [
         <tbody>
             <?php foreach ($students as $student): ?>
                 <tr>
-                    <td><?php echo $student['name']; ?></td>
-                    <td><?php echo $student['grade']; ?></td>
+                    <td><?php echo htmlspecialchars($student['name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php echo (int)$student['grade']; ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

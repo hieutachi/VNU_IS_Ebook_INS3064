@@ -222,7 +222,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // If no errors
     if (empty($errors)) {
-        $message = "Thank you $name! We will contact you at $email";
+        $nameEsc = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+        $emailEsc = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
+        $message = "Thank you $nameEsc! We will contact you at $emailEsc";
     }
 }
 ?>
@@ -244,8 +246,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
     
     <form method="POST">
-        <input type="text" name="name" value="<?= $name ?? '' ?>">
-        <input type="email" name="email" value="<?= $email ?? '' ?>">
+        <input type="text" name="name" value="<?= htmlspecialchars($name ?? '', ENT_QUOTES, 'UTF-8') ?>">
+        <input type="email" name="email" value="<?= htmlspecialchars($email ?? '', ENT_QUOTES, 'UTF-8') ?>">
         <button type="submit">Send</button>
     </form>
 </body>

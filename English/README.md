@@ -45,6 +45,7 @@ After completing this course, you will:
 
 ### 📘 Introduction Section
 ```
+00_start_here.md               ← How to use the portal (read first)
 00_course_overview.md          ← Course overview
 00_installation_guide.md       ← Environment setup guide
 ```
@@ -141,13 +142,14 @@ echo "<?php echo 'Hello World!'; ?>" > hello.php
 
 ### For Students:
 
-1. **Start from the beginning** — Read `00_course_overview.md`
-2. **Study sequentially** — Follow the order from Session 1 → Session 15
-3. **Type code** — Don't copy/paste
-4. **Run immediately** — Test after each change
-5. **Do exercises** — After each session
-6. **Complete worksheets** — Self-assessment
-7. **Integrate projects** — Build project week by week
+1. **Start here** — Read `00_start_here.md` for how to use the material
+2. **Then the overview** — Read `00_course_overview.md`
+3. **Study sequentially** — Follow the order from Session 1 → Session 15
+4. **Type code** — Don't copy/paste
+5. **Run immediately** — Test after each change
+6. **Do exercises** — After each session
+7. **Complete worksheets** — Self-assessment
+8. **Integrate projects** — Build project week by week
 
 ### For Instructors:
 

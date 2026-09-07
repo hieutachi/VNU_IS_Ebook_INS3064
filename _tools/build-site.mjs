@@ -43,9 +43,12 @@ const SESSIONS = RAW_SESSIONS.map(([n, slug, title, file, summary, part, tags]) 
   n, slug, title, summary, part, tags, source: `English/${file}`,
 }));
 const GUIDES = [
-  ["course-overview", "Course Overview", "English/00_course_overview.md", "Outcomes, structure, and the learning path.", "Start here"],
+  ["start-here", "Start Here", "English/00_start_here.md", "How to use this portal, and what to do before Session 1.", "Start here"],
+  ["course-overview", "Course Overview", "English/00_course_overview.md", "Outcomes, structure, and the learning path.", "Overview"],
   ["installation", "Installation Guide", "English/00_installation_guide.md", "Set up XAMPP, PHP, MySQL, and VS Code.", "Setup"],
   ["php-mysql-cheat-sheet", "PHP & MySQL Cheat Sheet", "English/appendix/cheat_sheet.md", "Quick syntax reference for practical work.", "Reference"],
+  ["student-guide", "Student Guide", "English/00_student_guide.md", "Your complete learning roadmap: weekly plan, study tips, exam prep, and project milestones.", "Students"],
+  ["instructor-guide", "Instructor Guide", "English/00_instructor_guide.md", "Course delivery handbook: grading workflows, weekly checklist, and common student issues.", "Instructors"],
 ].map(([slug, title, source, summary, kicker]) => ({ slug, title, source, summary, kicker }));
 
 const pad = (n) => String(n).padStart(2, "0");
@@ -69,8 +72,11 @@ function localTarget(href) {
     const session = SESSIONS.find((item) => pad(item.n) === match[1]);
     return session ? `../ebook/${match[1]}-${session.slug}.html${hash}` : null;
   }
+  if (name === "00_start_here.md") return `../guides/start-here.html${hash}`;
   if (name === "00_course_overview.md") return `../guides/course-overview.html${hash}`;
   if (name === "00_installation_guide.md") return `../guides/installation.html${hash}`;
+  if (name === "00_student_guide.md") return `../guides/student-guide.html${hash}`;
+  if (name === "00_instructor_guide.md") return `../guides/instructor-guide.html${hash}`;
   if (name === "cheat_sheet.md") return `../guides/php-mysql-cheat-sheet.html${hash}`;
   if (/^readme\.md$/i.test(name)) return `../index.html${hash}`;
   return null;
@@ -147,7 +153,7 @@ function page({ title, heading, lead, body, depth = 0, section = "", eyebrow = "
 <meta name="description" content="${esc(lead)}">
 <meta name="generator" content="INS3064 static-site builder">
 <meta name="color-scheme" content="light dark">
-${extraHead}<link rel="stylesheet" href="${base}/assets/site.css">
+${extraHead}<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="${base}/assets/site.css">
 <script>(function(){try{var t=localStorage.getItem("ins3064.theme");if(!t&&matchMedia("(prefers-color-scheme: dark)").matches)t="dark";document.documentElement.setAttribute("data-theme",t==="dark"?"dark":"light");}catch(e){}})();</script>
 </head>
 <body class="${esc(pageClass)}">
@@ -357,10 +363,10 @@ function homePage() {
     ["Sessions", "A guided route through all 15 weeks, grouped into four parts.", "sessions/index.html", "Course map"],
     ["Ebook", "Fifteen complete chapters with highlighted PHP, SQL, and HTML.", "ebook/index.html", "Read"],
     ["Slides", "Focused decks with one idea per slide for review and revision.", "slides/index.html", "Review"],
-    ["Guides", "Install XAMPP, check your setup, and keep syntax within reach.", "guides/index.html", "Setup"],
+    ["Guides", "How to use this portal, install XAMPP, and keep syntax within reach.", "guides/index.html", "Setup"],
   ].map(([title, summary, href, badge]) => `<li class="resource-card"><div class="card-top"><span class="badge">${esc(badge)}</span></div><a class="card-link" href="${href}"><h3>${esc(title)}</h3></a><p>${esc(summary)}</p></li>`).join("");
 
-  const body = `<div class="hero-actions"><a class="button-link primary" href="sessions/session-01.html">Start with Session 1</a><a class="button-link" href="guides/installation.html">Set up your environment</a></div>
+  const body = `<div class="hero-actions"><a class="button-link primary" href="guides/start-here.html">Start here</a><a class="button-link" href="sessions/session-01.html">Go to Session 1</a><a class="button-link" href="guides/installation.html">Set up your environment</a></div>
 <ul class="stat-row"><li class="stat"><strong>15</strong><span>guided sessions</span></li><li class="stat"><strong>4</strong><span>learning parts</span></li><li class="stat"><strong>PHP 8 · MySQL</strong><span>server-side stack</span></li></ul>
 <section><div class="section-head"><div><p class="eyebrow">Everything in one place</p><h2>Choose a resource</h2></div><p>Student-safe material for reading and review. Build the programming tasks in your local XAMPP project.</p></div><ul class="resource-grid home-grid">${resources}</ul></section>
 <section id="course"><div class="section-head"><div><p class="eyebrow">The learning path</p><h2>From first echo to secure AJAX</h2></div><p>Each part builds on the previous one. Follow them in order for the smoothest ride.</p></div>${partSections("")}</section>`;
@@ -418,7 +424,7 @@ async function build() {
     lead: "Prepare your environment and keep the essential syntax nearby.",
     items: GUIDES, href: (g) => `${g.slug}.html`, meta: (g) => g.kicker,
   }));
-  console.log(`Built site/: 15 chapters, 15 decks (${slideTotal} slides), 15 session hubs, 3 guides.`);
+  console.log(`Built site/: 15 chapters, 15 decks (${slideTotal} slides), 15 session hubs, ${GUIDES.length} guides.`);
 }
 
 build().catch((error) => { console.error(error.stack || error); process.exitCode = 1; });

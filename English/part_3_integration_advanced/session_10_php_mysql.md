@@ -93,7 +93,8 @@ try {
     );
     echo "Connection successful!";
 } catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    error_log("DB connection failed: " . $e->getMessage());
+    die("Database connection failed. Please try again later.");
 }
 ?>
 ```
@@ -247,10 +248,18 @@ class Database {
         return $this->query($sql, $params)->fetch();
     }
     
+    private function quoteIdentifier(string $name): string {
+        if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $name)) {
+            throw new InvalidArgumentException("Invalid identifier: $name");
+        }
+        return "`$name`";
+    }
+    
     public function insert(string $table, array $data): string {
-        $columns = implode(', ', array_keys($data));
+        $columns = implode(', ', array_map([$this, 'quoteIdentifier'], array_keys($data)));
         $placeholders = implode(', ', array_fill(0, count($data), '?'));
         
+        $table = $this->quoteIdentifier($table);
         $sql = "INSERT INTO $table ($columns) VALUES ($placeholders)";
         $this->query($sql, array_values($data));
         
@@ -258,13 +267,15 @@ class Database {
     }
     
     public function update(string $table, array $data, string $where, array $whereParams = []): int {
-        $set = implode(' = ?, ', array_keys($data)) . ' = ?';
+        $set = implode(' = ?, ', array_map([$this, 'quoteIdentifier'], array_keys($data))) . ' = ?';
+        $table = $this->quoteIdentifier($table);
         $sql = "UPDATE $table SET $set WHERE $where";
         
         return $this->query($sql, array_merge(array_values($data), $whereParams))->rowCount();
     }
     
     public function delete(string $table, string $where, array $params = []): int {
+        $table = $this->quoteIdentifier($table);
         $sql = "DELETE FROM $table WHERE $where";
         return $this->query($sql, $params)->rowCount();
     }
@@ -335,13 +346,13 @@ $users = $db->fetchAll("SELECT * FROM users ORDER BY created_at DESC");
         </tr>
         <?php foreach ($users as $user): ?>
         <tr>
-            <td><?= $user['id'] ?></td>
-            <td><?= htmlspecialchars($user['name']) ?></td>
-            <td><?= htmlspecialchars($user['email']) ?></td>
-            <td><?= $user['created_at'] ?></td>
+            <td><?= (int)$user['id'] ?></td>
+            <td><?= htmlspecialchars($user['name'], ENT_QUOTES, 'UTF-8') ?></td>
+            <td><?= htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8') ?></td>
+            <td><?= htmlspecialchars($user['created_at'], ENT_QUOTES, 'UTF-8') ?></td>
             <td>
-                <a href="edit.php?id=<?= $user['id'] ?>" class="btn btn-edit">Edit</a>
-                <a href="delete.php?id=<?= $user['id'] ?>" class="btn btn-delete" 
+                <a href="edit.php?id=<?= (int)$user['id'] ?>" class="btn btn-edit">Edit</a>
+                <a href="delete.php?id=<?= (int)$user['id'] ?>" class="btn btn-delete" 
                    onclick="return confirm('Are you sure?')">Delete</a>
             </td>
         </tr>

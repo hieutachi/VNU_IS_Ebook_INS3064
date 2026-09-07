@@ -52,3 +52,7 @@ examples/**/uploads/*
 !examples/**/uploads/.gitkeep
 **/config.local.php
 .env
+
+# AI tooling (local only)
+.commandcode/
+ClaudeKit-Clean/

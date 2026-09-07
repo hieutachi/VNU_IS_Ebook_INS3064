@@ -19,6 +19,7 @@ const unescape = (value) => value
   .replace(/&amp;/g, "&");
 
 const SOURCES = [
+  "English/00_start_here.md",
   "English/00_course_overview.md",
   "English/00_installation_guide.md",
   "English/appendix/cheat_sheet.md",

@@ -21,12 +21,12 @@ for(const file of htmlFiles)pages.set(file,await readFile(path.join(SITE,file),"
 const count=(text,regex)=>(text.match(regex)||[]).length;
 
 console.log("== inventory =====================================================");
-const expectedGroups={root:1,ebook:16,slides:16,sessions:16,guides:4};
+const expectedGroups={root:1,ebook:16,slides:16,sessions:16,guides:7};
 const groups={root:htmlFiles.filter((f)=>!f.includes("/")).length,ebook:htmlFiles.filter((f)=>f.startsWith("ebook/")).length,slides:htmlFiles.filter((f)=>f.startsWith("slides/")).length,sessions:htmlFiles.filter((f)=>f.startsWith("sessions/")).length,guides:htmlFiles.filter((f)=>f.startsWith("guides/")).length};
 for(const [group,want] of Object.entries(expectedGroups))groups[group]===want?ok(`${group}: ${want} page(s)`):bad(`${group}: expected ${want}, found ${groups[group]}`);
 const allowed=/^(?:\.nojekyll|assets\/(?:site\.css|site\.js)|(?:index|ebook\/[a-z0-9-]+|slides\/[a-z0-9-]+|sessions\/[a-z0-9-]+|guides\/[a-z0-9-]+)\.html)$/;
 for(const file of files)if(!allowed.test(file))bad(`unexpected public file: ${file}`);
-if(files.length===56)ok("only 53 HTML pages, two shared assets, and .nojekyll");else bad(`expected 56 public files, found ${files.length}`);
+if(files.length===59)ok("only 56 HTML pages, two shared assets, and .nojekyll");else bad(`expected 59 public files, found ${files.length}`);
 
 console.log("== document structure ============================================");
 const VOID_ELEMENTS=new Set(["area","base","br","col","embed","hr","img","input","link","meta","param","source","track","wbr"]);
@@ -106,7 +106,7 @@ for(const [file,source] of pages){
     if(file.startsWith("slides/")&&count(source,/data-slide(?:\s|>)/g)<5)bad(`${file}: fewer than five generated slides`);
   }
 }
-ok("all 33 generated documents match their allowlisted source SHA-256");
+ok("all 34 generated documents match their allowlisted source SHA-256");
 
 console.log("== public content policy ==========================================");
 const combined=[...pages.values()].join("\n");

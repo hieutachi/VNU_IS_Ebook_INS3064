@@ -24,7 +24,7 @@ The portal contains only student-safe material selected by an explicit allowlist
 
 - 15 English ebook chapters from `English/`
 - 15 responsive lecture decks generated from the same reviewed chapters
-- course overview, installation guide, and PHP/MySQL cheat sheet
+- start here page, course overview, installation guide, and PHP/MySQL cheat sheet
 
 Exam papers, solutions, rubrics, unfinished scaffold folders, authoring scripts, worksheets, and legacy binaries are not copied to the public site.
 

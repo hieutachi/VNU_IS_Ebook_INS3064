@@ -256,8 +256,8 @@ include '../includes/header.php';
                 <select name="category" class="form-select">
                     <option value="">All Categories</option>
                     <?php foreach ($categories as $cat): ?>
-                        <option value="<?= $cat['id'] ?>" <?= $category == $cat['id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($cat['name']) ?>
+                        <option value="<?= (int)$cat['id'] ?>" <?= $category == $cat['id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($cat['name'], ENT_QUOTES, 'UTF-8') ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -399,8 +399,8 @@ include '../includes/header.php';
                     <select name="category_id" class="form-select">
                         <option value="">-- Select --</option>
                         <?php foreach ($categories as $cat): ?>
-                            <option value="<?= $cat['id'] ?>" <?= $data['category_id'] == $cat['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($cat['name']) ?>
+                            <option value="<?= (int)$cat['id'] ?>" <?= $data['category_id'] == $cat['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($cat['name'], ENT_QUOTES, 'UTF-8') ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
