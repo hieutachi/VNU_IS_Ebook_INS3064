@@ -3,10 +3,22 @@
 > **Due:** Sunday 23:59 via LMS | **File:** `portfolio.php`
 
 ## How to Submit
+
+Submit **two things** on LMS before the deadline (Sunday 23:59):
+
+**Part 1 — Code ZIP**
 1. Save your file as `portfolio.php`
 2. Test it in browser via `http://localhost/INS3064/session01/portfolio.php`
 3. Compress the file into a `.zip` named `homework01.zip`
 4. Upload the `.zip` to LMS before the deadline (Sunday 23:59)
+
+**Part 2 — Video presentation link (OBS recording)**
+1. Record a short video (1–2 minutes) with OBS: share your screen showing `portfolio.php` running in the browser, and **present it out loud** — introduce yourself, point out which part of the code produces which part of the page, and show the dynamic "Last updated" timestamp.
+2. Upload the video to **Google Drive** (do not upload the video file to LMS).
+3. Set sharing to **"Anyone with the link → Viewer"**.
+4. Paste the link into the **"Video Link" field** on LMS (next to the ZIP upload).
+
+> ✅ **Checklist before submitting:** video is 1–2 minutes · your face or voice is on it (not just silent screen capture) · the demo runs from `http://localhost/...` without errors · Drive link opens in an incognito/private browser window (test this yourself!).
 
 ## Overview
 

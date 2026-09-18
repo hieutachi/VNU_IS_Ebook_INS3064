@@ -3,10 +3,22 @@
 > **Due:** Sunday 23:59 via LMS | **File:** `calculator.php`
 
 ## How to Submit
+
+Submit **two things** on LMS before the deadline (Sunday 23:59):
+
+**Part 1 — Code ZIP**
 1. Save your file as `calculator.php`
 2. Test it in browser via `http://localhost/INS3064/session09/calculator.php`
 3. Compress the file into a `.zip` named `homework09.zip`
 4. Upload the `.zip` to LMS before the deadline (Sunday 23:59)
+
+**Part 2 — Video presentation link (OBS recording)**
+1. Record a short video (1–2 minutes) with OBS: share your screen showing the calculator in the browser, and **present it out loud** — demonstrate **two** error cases live (e.g., `10 / 0` and an invalid operator), and explain which custom exception class handles each and how the friendly message is shown to the user.
+2. Upload the video to **Google Drive** (do not upload the video file to LMS).
+3. Set sharing to **"Anyone with the link → Viewer"**.
+4. Paste the link into the **"Video Link" field** on LMS (next to the ZIP upload).
+
+> ✅ **Checklist before submitting:** video is 1–2 minutes · your voice explains the error handling (not just silent screen capture) · at least two error cases are triggered live on screen · Drive link opens in an incognito/private browser window (test this yourself!).
 
 ## Overview
 

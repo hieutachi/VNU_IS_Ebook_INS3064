@@ -3,10 +3,22 @@
 > **Due:** Sunday 23:59 via LMS | **File:** `homework-11.zip` containing `contact_manager/`
 
 ## How to Submit
+
+Submit **two things** on LMS before the deadline (Sunday 23:59):
+
+**Part 1 — Code ZIP**
 1. Save all files in the `contact_manager/` folder
 2. Test each file in browser via `http://localhost/INS3064/contact_manager/`
 3. Compress the folder into `homework-11.zip`
 4. Upload the `.zip` to LMS before the deadline (Sunday 23:59)
+
+**Part 2 — Video presentation link (OBS recording)**
+1. Record a short video (1–2 minutes) with OBS: share your screen showing the refactored Contact Manager (in the browser and in VS Code), and **present it out loud** — show the MVC folder structure, open one Model and one Controller, and explain how the Router dispatches a request like `/contacts/edit` to the right controller action.
+2. Upload the video to **Google Drive** (do not upload the video file to LMS).
+3. Set sharing to **"Anyone with the link → Viewer"**.
+4. Paste the link into the **"Video Link" field** on LMS (next to the ZIP upload).
+
+> ✅ **Checklist before submitting:** video is 1–2 minutes · your voice explains the MVC structure (not just silent screen capture) · the app still works live in the browser on screen · Drive link opens in an incognito/private browser window (test this yourself!).
 
 ## Overview
 

@@ -3,10 +3,22 @@
 > **Due:** Sunday 23:59 via LMS | **File:** `university_queries.sql`
 
 ## How to Submit
+
+Submit **two things** on LMS before the deadline (Sunday 23:59):
+
+**Part 1 — Code ZIP**
 1. Save your `.sql` file as `university_queries.sql`
 2. Test by importing into phpMyAdmin (SQL tab)
 3. Compress the file into a `.zip` named `homework05.zip`
 4. Upload the `.zip` to LMS before the deadline (Sunday 23:59)
+
+**Part 2 — Video presentation link (OBS recording)**
+1. Record a short video (1–2 minutes) with OBS: share your screen showing the SQL tab in phpMyAdmin, and **present it out loud** — pick **one** query (a JOIN or a GROUP BY query works best) and explain what it does, run it live, and show the result set matches your expected output comment.
+2. Upload the video to **Google Drive** (do not upload the video file to LMS).
+3. Set sharing to **"Anyone with the link → Viewer"**.
+4. Paste the link into the **"Video Link" field** on LMS (next to the ZIP upload).
+
+> ✅ **Checklist before submitting:** video is 1–2 minutes · your voice explains the chosen query (not just silent screen capture) · the query runs live without errors on screen · Drive link opens in an incognito/private browser window (test this yourself!).
 
 ## Overview
 

@@ -3,10 +3,22 @@
 > **Due:** Sunday 23:59 via LMS | **File:** `grade_calculator.php`
 
 ## How to Submit
+
+Submit **two things** on LMS before the deadline (Sunday 23:59):
+
+**Part 1 — Code ZIP**
 1. Save your file as `grade_calculator.php`
 2. Test it in browser via `http://localhost/INS3064/session02/grade_calculator.php`
 3. Compress the file into a `.zip` named `homework02.zip`
 4. Upload the `.zip` to LMS before the deadline (Sunday 23:59)
+
+**Part 2 — Video presentation link (OBS recording)**
+1. Record a short video (1–2 minutes) with OBS: share your screen showing the grade table in the browser, and **present it out loud** — explain how you calculate the average, how the letter grade is assigned, and show one edge case (e.g., a student with all 0s or all 100s) still producing a correct result.
+2. Upload the video to **Google Drive** (do not upload the video file to LMS).
+3. Set sharing to **"Anyone with the link → Viewer"**.
+4. Paste the link into the **"Video Link" field** on LMS (next to the ZIP upload).
+
+> ✅ **Checklist before submitting:** video is 1–2 minutes · your voice explains the logic (not just silent screen capture) · the table sorts and color-codes correctly on screen · Drive link opens in an incognito/private browser window (test this yourself!).
 
 ## Overview
 

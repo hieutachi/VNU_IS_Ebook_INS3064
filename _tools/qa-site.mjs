@@ -21,12 +21,12 @@ for(const file of htmlFiles)pages.set(file,await readFile(path.join(SITE,file),"
 const count=(text,regex)=>(text.match(regex)||[]).length;
 
 console.log("== inventory =====================================================");
-const expectedGroups={root:1,ebook:16,slides:16,sessions:16,guides:7};
-const groups={root:htmlFiles.filter((f)=>!f.includes("/")).length,ebook:htmlFiles.filter((f)=>f.startsWith("ebook/")).length,slides:htmlFiles.filter((f)=>f.startsWith("slides/")).length,sessions:htmlFiles.filter((f)=>f.startsWith("sessions/")).length,guides:htmlFiles.filter((f)=>f.startsWith("guides/")).length};
+const expectedGroups={root:1,ebook:16,slides:16,sessions:16,guides:7,homework:14};
+const groups={root:htmlFiles.filter((f)=>!f.includes("/")).length,ebook:htmlFiles.filter((f)=>f.startsWith("ebook/")).length,slides:htmlFiles.filter((f)=>f.startsWith("slides/")).length,sessions:htmlFiles.filter((f)=>f.startsWith("sessions/")).length,guides:htmlFiles.filter((f)=>f.startsWith("guides/")).length,homework:htmlFiles.filter((f)=>f.startsWith("homework/")).length};
 for(const [group,want] of Object.entries(expectedGroups))groups[group]===want?ok(`${group}: ${want} page(s)`):bad(`${group}: expected ${want}, found ${groups[group]}`);
-const allowed=/^(?:\.nojekyll|assets\/(?:site\.css|site\.js)|(?:index|ebook\/[a-z0-9-]+|slides\/[a-z0-9-]+|sessions\/[a-z0-9-]+|guides\/[a-z0-9-]+)\.html)$/;
+const allowed=/^(?:\.nojekyll|assets\/(?:site\.css|site\.js)|(?:index|ebook\/[a-z0-9-]+|slides\/[a-z0-9-]+|sessions\/[a-z0-9-]+|guides\/[a-z0-9-]+|homework\/session-\d{2}\/homework)\.html)$/;
 for(const file of files)if(!allowed.test(file))bad(`unexpected public file: ${file}`);
-if(files.length===59)ok("only 56 HTML pages, two shared assets, and .nojekyll");else bad(`expected 59 public files, found ${files.length}`);
+if(files.length===73)ok("only 70 HTML pages, two shared assets, and .nojekyll");else bad(`expected 73 public files, found ${files.length}`);
 
 console.log("== document structure ============================================");
 const VOID_ELEMENTS=new Set(["area","base","br","col","embed","hr","img","input","link","meta","param","source","track","wbr"]);
@@ -88,7 +88,7 @@ console.log("== source fidelity ================================================
 for(const [file,source] of pages){
   const sourceFile=/<meta name="source-file" content="([^"]+)">/.exec(source)?.[1];
   const sourceHash=/<meta name="source-sha256" content="([a-f0-9]{64})">/.exec(source)?.[1];
-  if(!sourceFile&&!/^(?:index|ebook\/index|slides\/index|sessions\/index|sessions\/session-\d{2}|guides\/index)\.html$/.test(file))bad(`${file}: source metadata missing`);
+  if(!sourceFile&&!/^(?:index|ebook\/index|slides\/index|sessions\/index|sessions\/session-\d{2}|guides\/index|homework\/session-\d{2}\/homework)\.html$/.test(file))bad(`${file}: source metadata missing`);
   if(sourceFile){
     const target=path.resolve(ROOT,sourceFile);
     if(!target.startsWith(ROOT)||!existsSync(target)){bad(`${file}: invalid source ${sourceFile}`);continue;}
@@ -104,9 +104,14 @@ for(const [file,source] of pages){
       if(count(source,/<pre\b/g)<count(source,/<figure class="code-block/g))bad(`${file}: code figure without a pre element`);
     }
     if(file.startsWith("slides/")&&count(source,/data-slide(?:\s|>)/g)<5)bad(`${file}: fewer than five generated slides`);
+    if(file.startsWith("homework/")){
+      /* A homework sheet that ships must carry the weekly submission contract. */
+      if(!/Part 2/.test(source)||!/Video Link/.test(source)||!/Google Drive/.test(source))bad(`${file}: homework sheet missing the video-link submission contract`);
+      if(/href="[^"]*homework\.md/.test(source))bad(`${file}: links to raw markdown instead of rendered homework page`);
+    }
   }
 }
-ok("all 34 generated documents match their allowlisted source SHA-256");
+ok("all 48 generated documents match their allowlisted source SHA-256");
 
 console.log("== public content policy ==========================================");
 const combined=[...pages.values()].join("\n");

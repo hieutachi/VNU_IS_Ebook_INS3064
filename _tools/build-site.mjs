@@ -82,6 +82,20 @@ function localTarget(href) {
   return null;
 }
 
+/* Homework sheets sit one directory below a session hub, so their relative
+   links need the same treatment the chapters get: an explicit public target
+   or no link at all — a broken relative path must never ship. */
+function homeworkLocalTarget(href) {
+  const clean = decodeURIComponent(href).split("#")[0];
+  const hash = href.includes("#") ? `#${href.split("#").slice(1).join("#")}` : "";
+  const name = path.posix.basename(clean.replace(/\\/g, "/"));
+  const parent = path.posix.basename(path.posix.dirname(clean.replace(/\\/g, "/")));
+  const homeworkMatch = /^(?:homework\.md|.*homework.*)$/i.test(name) && /^session-(\d{2})$/.test(parent) ? /^session-(\d{2})$/.exec(parent) : null;
+  if (homeworkMatch) return `homework-${homeworkMatch[1]}.html${hash}`;
+  const target = localTarget(href);
+  return target ? `../../${target}` : null;
+}
+
 /* The public site never carries submission instructions that are not in force,
    and the portal's own pager replaces the chapters' hand-written back links. */
 function preparePublicMarkdown(markdown) {
@@ -140,7 +154,7 @@ function minimumPath(headings) {
 }
 
 function page({ title, heading, lead, body, depth = 0, section = "", eyebrow = "INS3064 student learning portal", extraHead = "", pageClass = "", meta = "", head = true }) {
-  const base = depth ? ".." : ".";
+  const base = depth ? "../".repeat(depth).replace(/\/$/, "") : ".";
   const pageHead = head
     ? `<header class="page-head"><p class="eyebrow">${esc(eyebrow)}</p><h1>${esc(heading)}</h1><p class="lead">${esc(lead)}</p>${meta}</header>`
     : `<h1 class="visually-hidden">${esc(heading)}</h1>`;
@@ -164,7 +178,7 @@ ${extraHead}<link rel="preconnect" href="https://fonts.googleapis.com"><link rel
 <nav class="primary-nav" aria-label="Learning resources"><a data-nav="sessions" href="${base}/sessions/index.html">Sessions</a><a data-nav="ebook" href="${base}/ebook/index.html">Ebook</a><a data-nav="slides" href="${base}/slides/index.html">Slides</a><a data-nav="guides" href="${base}/guides/index.html">Guides</a></nav>
 <button class="theme-toggle" type="button" data-theme-toggle><span class="theme-dot" aria-hidden="true"></span><span data-theme-label>Dark</span></button>
 </div></header>
-${depth ? `<nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Home</a><span>${esc(section)}</span></nav>` : ""}
+${depth ? `<nav class="breadcrumbs" aria-label="Breadcrumb"><a href="${base}/index.html">Home</a><span>${esc(section)}</span></nav>` : ""}
 <main id="main">${pageHead}${body}</main>
 <footer class="footer"><div><strong>INS3064</strong><p>${esc(SCHOOL)}</p></div><p>Student learning materials. Assessment files, solutions, rubrics, and lecturer-only resources are not published here.</p></footer>
 <script src="${base}/assets/site.js" defer></script>
@@ -210,6 +224,33 @@ function guidePage(guide, raw) {
     pageClass: "reading-page",
     extraHead: sourceHead(guide.source, raw),
     body: `<div class="reading-layout">${tocHtml(rendered.headings)}<article class="doc" data-source="${esc(guide.source)}">${rendered.html}</article></div>`,
+  });
+}
+
+/* Graded homework sheets are student-facing and due weekly, so they ship on the
+   public portal — but through the same student-safe markdown pipeline as the
+   chapters, with their own link resolver for cross-sheet navigation. */
+const HOMEWORK_SOURCES = SESSIONS
+  .filter((session) => session.n !== 8)
+  .map((session) => ({ session, source: `homework/session-${pad(session.n)}/homework.md` }));
+
+function homeworkPage({ session, source, raw }) {
+  const headings = [];
+  const renderer = makeRenderer({ headings, localTarget: homeworkLocalTarget, mode: "doc" });
+  const tokens = foldCallouts(lex(raw));
+  const html = renderStream(tokens, renderer);
+  const hw = HOMEWORKS[session.n] ?? session.summary;
+  return page({
+    title: `Homework ${session.n}: ${session.title}`,
+    heading: `Homework ${session.n}`,
+    lead: hw,
+    depth: 2,
+    section: "Sessions",
+    eyebrow: `Homework · Session ${pad(session.n)}`,
+    pageClass: "reading-page",
+    extraHead: sourceHead(source, raw),
+    body: `<div class="reading-layout">${tocHtml(headings)}<article class="doc" data-source="${esc(source)}">${html}</article></div>
+<nav class="pager" aria-label="Adjacent homework"><a class="pager-link is-prev" href="../../sessions/session-${pad(session.n)}.html"><span class="pager-label">Session hub</span><span class="pager-title">${esc(session.title)}</span></a><span class="pager-link is-empty"></span></nav>`,
   });
 }
 
@@ -312,6 +353,33 @@ function sessionsIndex() {
   });
 }
 
+/* One-line homework summary per session, shown in step 04 of every session hub.
+   Keyed by session number. Session 8 (midterm week) has no graded homework. */
+const HOMEWORKS = {
+  1: "Portfolio page — personal info rendered with PHP variables and a dynamic timestamp.",
+  2: "Grade calculator — arrays, functions, loops, and an HTML results table.",
+  3: "Registration & survey forms — multi-page flow with validation and sessions.",
+  4: "University database — design 6 tables in SQL and seed them with data.",
+  5: "University queries — 10 commented SQL queries against your Homework 4 database.",
+  6: "Bookstore database — ERD, 3NF design, full schema and sample data.",
+  7: "Bookstore queries — 10 advanced SQL queries: JOINs, aggregates, subqueries.",
+  9: "Robust calculator — custom exceptions, try/catch, error log, history.",
+  10: "Contact manager — full CRUD with PDO, prepared statements, and search.",
+  11: "Contact manager MVC — refactor Homework 10 into OOP with a Router.",
+  12: "Product management system — categories, products, uploads, pagination.",
+  13: "Authentication — register, login, sessions, remember-me, guarded routes.",
+  14: "Security audit — CSRF, XSS, SQL injection fixes plus a security checklist.",
+  15: "AJAX product app — JSON endpoints, live search with debounce, jQuery UI.",
+};
+
+function homeworkCard(session) {
+  const hw = HOMEWORKS[session.n];
+  if (!hw) {
+    return `<li class="flow-card homework-card"><span class="step"><span class="step-number">04</span>Homework</span><h2>Midterm week</h2><p>No graded homework this week — the review sheet is your midterm study guide.</p></li>`;
+  }
+  return `<li class="flow-card homework-card"><span class="step"><span class="step-number">04</span>Homework</span><h2>Do &amp; submit</h2><p><strong>${esc(hw)}</strong><br>Due Sunday 23:59 on LMS: the code ZIP <em>plus</em> a 1–2 minute OBS video (screen + voice) uploaded to Google Drive — submit the link, not the file.</p><a class="button-link" href="../homework/session-${pad(session.n)}/homework.html">Open homework sheet</a></li>`;
+}
+
 function sessionPage(session) {
   const nn = pad(session.n);
   const part = partOf(session);
@@ -328,8 +396,8 @@ function sessionPage(session) {
   const cards = steps.map(([number, when, title, copy, href, cta, primary]) =>
     `<li class="flow-card"><span class="step"><span class="step-number">${number}</span>${esc(when)}</span><h2>${esc(title)}</h2><p>${esc(copy)}</p><a class="button-link${primary ? " primary" : ""}" href="${href}">${esc(cta)}</a></li>`).join("");
   const body = `<div class="head-meta">${chip(`Part ${part.id} · ${part.name}`)}${session.tags.map(chip).join("")}</div>
-<ol class="session-flow">${cards}</ol>
-<aside class="notice"><p><strong>Practice only.</strong> Complete the tasks in your local project. Submission, grading, exam material, and answer keys are intentionally not hosted here.</p></aside>
+<ol class="session-flow">${cards}${homeworkCard(session)}</ol>
+<aside class="notice"><p><strong>Practice only.</strong> Complete the tasks in your local project. Submission, grading, exam material, and answer keys are intentionally not hosted here. Homework is submitted on LMS (ZIP + video link) — see the sheet linked in step 04.</p></aside>
 <nav class="pager" aria-label="Adjacent sessions">${adjacent(previous, "Previous", "prev")}${adjacent(next, "Next", "next")}</nav>`;
   return page({
     title: `Session ${session.n}: ${session.title}`, heading: session.title, lead: session.summary,
@@ -388,8 +456,11 @@ async function build() {
   for (const item of [...SESSIONS, ...GUIDES]) {
     if (!existsSync(path.join(ROOT, item.source))) throw new Error(`Missing allowlisted source: ${item.source}`);
   }
+  for (const item of HOMEWORK_SOURCES) {
+    if (!existsSync(path.join(ROOT, item.source))) throw new Error(`Missing allowlisted source: ${item.source}`);
+  }
   await rm(OUT, { recursive: true, force: true });
-  for (const dir of ["assets", "ebook", "slides", "sessions", "guides"]) await mkdir(path.join(OUT, dir), { recursive: true });
+  for (const dir of ["assets", "ebook", "slides", "sessions", "guides", "homework"]) await mkdir(path.join(OUT, dir), { recursive: true });
   await cp(path.join(ASSETS, "site.css"), path.join(OUT, "assets", "site.css"));
   await cp(path.join(ASSETS, "site.js"), path.join(OUT, "assets", "site.js"));
   await write(".nojekyll", "");
@@ -402,6 +473,10 @@ async function build() {
     slideTotal += (deck.match(/data-slide(?:\s|>)/g) || []).length;
     await write(`slides/${pad(session.n)}-${session.slug}.html`, deck);
     await write(`sessions/session-${pad(session.n)}.html`, sessionPage(session));
+  }
+  for (const item of HOMEWORK_SOURCES) {
+    const raw = await readFile(path.join(ROOT, item.source), "utf8");
+    await write(`homework/session-${pad(item.session.n)}/homework.html`, homeworkPage({ ...item, raw }));
   }
   for (const guide of GUIDES) {
     const raw = await readFile(path.join(ROOT, guide.source), "utf8");
@@ -424,7 +499,7 @@ async function build() {
     lead: "Prepare your environment and keep the essential syntax nearby.",
     items: GUIDES, href: (g) => `${g.slug}.html`, meta: (g) => g.kicker,
   }));
-  console.log(`Built site/: 15 chapters, 15 decks (${slideTotal} slides), 15 session hubs, ${GUIDES.length} guides.`);
+  console.log(`Built site/: 15 chapters, 15 decks (${slideTotal} slides), 15 session hubs, ${GUIDES.length} guides, ${HOMEWORK_SOURCES.length} homework sheets.`);
 }
 
 build().catch((error) => { console.error(error.stack || error); process.exitCode = 1; });

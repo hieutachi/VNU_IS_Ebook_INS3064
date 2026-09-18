@@ -3,10 +3,22 @@
 > **Due:** Sunday 23:59 via LMS | **Files:** `register.php`, `survey.php`, `summary.php`
 
 ## How to Submit
+
+Submit **two things** on LMS before the deadline (Sunday 23:59):
+
+**Part 1 — Code ZIP**
 1. Save all files (`register.php`, `survey.php`, `summary.php`) in one folder
 2. Test each file in browser via `http://localhost/INS3064/session03/`
 3. Compress the folder into a `.zip` named `homework03.zip`
 4. Upload the `.zip` to LMS before the deadline (Sunday 23:59)
+
+**Part 2 — Video presentation link (OBS recording)**
+1. Record a short video (1–2 minutes) with OBS: share your screen and **present it out loud** — walk through the full flow: fill the registration form, submit, land on the survey, submit again, and show the summary page. Then show one validation error (e.g., submit with an invalid email) and explain how your code detects and displays it.
+2. Upload the video to **Google Drive** (do not upload the video file to LMS).
+3. Set sharing to **"Anyone with the link → Viewer"**.
+4. Paste the link into the **"Video Link" field** on LMS (next to the ZIP upload).
+
+> ✅ **Checklist before submitting:** video is 1–2 minutes · your voice explains the flow (not just silent screen capture) · validation errors are shown on screen · Drive link opens in an incognito/private browser window (test this yourself!).
 
 ## Overview
 

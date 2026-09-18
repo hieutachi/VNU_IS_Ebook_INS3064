@@ -68,6 +68,10 @@ the source code instead of running it.
   about to practise.
 - **After class** — rebuild the exercises in your own project folder until they
   run without errors. A chapter you have only read is a chapter you have not learned.
+- **Before Sunday 23:59** — complete and submit the week's homework. Each homework
+  sheet (`homework/session-NN/homework.md`, handed out in class and via LMS) tells
+  you the task, the rubric, and exactly what to submit. See
+  [How homework works](00_student_guide.md#how-homework-works).
 
 ### 💡 Read the minimum path when time is short
 Every chapter opens with a **Minimum path** box: a handful of links that carry the

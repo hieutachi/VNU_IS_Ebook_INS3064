@@ -3,10 +3,22 @@
 > **Due:** Sunday 23:59 via LMS | **File:** `homework-13.zip` containing `product_app/`
 
 ## How to Submit
+
+Submit **two things** on LMS before the deadline (Sunday 23:59):
+
+**Part 1 — Code ZIP**
 1. Save all files in the `product_app/` folder
 2. Test each file in browser via `http://localhost/INS3064/product_app/`
 3. Compress the folder into `homework-13.zip`
 4. Upload the `.zip` to LMS before the deadline (Sunday 23:59)
+
+**Part 2 — Video presentation link (OBS recording)**
+1. Record a short video (1–2 minutes) with OBS: share your screen and **present it out loud** — register a new account live, log out, then log back in, and demonstrate the protected route: open a product page URL while logged out and show it redirecting to the login page. Mention where `session_regenerate_id()` and the remember-me cookie fit in.
+2. Upload the video to **Google Drive** (do not upload the video file to LMS).
+3. Set sharing to **"Anyone with the link → Viewer"**.
+4. Paste the link into the **"Video Link" field** on LMS (next to the ZIP upload).
+
+> ✅ **Checklist before submitting:** video is 1–2 minutes · your voice narrates the auth flow (not just silent screen capture) · the redirect-to-login is shown live on screen · Drive link opens in an incognito/private browser window (test this yourself!).
 
 ## Overview
 

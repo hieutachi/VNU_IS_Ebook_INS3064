@@ -332,6 +332,7 @@ h1 { margin: 0; font-size: clamp(2.05rem, 5vw, 3.9rem); line-height: 1.03; lette
 .flow-card h2 { margin: .2rem 0 0; font-size: 1.2rem; letter-spacing: -.02em; }
 .flow-card p { margin: 0 0 .9rem; color: var(--muted); font-size: .9rem; }
 .flow-card .button-link { margin-top: auto; align-self: flex-start; }
+.homework-card { border-color: color-mix(in srgb, var(--brand) 45%, transparent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 10%, transparent); }
 .notice {
   margin: 1.75rem 0; padding: 1.1rem 1.25rem 1.1rem 1.4rem;
   border: 1px solid var(--line); border-left: 4px solid var(--info);

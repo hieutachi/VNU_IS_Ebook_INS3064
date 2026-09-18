@@ -250,6 +250,76 @@ manage their clubs. Think of it as a mini Facebook for campus clubs.
 3. **Third pass (after class):** Rebuild the exercises from memory. If you get
    stuck, check the chapter. This is where real learning happens.
 
+
+---
+
+## 🏠 HOW HOMEWORK WORKS
+
+Every week (except the midterm week) has **one graded homework**. It is assigned at
+the end of the session and is due **Sunday 23:59**. The homework sheet for week `NN`
+is `homework/session-NN/homework.md` — your lecturer also publishes it on LMS each
+week. Every sheet contains the same five sections, in the same order:
+
+| Section on the sheet | What it tells you |
+|---|---|
+| **How to Submit** | The exact two deliverables and where they go |
+| **Overview** | What you are building and why it matters |
+| **Requirements** | Functional + technical requirements — the grading contract |
+| **Deliverables & Rubric** | Which files to hand in, and how the 10 points are split |
+| **Tips & Resources** | Hints, starter patterns, and official documentation links |
+
+### Your weekly homework flow
+
+```
+1. READ THE SHEET first — do not start coding before you know the rubric.
+2. BUILD the task in your XAMPP htdocs folder until it runs without errors.
+3. TEST against every requirement in the sheet (they are exactly what is graded).
+4. RECORD the short video (Part 2 below) — 1–2 minutes, screen + voice.
+5. ZIP the code (Part 1) and upload both to LMS before Sunday 23:59.
+6. CHECK the grade and feedback when the lecturer returns it — fix what was wrong.
+```
+
+### Part 1 — The code (ZIP on LMS)
+
+Compress your homework files into `homeworkNN.zip` and upload the file to LMS.
+The lecturer downloads, runs, and grades this against the rubric on the sheet.
+
+### Part 2 — The video presentation (OBS recording → Google Drive link)
+
+Alongside the ZIP, every homework requires a **short video (1–2 minutes)** that you
+record with **OBS Studio** — just your screen and your voice, no camera needed.
+This is how the lecturer knows the work is really yours and that you understand it:
+
+1. **Record** — open OBS, choose "Display Capture" as the source, start recording,
+   then walk through your homework **live**: show it running in the browser and
+   **present out loud** what you did and how the code works. The homework sheet
+   tells you exactly what to demonstrate that week. 1–2 minutes is enough.
+2. **Upload to Google Drive** — do **not** upload the video file to LMS. Drive is
+   fine with large files; LMS is not.
+3. **Set sharing** — right-click the file in Drive → Share → change to
+   **"Anyone with the link" → Viewer**.
+4. **Submit the link** — paste the Drive URL into the **"Video Link" field** on LMS,
+   next to your ZIP upload. The system stores the URL; the lecturer opens and checks
+   each video afterwards.
+
+> ⚠️ **A link the lecturer cannot open = no video mark.** Always test your Drive link
+> in an incognito/private browser window before submitting. If the link asks you to
+> "request access", the sharing setting is still wrong.
+
+### Grading and the late rule
+
+- Each homework is graded **out of 10** using the rubric printed on its sheet, and
+  the marks feed the **Attendance, Participation & Homework 10%** component.
+- Late work is marked until **Monday 23:59** but loses **20%**. Nothing is marked
+  after that — the sheet scores 0.
+- You may use AI tools to help you build the homework, **but** you must be able to
+  explain every line — and the video is where you prove it. If you cannot explain
+  your own submission in the recording, it is treated as plagiarism.
+- If illness or an emergency stops you submitting, contact the lecturer **before**
+  the deadline, not after.
+
+---
+
 ### Time management
 | Activity | Time per week | When |
 |---|---|---|
