@@ -256,8 +256,9 @@ manage their clubs. Think of it as a mini Facebook for campus clubs.
 ## 🏠 HOW HOMEWORK WORKS
 
 Every week (except the midterm week) has **one graded homework**. It is assigned at
-the end of the session and is due **Sunday 23:59**. The homework sheet for week `NN`
-is `homework/session-NN/homework.md` — your lecturer also publishes it on LMS each
+the end of the session and is due **Sunday 23:59**. All sheets are listed on the
+portal's **Homework page** (`homework/index.html`); the sheet for week `NN` is
+`homework/session-NN/homework.md` — your lecturer also publishes it on LMS each
 week. Every sheet contains the same five sections, in the same order:
 
 | Section on the sheet | What it tells you |
@@ -284,27 +285,32 @@ week. Every sheet contains the same five sections, in the same order:
 Compress your homework files into `homeworkNN.zip` and upload the file to LMS.
 The lecturer downloads, runs, and grades this against the rubric on the sheet.
 
-### Part 2 — The video presentation (OBS recording → Google Drive link)
+### Part 2 — The video presentation (OBS recording → YouTube Unlisted link)
 
 Alongside the ZIP, every homework requires a **short video (1–2 minutes)** that you
 record with **OBS Studio** — just your screen and your voice, no camera needed.
 This is how the lecturer knows the work is really yours and that you understand it:
 
-1. **Record** — open OBS, choose "Display Capture" as the source, start recording,
-   then walk through your homework **live**: show it running in the browser and
-   **present out loud** what you did and how the code works. The homework sheet
+1. **Record** — open OBS, add a "Display Capture" (or Window Capture) source, start
+   recording, then walk through your homework **live**: show it running in the
+   browser and **present out loud** what you did and how the code works. The
+   **Video Checklist — What to Show** section at the bottom of each homework sheet
    tells you exactly what to demonstrate that week. 1–2 minutes is enough.
-2. **Upload to Google Drive** — do **not** upload the video file to LMS. Drive is
-   fine with large files; LMS is not.
-3. **Set sharing** — right-click the file in Drive → Share → change to
-   **"Anyone with the link" → Viewer**.
-4. **Submit the link** — paste the Drive URL into the **"Video Link" field** on LMS,
-   next to your ZIP upload. The system stores the URL; the lecturer opens and checks
-   each video afterwards.
+2. **Upload to YouTube as Unlisted** — upload the recording in YouTube Studio and
+   set visibility to **Unlisted** (not Public, not Private). Unlisted means only
+   people with the link can watch — it does not appear in search or on your
+   channel page. Do **not** upload the video file to LMS.
+3. **Add it to your homework playlist** — create one playlist for the whole
+   semester named `INS3064 — Homework — <Your Full Name>` (visibility Unlisted)
+   and add this week's video to it. You create and own it — there is no shared
+   class playlist.
+4. **Submit the link** — paste the **video URL** (or the playlist URL) into the
+   **"Video Link" field** on LMS, next to your ZIP upload. The system stores the
+   URL; the lecturer opens and checks each video afterwards.
 
-> ⚠️ **A link the lecturer cannot open = no video mark.** Always test your Drive link
-> in an incognito/private browser window before submitting. If the link asks you to
-> "request access", the sharing setting is still wrong.
+> ⚠️ **A link the lecturer cannot open = no video mark.** Always test your YouTube
+> link in an incognito/private browser window before submitting. If the video is
+> set to **Private**, the lecturer cannot watch it — it must be **Unlisted**.
 
 ### Grading and the late rule
 

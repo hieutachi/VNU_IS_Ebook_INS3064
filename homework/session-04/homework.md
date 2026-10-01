@@ -12,13 +12,16 @@ Submit **two things** on LMS before the deadline (Sunday 23:59):
 3. Compress the file into a `.zip` named `homework04.zip`
 4. Upload the `.zip` to LMS before the deadline (Sunday 23:59)
 
-**Part 2 — Video presentation link (OBS recording)**
-1. Record a short video (1–2 minutes) with OBS: share your screen showing phpMyAdmin, and **present it out loud** — show the `university_db` structure, open one or two tables (e.g., `students`, `enrollments`), point out the primary key and foreign key, and explain why you chose the data types you used.
-2. Upload the video to **Google Drive** (do not upload the video file to LMS).
-3. Set sharing to **"Anyone with the link → Viewer"**.
-4. Paste the link into the **"Video Link" field** on LMS (next to the ZIP upload).
+**Part 2 — Video presentation link (OBS → YouTube)**
 
-> ✅ **Checklist before submitting:** video is 1–2 minutes · your voice explains the schema (not just silent screen capture) · all tables and sample data are visible on screen · Drive link opens in an incognito/private browser window (test this yourself!).
+Record a short screen+voice video, upload it to **your own YouTube channel as Unlisted**, add it to your semester playlist, and paste the link on LMS. Do **not** upload the video file to LMS.
+
+1. **Record with OBS (1–2 minutes).** Open OBS Studio → add a **Display Capture** (or Window Capture) source → start recording. Walk through your finished homework **live on screen** and **speak out loud** — no camera needed, screen + microphone is enough. Follow the **Video Checklist — What to Show** section at the bottom of this sheet so the lecturer can confirm the work is done and is yours.
+2. **Upload to YouTube as Unlisted.** In YouTube Studio, upload the recording and set visibility to **Unlisted** (not Public, not Private). Unlisted means only people with the link can watch — it does not appear in search or on your channel page, but the lecturer can open it. (Private links will not work for grading.)
+3. **Add it to your homework playlist.** Create one playlist for the whole semester named `INS3064 — Homework — <Your Full Name>` and add this week's video to it (in YouTube Studio: SAVE → + Create new playlist, visibility Unlisted). The playlist collects every week's demo in one place; you create and own it — there is no shared class playlist.
+4. **Paste the link on LMS.** Copy the **video URL** (or the playlist URL) and paste it into the **"Video Link" field** on LMS (next to the ZIP upload).
+
+> ✅ **Checklist before submitting:** video is 1–2 minutes · your voice explains the schema (not just silent screen capture) · all tables and sample data are visible on screen · visibility is **Unlisted** · video is in your `INS3064 — Homework — <Your Name>` playlist · the YouTube link opens and plays in an incognito/private browser window (test this yourself!).
 
 ## Overview
 
@@ -107,3 +110,14 @@ In this assignment you will **design and create** a relational database schema f
 - [MySQL Manual — Foreign Keys](https://dev.mysql.com/doc/refman/8.0/en/create-table-foreign-keys.html)
 - [MySQL Data Types](https://dev.mysql.com/doc/refman/8.0/en/data-types.html)
 - [dbdiagram.io — Free ER Diagram Tool](https://dbdiagram.io/)
+
+## Video Checklist — What to Show
+
+In your 1–2 minute OBS recording, demonstrate **all** of the following on screen while narrating out loud:
+
+- phpMyAdmin open on your `university_db` database.
+- The full table list (around 6 tables, including the enrollment table).
+- The `students` and `enrollments` tables open with the primary key and foreign key columns pointed out.
+- Why you chose 1–2 of the data types you used (e.g., `DECIMAL(3,2)` for GPA, `ENUM` for gender).
+- Sample rows visible in at least one table.
+- A quick scroll through the main code file(s) in your editor so the grader sees the code is yours.

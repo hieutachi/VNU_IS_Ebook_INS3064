@@ -175,7 +175,7 @@ ${extraHead}<link rel="preconnect" href="https://fonts.googleapis.com"><link rel
 <div class="progress" aria-hidden="true"><span data-reading-progress></span></div>
 <header class="topbar"><div class="topbar-inner">
 <a class="brand" href="${base}/index.html" aria-label="INS3064 home"><span class="brand-mark" aria-hidden="true">PHP</span><span class="brand-copy"><strong>INS3064</strong><span>Web Development</span></span></a>
-<nav class="primary-nav" aria-label="Learning resources"><a data-nav="sessions" href="${base}/sessions/index.html">Sessions</a><a data-nav="ebook" href="${base}/ebook/index.html">Ebook</a><a data-nav="slides" href="${base}/slides/index.html">Slides</a><a data-nav="guides" href="${base}/guides/index.html">Guides</a></nav>
+<nav class="primary-nav" aria-label="Learning resources"><a data-nav="sessions" href="${base}/sessions/index.html">Sessions</a><a data-nav="homework" href="${base}/homework/index.html">Homework</a><a data-nav="ebook" href="${base}/ebook/index.html">Ebook</a><a data-nav="slides" href="${base}/slides/index.html">Slides</a><a data-nav="guides" href="${base}/guides/index.html">Guides</a></nav>
 <button class="theme-toggle" type="button" data-theme-toggle><span class="theme-dot" aria-hidden="true"></span><span data-theme-label>Dark</span></button>
 </div></header>
 ${depth ? `<nav class="breadcrumbs" aria-label="Breadcrumb"><a href="${base}/index.html">Home</a><span>${esc(section)}</span></nav>` : ""}
@@ -245,7 +245,7 @@ function homeworkPage({ session, source, raw }) {
     heading: `Homework ${session.n}`,
     lead: hw,
     depth: 2,
-    section: "Sessions",
+    section: "Homework",
     eyebrow: `Homework · Session ${pad(session.n)}`,
     pageClass: "reading-page",
     extraHead: sourceHead(source, raw),
@@ -377,7 +377,7 @@ function homeworkCard(session) {
   if (!hw) {
     return `<li class="flow-card homework-card"><span class="step"><span class="step-number">04</span>Homework</span><h2>Midterm week</h2><p>No graded homework this week — the review sheet is your midterm study guide.</p></li>`;
   }
-  return `<li class="flow-card homework-card"><span class="step"><span class="step-number">04</span>Homework</span><h2>Do &amp; submit</h2><p><strong>${esc(hw)}</strong><br>Due Sunday 23:59 on LMS: the code ZIP <em>plus</em> a 1–2 minute OBS video (screen + voice) uploaded to Google Drive — submit the link, not the file.</p><a class="button-link" href="../homework/session-${pad(session.n)}/homework.html">Open homework sheet</a></li>`;
+  return `<li class="flow-card homework-card"><span class="step"><span class="step-number">04</span>Homework</span><h2>Do &amp; submit</h2><p><strong>${esc(hw)}</strong><br>Due Sunday 23:59 on LMS: the code ZIP <em>plus</em> a 1–2 minute OBS video (screen + voice) uploaded to YouTube as Unlisted and added to your playlist «INS3064 — Homework — Your Name» — submit the link, not the file.</p><a class="button-link" href="../homework/session-${pad(session.n)}/homework.html">Open homework sheet</a></li>`;
 }
 
 function sessionPage(session) {
@@ -418,6 +418,29 @@ ${item.tags ? `<div class="card-tags">${item.tags.map(chip).join("")}</div>` : "
   });
 }
 
+function homeworkIndex() {
+  const cards = HOMEWORK_SOURCES.map((item) => `<li class="resource-card">
+<div class="card-top"><span class="badge">Homework ${pad(item.session.n)}</span><div class="card-tags">${chip(`Due Sunday · week ${item.session.n + 1}`)}</div></div>
+<a class="card-link" href="session-${pad(item.session.n)}/homework.html"><h2>${esc(item.session.title)}</h2></a>
+<p>${esc(HOMEWORKS[item.session.n] ?? item.session.summary)}</p>
+</li>`).join("\n");
+  const intro = `<article class="doc">
+<p>Homework is the graded half of the course: every week you build a small task from the session you just covered, then <strong>prove it is done and it is yours</strong>. Homework is set at the end of each session and is <strong>due Sunday 23:59</strong> of the following week on LMS. (Week 8 is the midterm — no graded homework.)</p>
+<p>Each week you submit <strong>two things</strong> on LMS:</p>
+<ol>
+<li><strong>Part 1 — the code ZIP.</strong> Zip the finished project folder and upload it to the LMS assignment.</li>
+<li><strong>Part 2 — the video link.</strong> Record a 1–2 minute screen-and-voice demo with <strong>OBS Studio</strong>, upload it to <strong>your own YouTube channel as Unlisted</strong>, add it to your semester playlist <code>INS3064 — Homework — &lt;Your Full Name&gt;</code>, and paste the video (or playlist) URL into the LMS "Video Link" field. Upload the link — never the video file.</li>
+</ol>
+<p>Every sheet ends with a <strong>Video Checklist — What to Show</strong>: the exact items to demonstrate in your recording, so the grader can see the homework works and the code is yours. Test your YouTube link in an incognito window before submitting — Private links cannot be graded.</p>
+</article>`;
+  return page({
+    title: "Homework", heading: "Weekly homework",
+    lead: "Fourteen graded sheets — build the task, record a short OBS demo, submit ZIP + YouTube link on LMS.",
+    depth: 1, section: "Homework",
+    eyebrow: `${HOMEWORK_SOURCES.length} graded sheets`, body: `${intro}<ul class="resource-grid">${cards}</ul>`,
+  });
+}
+
 function pager(session, folder) {
   const previous = SESSIONS.find((item) => item.n === session.n - 1);
   const next = SESSIONS.find((item) => item.n === session.n + 1);
@@ -429,6 +452,7 @@ function pager(session, folder) {
 function homePage() {
   const resources = [
     ["Sessions", "A guided route through all 15 weeks, grouped into four parts.", "sessions/index.html", "Course map"],
+    ["Homework", "Fourteen weekly sheets: build the task, record a short OBS demo, submit ZIP + YouTube link on LMS.", "homework/index.html", "Submit"],
     ["Ebook", "Fifteen complete chapters with highlighted PHP, SQL, and HTML.", "ebook/index.html", "Read"],
     ["Slides", "Focused decks with one idea per slide for review and revision.", "slides/index.html", "Review"],
     ["Guides", "How to use this portal, install XAMPP, and keep syntax within reach.", "guides/index.html", "Setup"],
@@ -484,6 +508,7 @@ async function build() {
   }
   await write("index.html", homePage());
   await write("sessions/index.html", sessionsIndex());
+  await write("homework/index.html", homeworkIndex());
   await write("ebook/index.html", listPage({
     kind: "Ebook", heading: "The INS3064 ebook",
     lead: "Fifteen chapters in teaching order, from PHP syntax to secure AJAX applications.",
@@ -499,7 +524,7 @@ async function build() {
     lead: "Prepare your environment and keep the essential syntax nearby.",
     items: GUIDES, href: (g) => `${g.slug}.html`, meta: (g) => g.kicker,
   }));
-  console.log(`Built site/: 15 chapters, 15 decks (${slideTotal} slides), 15 session hubs, ${GUIDES.length} guides, ${HOMEWORK_SOURCES.length} homework sheets.`);
+  console.log(`Built site/: 15 chapters, 15 decks (${slideTotal} slides), 15 session hubs, ${GUIDES.length} guides, ${HOMEWORK_SOURCES.length} homework sheets + homework index.`);
 }
 
 build().catch((error) => { console.error(error.stack || error); process.exitCode = 1; });

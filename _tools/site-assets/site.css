@@ -781,7 +781,7 @@ html.js .deck-slide.is-active { display: flex; }
   main { padding: 1.75rem 0 3.5rem; }
   .topbar-inner { flex-wrap: wrap; gap: .45rem 1rem; padding: .55rem 0; }
   .brand-mark { width: 38px; height: 38px; font-size: .72rem; }
-  .primary-nav { order: 3; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; margin: 0; }
+  .primary-nav { order: 3; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); width: 100%; margin: 0; }
   .primary-nav a { padding-inline: .2rem; text-align: center; font-size: .8rem; }
   .primary-nav a[aria-current="page"]::after { display: none; }
   .theme-toggle { margin-left: auto; }

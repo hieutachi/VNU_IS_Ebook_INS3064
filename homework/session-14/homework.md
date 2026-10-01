@@ -12,13 +12,16 @@ Submit **two things** on LMS before the deadline (Sunday 23:59):
 3. Compress the folder into `homework-14.zip`
 4. Upload the `.zip` to LMS before the deadline (Sunday 23:59)
 
-**Part 2 — Video presentation link (OBS recording)**
-1. Record a short video (1–2 minutes) with OBS: share your screen showing the hardened Product Management System, and **present it out loud** — pick **one** vulnerability you fixed (CSRF, XSS, or SQL injection), show the "before" pattern in code, the "after" pattern, and demonstrate live that the attack (e.g., submitting a form without a CSRF token) is now rejected.
-2. Upload the video to **Google Drive** (do not upload the video file to LMS).
-3. Set sharing to **"Anyone with the link → Viewer"**.
-4. Paste the link into the **"Video Link" field** on LMS (next to the ZIP upload).
+**Part 2 — Video presentation link (OBS → YouTube)**
 
-> ✅ **Checklist before submitting:** video is 1–2 minutes · your voice explains the fix (not just silent screen capture) · one attack attempt is shown being rejected live on screen · Drive link opens in an incognito/private browser window (test this yourself!).
+Record a short screen+voice video, upload it to **your own YouTube channel as Unlisted**, add it to your semester playlist, and paste the link on LMS. Do **not** upload the video file to LMS.
+
+1. **Record with OBS (1–2 minutes).** Open OBS Studio → add a **Display Capture** (or Window Capture) source → start recording. Walk through your finished homework **live on screen** and **speak out loud** — no camera needed, screen + microphone is enough. Follow the **Video Checklist — What to Show** section at the bottom of this sheet so the lecturer can confirm the work is done and is yours.
+2. **Upload to YouTube as Unlisted.** In YouTube Studio, upload the recording and set visibility to **Unlisted** (not Public, not Private). Unlisted means only people with the link can watch — it does not appear in search or on your channel page, but the lecturer can open it. (Private links will not work for grading.)
+3. **Add it to your homework playlist.** Create one playlist for the whole semester named `INS3064 — Homework — <Your Full Name>` and add this week's video to it (in YouTube Studio: SAVE → + Create new playlist, visibility Unlisted). The playlist collects every week's demo in one place; you create and own it — there is no shared class playlist.
+4. **Paste the link on LMS.** Copy the **video URL** (or the playlist URL) and paste it into the **"Video Link" field** on LMS (next to the ZIP upload).
+
+> ✅ **Checklist before submitting:** video is 1–2 minutes · your voice explains the fix (not just silent screen capture) · one attack attempt is shown being rejected live on screen · visibility is **Unlisted** · video is in your `INS3064 — Homework — <Your Name>` playlist · the YouTube link opens and plays in an incognito/private browser window (test this yourself!).
 
 ## Overview
 
@@ -164,3 +167,13 @@ Perform a **comprehensive security audit and hardening** of your Product Managem
 - **Test your security measures**: try submitting a form without a CSRF token (should fail), try outputting `<script>alert('xss')</script>` in a product name (should display as text, not execute), try logging in 6 times rapidly (should lock out).
 - **Use `hash_equals()`** for comparing CSRF tokens and remember-me tokens to prevent timing attacks.
 - **`display_errors = Off`** in `php.ini` for production — errors should be logged, not shown to users.
+
+## Video Checklist — What to Show
+
+In your 1–2 minute OBS recording, demonstrate **all** of the following on screen while narrating out loud:
+
+- Your hardened Product Management System open in the browser.
+- One vulnerability you fixed (CSRF, XSS, or SQL injection): show the "before" pattern in code, then the "after" pattern.
+- The attack rejected live — e.g., submitting a form without a CSRF token and showing the 403 response.
+- (Optional) A quick flash of your `SECURITY_CHECKLIST.md` summarizing everything you hardened.
+- A quick scroll through the main code file(s) in your editor so the grader sees the code is yours.

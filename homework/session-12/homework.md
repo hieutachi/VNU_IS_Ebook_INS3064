@@ -12,13 +12,16 @@ Submit **two things** on LMS before the deadline (Sunday 23:59):
 3. Compress the folder into `homework-12.zip`
 4. Upload the `.zip` to LMS before the deadline (Sunday 23:59)
 
-**Part 2 — Video presentation link (OBS recording)**
-1. Record a short video (1–2 minutes) with OBS: share your screen showing the Product Management System in the browser, and **present it out loud** — add one product with an image upload live, show the pagination and one filter, then delete that product to prove the foreign key handling works.
-2. Upload the video to **Google Drive** (do not upload the video file to LMS).
-3. Set sharing to **"Anyone with the link → Viewer"**.
-4. Paste the link into the **"Video Link" field** on LMS (next to the ZIP upload).
+**Part 2 — Video presentation link (OBS → YouTube)**
 
-> ✅ **Checklist before submitting:** video is 1–2 minutes · your voice narrates the demo (not just silent screen capture) · image upload and pagination are visible on screen · Drive link opens in an incognito/private browser window (test this yourself!).
+Record a short screen+voice video, upload it to **your own YouTube channel as Unlisted**, add it to your semester playlist, and paste the link on LMS. Do **not** upload the video file to LMS.
+
+1. **Record with OBS (1–2 minutes).** Open OBS Studio → add a **Display Capture** (or Window Capture) source → start recording. Walk through your finished homework **live on screen** and **speak out loud** — no camera needed, screen + microphone is enough. Follow the **Video Checklist — What to Show** section at the bottom of this sheet so the lecturer can confirm the work is done and is yours.
+2. **Upload to YouTube as Unlisted.** In YouTube Studio, upload the recording and set visibility to **Unlisted** (not Public, not Private). Unlisted means only people with the link can watch — it does not appear in search or on your channel page, but the lecturer can open it. (Private links will not work for grading.)
+3. **Add it to your homework playlist.** Create one playlist for the whole semester named `INS3064 — Homework — <Your Full Name>` and add this week's video to it (in YouTube Studio: SAVE → + Create new playlist, visibility Unlisted). The playlist collects every week's demo in one place; you create and own it — there is no shared class playlist.
+4. **Paste the link on LMS.** Copy the **video URL** (or the playlist URL) and paste it into the **"Video Link" field** on LMS (next to the ZIP upload).
+
+> ✅ **Checklist before submitting:** video is 1–2 minutes · your voice narrates the demo (not just silent screen capture) · image upload and pagination are visible on screen · visibility is **Unlisted** · video is in your `INS3064 — Homework — <Your Name>` playlist · the YouTube link opens and plays in an incognito/private browser window (test this yourself!).
 
 ## Overview
 
@@ -167,3 +170,14 @@ product_app/
 - **POST-Redirect-GET**: after a successful POST (create/update/delete), use `header('Location: ...')` and `exit()` to redirect. Store the success message in `$_SESSION` and display it on the redirected page.
 - **Bootstrap** can save significant time on responsive design — use the CDN version (`<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">`).
 - **Test edge cases**: delete a category that has products, search with no results, upload a file that is too large, submit a form with missing required fields.
+
+## Video Checklist — What to Show
+
+In your 1–2 minute OBS recording, demonstrate **all** of the following on screen while narrating out loud:
+
+- Your Product Management System open in the browser.
+- Adding one product with an image upload live, then seeing it (with the image) in the list.
+- Pagination working — move to another page of the product list.
+- One filter or search applied live, with the list updating.
+- Deleting that product and explaining how the foreign key handling keeps the data consistent.
+- A quick scroll through the main code file(s) in your editor so the grader sees the code is yours.
