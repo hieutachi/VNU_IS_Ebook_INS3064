@@ -372,15 +372,70 @@ const HOMEWORKS = {
   15: "AJAX product app — JSON endpoints, live search with debounce, jQuery UI.",
 };
 
-function homeworkCard(session) {
-  const hw = HOMEWORKS[session.n];
-  if (!hw) {
-    return `<li class="flow-card homework-card"><span class="step"><span class="step-number">04</span>Homework</span><h2>Midterm week</h2><p>No graded homework this week — the review sheet is your midterm study guide.</p></li>`;
-  }
-  return `<li class="flow-card homework-card"><span class="step"><span class="step-number">04</span>Homework</span><h2>Do &amp; submit</h2><p><strong>${esc(hw)}</strong><br>Due Sunday 23:59 on LMS: the code ZIP <em>plus</em> a 1–2 minute OBS video (screen + voice) uploaded to YouTube as Unlisted and added to your playlist «INS3064 — Homework — Your Name» — submit the link, not the file.</p><a class="button-link" href="../homework/session-${pad(session.n)}/homework.html">Open homework sheet</a></li>`;
+/* ---------- homework brief, extracted from the real sheet ---------- */
+
+/* Render the small amount of inline markdown a brief carries (bold + code
+   spans) after escaping, so sheet text can never inject markup. */
+function inlineMd(text) {
+  return esc(text)
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/`([^`]+)`/g, "<code>$1</code>");
 }
 
-function sessionPage(session) {
+/* Pull the detailed description out of a homework sheet: the first paragraph
+   of its "## Overview" section plus the Due/Deliverable banner line. This is
+   what makes step 04 of a session hub an actual assignment brief instead of
+   a one-line teaser. */
+function extractBrief(raw) {
+  const lines = raw.split(/\r?\n/);
+  const start = lines.findIndex((line) => /^##\s+Overview\s*$/.test(line));
+  let overview = "";
+  if (start !== -1) {
+    const blocks = [];
+    let current = [];
+    for (const line of lines.slice(start + 1)) {
+      if (/^#{1,6}\s/.test(line)) break;
+      if (line.trim() === "") {
+        if (current.length) { blocks.push(current.join(" ")); current = []; }
+      } else {
+        current.push(line.replace(/^>\s?/, "").trim());
+      }
+    }
+    if (current.length) blocks.push(current.join(" "));
+    overview = blocks.find((block) => block.length > 0) ?? "";
+  }
+  const dueMatch = /^>\s*\*\*Due:\*\*[^\n]*$/m.exec(raw);
+  const due = dueMatch ? dueMatch[0].replace(/^>\s*/, "").trim() : "";
+  return { overview, due };
+}
+
+/* Steps 04–06 of every session hub: the complete homework flow —
+   the assignment (detailed brief), how to do it, and how to submit it. */
+function homeworkCards(session, brief) {
+  const href = `../homework/session-${pad(session.n)}/homework.html`;
+  if (!HOMEWORKS[session.n]) {
+    return `<li class="flow-card homework-card"><span class="step"><span class="step-number">04</span>Homework</span><h2>Midterm week</h2><p>No graded homework this week — the review sheet is your midterm study guide.</p></li>`;
+  }
+  const assignment = `<li class="flow-card homework-card"><span class="step"><span class="step-number">04</span>Homework · The assignment</span><h2>${esc(session.title)}</h2>`
+    + `<p><strong>${esc(HOMEWORKS[session.n])}</strong></p>`
+    + (brief.overview ? `<p>${inlineMd(brief.overview)}</p>` : "")
+    + (brief.due ? `<p class="hw-due">${inlineMd(brief.due)}</p>` : "")
+    + `<a class="button-link primary" href="${href}">Open homework sheet</a></li>`;
+  const howTo = `<li class="flow-card homework-card"><span class="step"><span class="step-number">05</span>Homework · How to do it</span><h2>Work the task</h2>`
+    + `<ol class="hw-steps"><li>Read the sheet <em>first</em> — Overview, Requirements, and the grading rubric are the contract you are marked against.</li>`
+    + `<li>Build the task in your XAMPP <code>htdocs</code> folder until it runs at <code>http://localhost/…</code> without errors.</li>`
+    + `<li>Test against <strong>every</strong> functional and technical requirement, then use the sheet's Tips &amp; Resources when stuck.</li>`
+    + `<li>Rehearse the <strong>Video Checklist — What to Show</strong> at the bottom of the sheet; it is exactly what you will record.</li></ol>`
+    + `<a class="button-link" href="${href}">Open requirements &amp; tips</a></li>`;
+  const howToSubmit = `<li class="flow-card homework-card"><span class="step"><span class="step-number">06</span>Homework · How to submit</span><h2>Submit on LMS</h2>`
+    + `<ol class="hw-steps"><li><strong>Part 1 — Code ZIP.</strong> Zip the finished file/folder (<code>${esc(`homework${pad(session.n)}.zip`)}</code>) and upload it to the LMS assignment.</li>`
+    + `<li><strong>Part 2 — Video link.</strong> Record 1–2 minutes with OBS (screen + voice), upload to YouTube as <strong>Unlisted</strong>, add it to your playlist «INS3064 — Homework — Your Name», and paste the URL into the LMS "Video Link" field — never the video file.</li>`
+    + `<li><strong>Deadline:</strong> Sunday 23:59. Late work is marked until Monday 23:59 at −20%; after that it scores 0. Test your link in an incognito window first.</li></ol>`
+    + `<a class="button-link" href="${href}">Open submission steps</a></li>`;
+  return assignment + howTo + howToSubmit;
+}
+
+function sessionPage(session, brief) {
   const nn = pad(session.n);
   const part = partOf(session);
   const previous = SESSIONS.find((item) => item.n === session.n - 1);
@@ -396,8 +451,8 @@ function sessionPage(session) {
   const cards = steps.map(([number, when, title, copy, href, cta, primary]) =>
     `<li class="flow-card"><span class="step"><span class="step-number">${number}</span>${esc(when)}</span><h2>${esc(title)}</h2><p>${esc(copy)}</p><a class="button-link${primary ? " primary" : ""}" href="${href}">${esc(cta)}</a></li>`).join("");
   const body = `<div class="head-meta">${chip(`Part ${part.id} · ${part.name}`)}${session.tags.map(chip).join("")}</div>
-<ol class="session-flow">${cards}${homeworkCard(session)}</ol>
-<aside class="notice"><p><strong>Practice only.</strong> Complete the tasks in your local project. Submission, grading, exam material, and answer keys are intentionally not hosted here. Homework is submitted on LMS (ZIP + video link) — see the sheet linked in step 04.</p></aside>
+<ol class="session-flow">${cards}${homeworkCards(session, brief)}</ol>
+<aside class="notice"><p><strong>Practice only.</strong> Complete the tasks in your local project. Submission, grading, exam material, and answer keys are intentionally not hosted here. Homework is submitted on LMS (ZIP + video link) — the full brief, the how-to, and the submission steps are in steps 04–06 above.</p></aside>
 <nav class="pager" aria-label="Adjacent sessions">${adjacent(previous, "Previous", "prev")}${adjacent(next, "Next", "next")}</nav>`;
   return page({
     title: `Session ${session.n}: ${session.title}`, heading: session.title, lead: session.summary,
@@ -489,6 +544,13 @@ async function build() {
   await cp(path.join(ASSETS, "site.js"), path.join(OUT, "assets", "site.js"));
   await write(".nojekyll", "");
 
+  /* Read every homework sheet once: it feeds both the public sheet page and
+     the detailed assignment brief in steps 04–06 of the session hub. */
+  const homeworkRaw = new Map();
+  for (const item of HOMEWORK_SOURCES) {
+    homeworkRaw.set(item.session.n, await readFile(path.join(ROOT, item.source), "utf8"));
+  }
+
   let slideTotal = 0;
   for (const session of SESSIONS) {
     const raw = await readFile(path.join(ROOT, session.source), "utf8");
@@ -496,10 +558,11 @@ async function build() {
     const deck = deckPage(session, raw);
     slideTotal += (deck.match(/data-slide(?:\s|>)/g) || []).length;
     await write(`slides/${pad(session.n)}-${session.slug}.html`, deck);
-    await write(`sessions/session-${pad(session.n)}.html`, sessionPage(session));
+    const hwRaw = homeworkRaw.get(session.n);
+    await write(`sessions/session-${pad(session.n)}.html`, sessionPage(session, hwRaw ? extractBrief(hwRaw) : { overview: "", due: "" }));
   }
   for (const item of HOMEWORK_SOURCES) {
-    const raw = await readFile(path.join(ROOT, item.source), "utf8");
+    const raw = homeworkRaw.get(item.session.n);
     await write(`homework/session-${pad(item.session.n)}/homework.html`, homeworkPage({ ...item, raw }));
   }
   for (const guide of GUIDES) {
