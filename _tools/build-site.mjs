@@ -175,7 +175,8 @@ ${extraHead}<link rel="preconnect" href="https://fonts.googleapis.com"><link rel
 <div class="progress" aria-hidden="true"><span data-reading-progress></span></div>
 <header class="topbar"><div class="topbar-inner">
 <a class="brand" href="${base}/index.html" aria-label="INS3064 home"><span class="brand-mark" aria-hidden="true">PHP</span><span class="brand-copy"><strong>INS3064</strong><span>Web Development</span></span></a>
-<nav class="primary-nav" aria-label="Learning resources"><a data-nav="sessions" href="${base}/sessions/index.html">Sessions</a><a data-nav="homework" href="${base}/homework/index.html">Homework</a><a data-nav="ebook" href="${base}/ebook/index.html">Ebook</a><a data-nav="slides" href="${base}/slides/index.html">Slides</a><a data-nav="guides" href="${base}/guides/index.html">Guides</a></nav>
+<nav class="primary-nav" aria-label="Learning resources"><a data-nav="home" href="${base}/index.html">Dashboard</a><a data-nav="sessions" href="${base}/sessions/index.html">Sessions</a><a data-nav="homework" href="${base}/homework/index.html">Homework</a><a data-nav="ebook" href="${base}/ebook/index.html">Ebook</a><a data-nav="slides" href="${base}/slides/index.html">Slides</a><a data-nav="guides" href="${base}/guides/index.html">Guides</a></nav>
+
 <button class="theme-toggle" type="button" data-theme-toggle><span class="theme-dot" aria-hidden="true"></span><span data-theme-label>Dark</span></button>
 </div></header>
 ${depth ? `<nav class="breadcrumbs" aria-label="Breadcrumb"><a href="${base}/index.html">Home</a><span>${esc(section)}</span></nav>` : ""}
@@ -450,7 +451,8 @@ function sessionPage(session, brief) {
   ];
   const cards = steps.map(([number, when, title, copy, href, cta, primary]) =>
     `<li class="flow-card"><span class="step"><span class="step-number">${number}</span>${esc(when)}</span><h2>${esc(title)}</h2><p>${esc(copy)}</p><a class="button-link${primary ? " primary" : ""}" href="${href}">${esc(cta)}</a></li>`).join("");
-  const body = `<div class="head-meta">${chip(`Part ${part.id} · ${part.name}`)}${session.tags.map(chip).join("")}</div>
+  const body = `<div class="session-context"><div><p class="eyebrow">You are here</p><strong>Course map / Session ${nn}</strong><span>${esc(part.name)} · ${esc(part.range)}</span></div><div class="session-progress"><span>Progress</span><strong>${Math.round((session.n / SESSIONS.length) * 100)}%</strong><div class="course-progress"><span style="width:${Math.round((session.n / SESSIONS.length) * 100)}%"></span></div></div></div>
+<div class="head-meta">${chip(`Part ${part.id} · ${part.name}`)}${session.tags.map(chip).join("")}</div>
 <ol class="session-flow">${cards}${homeworkCards(session, brief)}</ol>
 <aside class="notice"><p><strong>Practice only.</strong> Complete the tasks in your local project. Submission, grading, exam material, and answer keys are intentionally not hosted here. Homework is submitted on LMS (ZIP + video link) — the full brief, the how-to, and the submission steps are in steps 04–06 above.</p></aside>
 <nav class="pager" aria-label="Adjacent sessions">${adjacent(previous, "Previous", "prev")}${adjacent(next, "Next", "next")}</nav>`;
@@ -504,6 +506,20 @@ function pager(session, folder) {
     : '<span class="pager-link is-empty"></span>');
   return `<nav class="pager" aria-label="Adjacent ${folder}">${link(previous, "Previous", "prev")}${link(next, "Next", "next")}</nav>`;
 }
+
+function learningProgress(current = 1) {
+  const percent = Math.round((current / SESSIONS.length) * 100);
+  return `<section class="learning-progress" aria-label="Course progress">
+<div class="progress-heading"><div><p class="eyebrow">Your learning position</p><h2>Session ${pad(current)} of ${SESSIONS.length}</h2></div><strong>${percent}% complete</strong></div>
+<div class="course-progress" role="progressbar" aria-valuemin="0" aria-valuemax="15" aria-valuenow="${current}" aria-label="${percent}% of the course"><span style="width:${percent}%"></span></div>
+<div class="progress-meta"><span>PHP foundations → secure AJAX</span><a href="sessions/index.html">View the full course map →</a></div>
+</section>`;
+}
+
+function nextStepPanel() {
+  return `<section class="next-step-panel" aria-labelledby="next-step-title"><div class="next-step-copy"><span class="status-dot">Next step</span><p class="eyebrow">Start with the first milestone</p><h2 id="next-step-title">Set up PHP, then build your first dynamic page.</h2><p>Follow one simple rhythm: prepare before class, participate in class, practise locally, then submit the weekly task on LMS.</p><div class="hero-actions"><a class="button-link primary" href="sessions/session-01.html">Open Session 01</a><a class="button-link" href="guides/start-here.html">How this portal works</a></div></div><div class="next-step-map" aria-label="The four-step learning rhythm"><div><span>01</span><strong>Before class</strong><small>Read & prepare</small></div><div><span>02</span><strong>In class</strong><small>Follow & ask</small></div><div><span>03</span><strong>After class</strong><small>Build locally</small></div><div><span>04</span><strong>Homework</strong><small>Submit on LMS</small></div></div></section>`;
+}
+
 function homePage() {
   const resources = [
     ["Sessions", "A guided route through all 15 weeks, grouped into four parts.", "sessions/index.html", "Course map"],
@@ -513,9 +529,7 @@ function homePage() {
     ["Guides", "How to use this portal, install XAMPP, and keep syntax within reach.", "guides/index.html", "Setup"],
   ].map(([title, summary, href, badge]) => `<li class="resource-card"><div class="card-top"><span class="badge">${esc(badge)}</span></div><a class="card-link" href="${href}"><h3>${esc(title)}</h3></a><p>${esc(summary)}</p></li>`).join("");
 
-  const body = `<div class="hero-actions"><a class="button-link primary" href="guides/start-here.html">Start here</a><a class="button-link" href="sessions/session-01.html">Go to Session 1</a><a class="button-link" href="guides/installation.html">Set up your environment</a></div>
-<ul class="stat-row"><li class="stat"><strong>15</strong><span>guided sessions</span></li><li class="stat"><strong>4</strong><span>learning parts</span></li><li class="stat"><strong>PHP 8 · MySQL</strong><span>server-side stack</span></li></ul>
-<section><div class="section-head"><div><p class="eyebrow">Everything in one place</p><h2>Choose a resource</h2></div><p>Student-safe material for reading and review. Build the programming tasks in your local XAMPP project.</p></div><ul class="resource-grid home-grid">${resources}</ul></section>
+  const body = `${nextStepPanel()}${learningProgress()}<section><div class="section-head"><div><p class="eyebrow">Everything in one place</p><h2>Choose your next resource</h2></div><p>Use the dashboard as your launchpad. Every session connects preparation, classwork, practice, and submission.</p></div><ul class="resource-grid home-grid">${resources}</ul></section>
 <section id="course"><div class="section-head"><div><p class="eyebrow">The learning path</p><h2>From first echo to secure AJAX</h2></div><p>Each part builds on the previous one. Follow them in order for the smoothest ride.</p></div>${partSections("")}</section>`;
 
   return page({
