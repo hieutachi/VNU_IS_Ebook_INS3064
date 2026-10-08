@@ -522,12 +522,12 @@ function nextStepPanel() {
 
 function homePage() {
   const resources = [
-    ["Sessions", "A guided route through all 15 weeks, grouped into four parts.", "sessions/index.html", "Course map"],
-    ["Homework", "Fourteen weekly sheets: build the task, record a short OBS demo, submit ZIP + YouTube link on LMS.", "homework/index.html", "Submit"],
-    ["Ebook", "Fifteen complete chapters with highlighted PHP, SQL, and HTML.", "ebook/index.html", "Read"],
-    ["Slides", "Focused decks with one idea per slide for review and revision.", "slides/index.html", "Review"],
-    ["Guides", "How to use this portal, install XAMPP, and keep syntax within reach.", "guides/index.html", "Setup"],
-  ].map(([title, summary, href, badge]) => `<li class="resource-card"><div class="card-top"><span class="badge">${esc(badge)}</span></div><a class="card-link" href="${href}"><h3>${esc(title)}</h3></a><p>${esc(summary)}</p></li>`).join("");
+    ["Sessions", "A guided route through all 15 weeks, grouped into four parts.", "sessions/index.html", "Course map", "resource-card--primary"],
+    ["Homework", "Fourteen weekly sheets: build the task, record a short OBS demo, submit ZIP + YouTube link on LMS.", "homework/index.html", "Submit", "resource-card--action"],
+    ["Ebook", "Fifteen complete chapters with highlighted PHP, SQL, and HTML.", "ebook/index.html", "Read", ""],
+    ["Slides", "Focused decks with one idea per slide for review and revision.", "slides/index.html", "Review", ""],
+    ["Guides", "How to use this portal, install XAMPP, and keep syntax within reach.", "guides/index.html", "Setup", ""],
+  ].map(([title, summary, href, badge, modifier]) => `<li class="resource-card ${modifier}"><div class="card-top"><span class="badge">${esc(badge)}</span></div><a class="card-link" href="${href}"><h3>${esc(title)}</h3></a><p>${esc(summary)}</p><span class="card-arrow" aria-hidden="true">Open resource <span>→</span></span></li>`).join("");
 
   const body = `${nextStepPanel()}${learningProgress()}<section><div class="section-head"><div><p class="eyebrow">Everything in one place</p><h2>Choose your next resource</h2></div><p>Use the dashboard as your launchpad. Every session connects preparation, classwork, practice, and submission.</p></div><ul class="resource-grid home-grid">${resources}</ul></section>
 <section id="course"><div class="section-head"><div><p class="eyebrow">The learning path</p><h2>From first echo to secure AJAX</h2></div><p>Each part builds on the previous one. Follow them in order for the smoothest ride.</p></div>${partSections("")}</section>`;
