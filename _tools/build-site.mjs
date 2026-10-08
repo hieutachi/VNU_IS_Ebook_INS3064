@@ -522,15 +522,55 @@ function nextStepPanel() {
 
 function homePage() {
   const resources = [
-    ["Sessions", "A guided route through all 15 weeks, grouped into four parts.", "sessions/index.html", "Course map", "resource-card--primary"],
-    ["Homework", "Fourteen weekly sheets: build the task, record a short OBS demo, submit ZIP + YouTube link on LMS.", "homework/index.html", "Submit", "resource-card--action"],
-    ["Ebook", "Fifteen complete chapters with highlighted PHP, SQL, and HTML.", "ebook/index.html", "Read", ""],
-    ["Slides", "Focused decks with one idea per slide for review and revision.", "slides/index.html", "Review", ""],
-    ["Guides", "How to use this portal, install XAMPP, and keep syntax within reach.", "guides/index.html", "Setup", ""],
-  ].map(([title, summary, href, badge, modifier]) => `<li class="resource-card ${modifier}"><div class="card-top"><span class="badge">${esc(badge)}</span></div><a class="card-link" href="${href}"><h3>${esc(title)}</h3></a><p>${esc(summary)}</p><span class="card-arrow" aria-hidden="true">Open resource <span>→</span></span></li>`).join("");
+    ["Sessions", "Follow the 15-week course map from PHP foundations to secure AJAX.", "#course", "Course map", "app-resource app-resource--primary"],
+    ["Homework", "Open the weekly brief, build locally, and submit your ZIP + video link on LMS.", "#homework", "Practice", "app-resource app-resource--action"],
+    ["Ebook", "Read the complete chapters with examples, exercises, and a minimum path.", "#library", "Read", "app-resource"],
+    ["Slides", "Review focused lecture decks one idea at a time.", "slides/index.html", "Review", "app-resource"],
+    ["Guides", "Set up XAMPP and keep the essential references nearby.", "#guides", "Setup", "app-resource"],
+  ].map(([title, summary, href, badge, modifier]) => `<a class="${modifier}" href="${href}"><span class="app-resource-badge">${esc(badge)}</span><strong>${esc(title)}</strong><span>${esc(summary)}</span><b>Open <span aria-hidden="true">→</span></b></a>`).join("");
 
-  const body = `${nextStepPanel()}${learningProgress()}<section><div class="section-head"><div><p class="eyebrow">Everything in one place</p><h2>Choose your next resource</h2></div><p>Use the dashboard as your launchpad. Every session connects preparation, classwork, practice, and submission.</p></div><ul class="resource-grid home-grid">${resources}</ul></section>
-<section id="course"><div class="section-head"><div><p class="eyebrow">The learning path</p><h2>From first echo to secure AJAX</h2></div><p>Each part builds on the previous one. Follow them in order for the smoothest ride.</p></div>${partSections("")}</section>`;
+  const stats = `<div class="app-stat"><strong>15</strong><span>sessions</span></div><div class="app-stat"><strong>14</strong><span>homework sheets</span></div><div class="app-stat"><strong>4</strong><span>learning parts</span></div>`;
+  const library = SESSIONS.map((session) => `<a class="app-list-item" href="ebook/${pad(session.n)}-${session.slug}.html"><span class="app-list-number">${pad(session.n)}</span><span><strong>${esc(session.title)}</strong><small>${esc(session.summary)}</small></span><b aria-hidden="true">→</b></a>`).join("");
+  const guideLinks = GUIDES.filter((guide) => guide.slug !== "instructor-guide").map((guide) => `<a class="app-list-item" href="guides/${guide.slug}.html"><span class="app-list-icon">${esc(guide.kicker.slice(0, 1))}</span><span><strong>${esc(guide.title)}</strong><small>${esc(guide.summary)}</small></span><b aria-hidden="true">→</b></a>`).join("");
+  const homeworkList = SESSIONS.filter((session) => session.n !== 8).map((session) => `<a class="app-list-item" href="homework/session-${pad(session.n)}/homework.html"><span class="app-list-number">${pad(session.n)}</span><span><strong>${esc(session.title)}</strong><small>${esc(HOMEWORKS[session.n] || session.summary)}</small></span><b aria-hidden="true">→</b></a>`).join("");
+
+  const appViews = `
+<section class="app-view is-active" data-spa-view="dashboard" id="dashboard" aria-labelledby="dashboard-title">
+  <div class="app-view-head"><div><p class="eyebrow">Dashboard</p><h2 id="dashboard-title">Start with the first milestone.</h2></div><p>This one page is your command center. Use the left menu to move between overview, course map, library, homework, and guides without loading another page.</p></div>
+  ${nextStepPanel()}
+  ${learningProgress()}
+  <div class="app-panel"><div class="app-panel-head"><div><p class="eyebrow">This week</p><h3>Session 01 · Introduction to PHP</h3></div><span class="badge">7% complete</span></div><div class="app-grid app-grid--3"><div class="app-stage"><span>01</span><strong>Before class</strong><p>Read the chapter and install XAMPP so the examples run locally.</p></div><div class="app-stage"><span>02</span><strong>In class</strong><p>Follow the deck and ask questions while the code is projected.</p></div><div class="app-stage"><span>03</span><strong>After class</strong><p>Rebuild the exercises in <code>htdocs</code> and keep a working copy.</p></div></div></div>
+  <div class="app-grid app-grid--2"><div class="app-panel"><div class="app-panel-head"><div><p class="eyebrow">Resources</p><h3>Quick access</h3></div></div><div class="app-resource-grid">${resources}</div></div><div class="app-panel"><div class="app-panel-head"><div><p class="eyebrow">Progress</p><h3>Course position</h3></div></div><div class="app-stat-grid">${stats}</div><p class="app-note">The dashboard is static and fast; the sections switch instantly with hash navigation.</p></div></div>
+</section>
+<section class="app-view" data-spa-view="course" id="course" hidden aria-labelledby="course-title">
+  <div class="app-view-head"><div><p class="eyebrow">Course map</p><h2 id="course-title">Follow the four-part learning path.</h2></div><p>Each part builds on the previous one. Open a session hub when you want the chapter, slides, practice, and homework for that week.</p></div>
+  ${partSections("")}
+</section>
+<section class="app-view" data-spa-view="library" id="library" hidden aria-labelledby="library-title">
+  <div class="app-view-head"><div><p class="eyebrow">Library</p><h2 id="library-title">Read the chapters in order.</h2></div><p>Every chapter stays on its own generated page so links remain shareable and the source markdown pipeline stays intact.</p></div>
+  <div class="app-list">${library}</div>
+</section>
+<section class="app-view" data-spa-view="homework" id="homework" hidden aria-labelledby="homework-title">
+  <div class="app-view-head"><div><p class="eyebrow">Homework</p><h2 id="homework-title">Build, record, submit.</h2></div><p>Fourteen sheets are linked here. Session 08 is midterm week, so it intentionally has no graded homework.</p></div>
+  <div class="app-list">${homeworkList}</div>
+</section>
+<section class="app-view" data-spa-view="guides" id="guides" hidden aria-labelledby="guides-title">
+  <div class="app-view-head"><div><p class="eyebrow">Guides</p><h2 id="guides-title">Get set up before the first lesson.</h2></div><p>Start with the portal guide, then install XAMPP and keep the cheat sheet within reach.</p></div>
+  <div class="app-list">${guideLinks}</div>
+</section>
+<section class="app-view" data-spa-view="resources" id="resources" hidden aria-labelledby="resources-title">
+  <div class="app-view-head"><div><p class="eyebrow">Resources</p><h2 id="resources-title">Everything in one place.</h2></div><p>Use this view when you want the same launchpad as the dashboard, but with the resource links grouped in one clean grid.</p></div>
+  <div class="app-panel"><div class="app-resource-grid app-resource-grid--wide">${resources}</div></div>
+</section>`;
+
+  const body = `<div class="app-shell">
+    <aside class="app-sidebar">
+      <div class="app-side-head"><span class="status-dot">INS3064</span><p>Student learning portal</p></div>
+      <nav class="app-nav" aria-label="Learning sections"><a class="app-nav-link is-active" href="#dashboard" data-spa-nav="dashboard">Dashboard</a><a class="app-nav-link" href="#course" data-spa-nav="course">Course map</a><a class="app-nav-link" href="#library" data-spa-nav="library">Library</a><a class="app-nav-link" href="#homework" data-spa-nav="homework">Homework</a><a class="app-nav-link" href="#guides" data-spa-nav="guides">Guides</a><a class="app-nav-link" href="#resources" data-spa-nav="resources">Resources</a></nav>
+      <div class="app-side-card"><p class="eyebrow">Quick rule</p><p>Prepare → attend → practise → submit. That’s the weekly rhythm for this course.</p></div>
+    </aside>
+    <div class="app-content">${appViews}</div>
+  </div>`;
 
   return page({
     title: "Student Learning Portal", heading: "Build dynamic web applications.",
